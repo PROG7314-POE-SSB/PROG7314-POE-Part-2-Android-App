@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PantryChef">
         <activity
+            android:name=".entry.WelcomeActivity"
+            android:exported="false" />
+        <activity
             android:name=".entry.OnboardingActivity"
             android:exported="false" />
         <activity
