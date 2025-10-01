@@ -48,4 +48,13 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // For Material Components
+    implementation(libs.material.v1130)
+    // For ViewPager2 to swipe between fragments
+    implementation(libs.androidx.viewpager2)
+    // For Fragments
+    implementation(libs.androidx.fragment.ktx)
+    // For ViewModel to share data between fragments and the activity
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
 }

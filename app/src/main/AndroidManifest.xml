@@ -12,7 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PantryChef">
         <activity
-            android:name=".MainActivity"
+            android:name=".entry.OnboardingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".entry.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".entry.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".entry.SplashScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,6 +29,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
