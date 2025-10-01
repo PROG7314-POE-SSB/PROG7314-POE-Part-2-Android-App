@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "898697174835",
+    "project_id": "pantrychef-recipe-app",
+    "storage_bucket": "pantrychef-recipe-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:898697174835:android:5222c5fe70c3c177846846",
+        "android_client_info": {
+          "package_name": "com.ssba.pantrychef"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "898697174835-ld7l0766bckefqmlaricm446svuh7f66.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBM0zu44eyCpzjsmRpu4db2s0ck6QhcyCo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "898697174835-ld7l0766bckefqmlaricm446svuh7f66.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
