@@ -1,60 +1,52 @@
 package com.ssba.pantrychef.home
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.ssba.pantrychef.R
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 /**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * This is the main fragment for the 'Home' section.
+ * All UI logic for the home screen should be managed here.
  */
 class HomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+        // Inflate the layout defined in fragment_home.xml for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // --- HOW TO NAVIGATE TO A NEW SCREEN (GUIDE FOR TEAM) ---
+        //
+        // STEP 1: Define your new fragment and the navigation action
+        //         in `res/navigation/home_nav_graph.xml`.
+        //
+        //         <fragment android:id="@+id/recipeDetailsFragment" ... />
+        //         <action
+        //             android:id="@+id/action_homeFragment_to_recipeDetailsFragment"
+        //             app:destination="@id/recipeDetailsFragment" />
+        //
+        // STEP 2: Find the view (e.g., a button) that will trigger the navigation.
+        val navigateButton = view.findViewById<Button>(R.id.btn_navigate_to_details)
+
+        // STEP 3: Set an OnClickListener.
+        navigateButton.setOnClickListener {
+            // STEP 4: Call findNavController().navigate() and pass the ID of the action
+            //         you created in your navigation graph. The Navigation Component
+            //         handles the rest!
+
+            // Example Implementation:
+            // findNavController().navigate(R.id.action_homeFragment_to_recipeDetailsFragment)
+        }
     }
 }
