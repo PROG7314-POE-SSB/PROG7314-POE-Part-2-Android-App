@@ -1,17 +1,14 @@
 package com.ssba.pantrychef.pantry
 
-
-
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.util.*
 
 class PantryViewModel : ViewModel() {
 
     // private mutable backing flows
-    private val _allItems = MutableStateFlow<List<PantryItem>>(createSampleData())
+    private val _allItems = MutableStateFlow<List<PantryItem>>(emptyList())
     val allItems: StateFlow<List<PantryItem>> = _allItems.asStateFlow()
 
     // Filters are computed by consumers (fragments)
@@ -37,14 +34,11 @@ class PantryViewModel : ViewModel() {
         _allItems.value = _allItems.value.map { if (it.id == updated.id) updated else it }
     }
 
-    companion object {
-        private fun createSampleData(): List<PantryItem> {
-            val id = { UUID.randomUUID().toString() }
-            return listOf(
-                PantryItem(id(), "Muffins with cocoa cream", "Mix the flours, salt, cinnamon and baking powder...", "Chef Jhon", 30, "Easy", null, PantryLocation.PANTRY),
-                PantryItem(id(), "Milk (2L)", "Full cream milk", "Brand", 0, "N/A", null, PantryLocation.FRIDGE),
-                PantryItem(id(), "Frozen Peas", "Peas for quick meals", "Brand", 0, "N/A", null, PantryLocation.FREEZER)
-            )
-        }
+    /**
+     * Replace entire list with fetched data
+     * (e.g. from Room DB or API via Repository)
+     */
+    fun setItems(newItems: List<PantryItem>) {
+        _allItems.value = newItems
     }
 }

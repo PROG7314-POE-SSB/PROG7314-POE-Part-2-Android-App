@@ -26,10 +26,14 @@
     <!-- Pantry item details -->
     <fragment
         android:id="@+id/nav_pantry_item_details"
-        android:name="com.ssba.pantrychef.PantryItemDetailsFragment"
+        android:name="com.ssba.pantrychef.pantry.PantryItemDetailsFragment"
         android:label="Pantry Item Details"
-        tools:layout="@layout/fragment_item_details" />
+        tools:layout="@layout/fragment_item_details">
 
+        <argument
+            android:name="itemId"
+            app:argType="string" />
+    </fragment>
     <!-- Optional: Add/Edit Pantry Item -->
     <fragment
         android:id="@+id/nav_add_item"

@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
+import com.ssba.pantrychef.R
 class ShelfFragment : Fragment() {
     private lateinit var viewModel: PantryViewModel
     private lateinit var recycler: RecyclerView
@@ -31,7 +31,7 @@ class ShelfFragment : Fragment() {
         adapter = PantryItemAdapter { item, action ->
             when (action) {
                 PantryItemAdapter.Action.CLICK ->
-                    requireActivity().findNavController(R.id.nav_host_fragment).navigate(R.id.pantry_item_details_fragment, Bundle().apply { putString("itemId", item.id) })
+                    requireActivity().findNavController(R.id.nav_host_fragment).navigate(R.id.nav_pantry_item_details, Bundle().apply { putString("itemId", item.id) })
                 PantryItemAdapter.Action.FAVORITE -> viewModel.toggleFavorite(item.id)
             }
         }

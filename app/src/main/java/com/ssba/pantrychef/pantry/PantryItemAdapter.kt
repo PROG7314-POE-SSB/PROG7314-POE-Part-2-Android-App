@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-
+import com.ssba.pantrychef.R
 class PantryItemAdapter(
     private val onAction: (PantryItem, Action) -> Unit
 ) : ListAdapter<PantryItem, PantryItemAdapter.VH>(DIFF) {
@@ -38,11 +38,16 @@ class PantryItemAdapter(
         fun bind(item: PantryItem) {
             title.text = item.title
             desc.text = item.description
-            chef.text = item.chef
-            time.text = "${item.timeMinutes}min"
+
+            time.text = "${item.time}min"
             diff.text = item.difficulty
             // image placeholder
-            item.imageRes?.let { image.setImageResource(it) }
+          /*  item.imageUrl?.let { url ->
+                Glide.with(image.context)
+                    .load(url)
+                    .placeholder(R.drawable.sample_food)
+                    .error(R.drawable.sample_food)
+                    .into(image)*/
             fav.visibility = if (item.favorite) View.VISIBLE else View.GONE
 
             view.setOnClickListener { onAction(item, Action.CLICK) }
