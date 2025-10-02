@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION")
 package com.ssba.pantrychef.data
 
 import android.content.Context

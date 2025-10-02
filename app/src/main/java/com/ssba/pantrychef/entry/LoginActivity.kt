@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION")
 package com.ssba.pantrychef.entry
 
 import android.content.Intent
