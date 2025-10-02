@@ -51,8 +51,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    // For Material Components
-    implementation(libs.material.v1130)
     // For ViewPager2 to swipe between fragments
     implementation(libs.androidx.viewpager2)
     // For Fragments
@@ -64,22 +62,28 @@ dependencies {
     // For Navigation Component
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-
-    // Supabase dependencies
-    val kotlin_version = "3.1.4"
-    val ktor_version = "3.1.2"
-
-    implementation(platform("io.github.jan-tennert.supabase:bom:$kotlin_version"))
-    implementation("io.github.jan-tennert.supabase:postgrest-kt")
-    implementation("io.ktor:ktor-client-android:$ktor_version")
-    implementation("io.github.jan-tennert.supabase:storage-kt:$ktor_version")
-
+    // For Supabase
+    implementation(platform(libs.bom))
+    implementation(libs.postgrest.kt)
+    implementation(libs.ktor.client.android)
+    implementation(libs.storage.kt)
     // Glide for image loading
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-
-    // Networking (Retrofit & OkHttp)
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation(libs.glide)
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+    // Google Sign-In
+    implementation(libs.play.services.auth)
+    // Biometrics
+    implementation(libs.androidx.biometric.ktx)
+    // For securely storing credentials
+    implementation(libs.androidx.security.crypto)
+    // Coroutines for asynchronous operations
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.play.services)
+    // Retrofit for API calls
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
 }
