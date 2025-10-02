@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:layout_marginBottom="12dp"
+    card_view:cardCornerRadius="14dp"
+    card_view:cardElevation="4dp"
+    android:background="@color/white_beige">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="12dp">
+
+        <!-- Left image -->
+        <ImageView
+            android:id="@+id/item_image"
+            android:layout_width="151dp"
+            android:layout_height="126dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/sample_food"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/image_rounded" />
+
+        <!-- Favorite (hidden by default) -->
+        <ImageButton
+            android:id="@+id/btn_favorite"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignTop="@id/item_image"
+            android:layout_alignEnd="@id/item_image"
+            android:src="@drawable/ic_favorite"
+            android:background="@drawable/circle_white_transparent"
+            android:visibility="gone"
+            android:tint="@color/orange_main" />
+
+        <!-- Right content -->
+        <LinearLayout
+            android:id="@+id/right_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/item_image"
+            android:orientation="vertical"
+            android:paddingStart="10dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp">
+
+            <TextView
+                android:id="@+id/item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Muffins with cocoa cream"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/brown_letters" />
+
+            <TextView
+                android:id="@+id/item_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mix the flours, salt, cinnamon..."
+                android:textSize="13sp"
+                android:textColor="@color/brown_letters"
+                android:layout_marginTop="6dp" />
+
+            <TextView
+                android:id="@+id/item_chef"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="By Chef Jhon"
+                android:textSize="12sp"
+                android:textColor="@color/dark_brown"
+                android:layout_marginTop="8dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/item_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="30min"
+                    android:textSize="12sp"
+                    android:textColor="@color/dark_brown" />
+
+                <TextView
+                    android:id="@+id/item_difficulty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" • Easy"
+                    android:textSize="12sp"
+                    android:textColor="@color/dark_brown"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

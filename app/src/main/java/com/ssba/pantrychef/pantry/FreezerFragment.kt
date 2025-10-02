@@ -1,9 +1,6 @@
 package com.ssba.pantrychef.pantry
 
 import androidx.navigation.findNavController
-
-package com.ssba.pantrychef
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
