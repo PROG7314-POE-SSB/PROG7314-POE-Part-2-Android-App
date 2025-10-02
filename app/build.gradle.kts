@@ -57,4 +57,6 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     // For ViewModel to share data between fragments and the activity
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    // For SplashScreen
+    implementation(libs.androidx.core.splashscreen)
 }
