@@ -17,7 +17,7 @@
         tools:layout="@layout/fragment_discover" />
     <fragment
         android:id="@+id/nav_pantry"
-        android:name="com.ssba.pantrychef.pantry.PantryFragment"
+        android:name="com.ssba.pantrychef.pantry.Pantry"
         android:label="fragment_pantry"
         tools:layout="@layout/fragment_discover" />
     <fragment

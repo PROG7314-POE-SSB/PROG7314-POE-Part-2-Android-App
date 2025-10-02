@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pantry_nav_graph"
+    app:startDestination="@id/nav_pantry">
+
+    <!-- Pantry main host fragment (TabLayout with Fridge/Freezer/Pantry) -->
+    <fragment
+        android:id="@+id/nav_pantry"
+        android:name="com.ssba.pantrychef.PantryHostFragment"
+        android:label="Pantry"
+        tools:layout="@layout/fragment_pantry_host" >
+
+        <!-- Navigation action to item details -->
+        <action
+            android:id="@+id/action_pantry_to_itemDetails"
+            app:destination="@id/nav_pantry_item_details" />
+
+        <!-- Optional: Navigation action to Add Item screen -->
+        <action
+            android:id="@+id/action_pantry_to_addItem"
+            app:destination="@id/nav_add_item" />
+    </fragment>
+
+    <!-- Pantry item details -->
+    <fragment
+        android:id="@+id/nav_pantry_item_details"
+        android:name="com.ssba.pantrychef.PantryItemDetailsFragment"
+        android:label="Pantry Item Details"
+        tools:layout="@layout/fragment_item_details" />
+
+    <!-- Optional: Add/Edit Pantry Item -->
+    <fragment
+        android:id="@+id/nav_add_item"
+        android:name="com.ssba.pantrychef.AddPantryItemFragment"
+        android:label="Add Pantry Item"
+        tools:layout="@layout/fragment_add_pantry_item" />
+
+</navigation>
