@@ -49,6 +49,16 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    // For Material Components
+    implementation(libs.material.v1130)
+    // For ViewPager2 to swipe between fragments
+    implementation(libs.androidx.viewpager2)
+    // For Fragments
+    implementation(libs.androidx.fragment.ktx)
+    // For ViewModel to share data between fragments and the activity
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    // For SplashScreen
+    implementation(libs.androidx.core.splashscreen)
     // For Navigation Component
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
