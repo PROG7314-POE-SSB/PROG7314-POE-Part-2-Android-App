@@ -59,4 +59,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     // For SplashScreen
     implementation(libs.androidx.core.splashscreen)
+    // For Navigation Component
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 }
