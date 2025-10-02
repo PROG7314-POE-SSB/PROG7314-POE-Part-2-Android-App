@@ -24,46 +24,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <GridLayout
-            android:id="@+id/gridLayout"
+        <ImageView
+            android:id="@+id/ivWelcomeCollage"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:columnCount="2"
-            android:useDefaultMargins="true"
+            android:adjustViewBounds="true"
+            android:contentDescription="A collage of delicious food"
+            android:src="@drawable/ic_welcome"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvWelcome">
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="150dp"
-                android:layout_columnWeight="1"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_placeholder" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="150dp"
-                android:layout_columnWeight="1"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_placeholder" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="150dp"
-                android:layout_columnWeight="1"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_placeholder" />
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="150dp"
-                android:layout_columnWeight="1"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_placeholder" />
-
-        </GridLayout>
+            app:layout_constraintTop_toBottomOf="@id/tvWelcome" />
 
         <TextView
             android:id="@+id/tvDescription"
@@ -76,7 +47,7 @@
             android:text="Turn your pantry into delicious meals, plan smarter, and waste less. Discover recipes, get AI tips, and unleash your inner chef cooking made simple, fun, and sustainable."
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/gridLayout" />
+            app:layout_constraintTop_toBottomOf="@id/ivWelcomeCollage" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnGetStarted"
