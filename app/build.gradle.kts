@@ -64,13 +64,22 @@ dependencies {
     // For Navigation Component
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    // Firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
-    // Google Sign-In
-    implementation(libs.play.services.auth)
-    // Biometrics
-    implementation(libs.androidx.biometric.ktx)
-    // For securely storing credentials
-    implementation(libs.androidx.security.crypto)
+
+    // Supabase dependencies
+    val kotlin_version = "3.1.4"
+    val ktor_version = "3.1.2"
+
+    implementation(platform("io.github.jan-tennert.supabase:bom:$kotlin_version"))
+    implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    implementation("io.ktor:ktor-client-android:$ktor_version")
+    implementation("io.github.jan-tennert.supabase:storage-kt:$ktor_version")
+
+    // Glide for image loading
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    // Networking (Retrofit & OkHttp)
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 }

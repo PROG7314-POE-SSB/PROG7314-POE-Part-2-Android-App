@@ -1,5 +1,11 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">PantryChef</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Supabase Credentials -->
+    <string name="supabase_url">https://lvrepsmzacxbwitborzz.supabase.co</string>
+    <string name="supabase_api_key" tools:ignore="Typos">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2cmVwc216YWN4YndpdGJvcnp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzNDQwNDMsImV4cCI6MjA3NDkyMDA0M30.cK1_6scNUB57Y1f74jIyHVvUvyb0NtMqTFBoPsSKO68</string>
+    <string name="supabase_user_profile_images_bucket_name">user-profile-images</string>
+    <string name="supabase_recipe_images_bucket_name">recipe-images</string>
+    <string name="supabase_pantry_items_images_bucket_name">pantry-items-images</string>
 </resources>
