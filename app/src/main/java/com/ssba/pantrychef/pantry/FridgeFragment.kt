@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,23 +29,26 @@ class FridgeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel = ViewModelProvider(requireActivity()).get(PantryViewModel::class.java)
-        recycler = view.findViewById(R.id.fridge_root)
+
+        recycler = view.findViewById(R.id.recycler_shelf)
         recycler.layoutManager = LinearLayoutManager(requireContext())
-        adapter = PantryItemAdapter { item, action ->
-            when (action) {
-                PantryItemAdapter.Action.CLICK -> {
-                    val bundle = Bundle().apply { putString("itemId", item.id) }
-                    requireActivity().findNavController(R.id.nav_host_fragment).navigate(R.id.nav_pantry_item_details, bundle)
-                }
-                PantryItemAdapter.Action.FAVORITE -> viewModel.toggleFavorite(item.id)
-            }
+
+        // Adapter now only handles clicks
+        adapter = PantryItemAdapter { item ->
+            requireActivity().findNavController(R.id.nav_host_fragment).navigate(
+                R.id.nav_pantry_item_details,
+                Bundle().apply { putString("itemId", item.id) }
+            )
         }
+
         recycler.adapter = adapter
 
         // collect and filter
-        lifecycleScope.launch {
-            viewModel.allItems.collectLatest { all ->
-                adapter.submitList(all.filter { it.location == PantryLocation.FRIDGE })
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.allItems.collectLatest { list ->
+                    adapter.submitList(list.filter { it.location == PantryLocation.PANTRY })
+                }
             }
         }
     }

@@ -24,11 +24,7 @@ class PantryViewModel : ViewModel() {
         _allItems.value = _allItems.value.filterNot { it.id == itemId }
     }
 
-    fun toggleFavorite(itemId: String) {
-        _allItems.value = _allItems.value.map {
-            if (it.id == itemId) it.copy(favorite = !it.favorite) else it
-        }
-    }
+
 
     fun updateItem(updated: PantryItem) {
         _allItems.value = _allItems.value.map { if (it.id == updated.id) updated else it }

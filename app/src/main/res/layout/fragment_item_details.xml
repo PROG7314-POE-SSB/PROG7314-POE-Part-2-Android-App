@@ -17,51 +17,58 @@
             android:layout_width="match_parent"
             android:layout_height="220dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/placeholder_food"
-            android:background="@drawable/image_rounded" />
+            android:src="@drawable/sample_food"
+            />
 
         <!-- Title -->
         <TextView
             android:id="@+id/details_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Muffins with cocoa cream"
+            android:text="Apples"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/orange_main"
             android:layout_marginTop="12dp" />
 
+        <!-- Category -->
+        <TextView
+            android:id="@+id/details_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fruit"
+            android:textSize="14sp"
+            android:textColor="@color/brown_letters"
+            android:layout_marginTop="8dp" />
 
-        <!-- Description -->
+        <!-- Description / Notes -->
         <TextView
             android:id="@+id/details_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mix the flours, salt, cinnamon and baking powder..."
+            android:text="Fresh red apples, perfect for snacks or pies."
             android:textSize="13sp"
             android:textColor="@color/brown_letters"
             android:layout_marginTop="8dp" />
 
-        <!-- Difficulty -->
+        <!-- Expiry date -->
         <TextView
-            android:id="@+id/details_difficulty"
+            android:id="@+id/details_expiry"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Easy"
-            android:textSize="12sp"
+            android:text="Expires: 05 Oct 2025"
+            android:textSize="13sp"
+
+            android:layout_marginTop="12dp" />
+
+        <!-- Quantity -->
+        <TextView
+            android:id="@+id/details_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quantity: 6"
+            android:textSize="13sp"
             android:textColor="@color/brown_letters"
             android:layout_marginTop="8dp" />
-
-        <!-- Time -->
-        <TextView
-            android:id="@+id/details_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="30 min"
-            android:textSize="12sp"
-            android:textColor="@color/brown_letters"
-            android:layout_marginTop="2dp" />
-
     </LinearLayout>
-
 </ScrollView>

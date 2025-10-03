@@ -13,30 +13,18 @@
         android:layout_height="match_parent"
         android:padding="12dp">
 
-        <!-- Left image -->
+        <!-- Left: Item image -->
         <ImageView
             android:id="@+id/item_image"
-            android:layout_width="151dp"
-            android:layout_height="126dp"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:src="@drawable/sample_food"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/image_rounded" />
+            />
 
-        <!-- Favorite (hidden by default) -->
-        <ImageButton
-            android:id="@+id/btn_favorite"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_alignTop="@id/item_image"
-            android:layout_alignEnd="@id/item_image"
-            android:src="@drawable/ic_favorite"
-            android:background="@drawable/circle_white_transparent"
-            android:visibility="gone"
-            android:tint="@color/orange_main" />
-
-        <!-- Right content -->
+        <!-- Right: Content -->
         <LinearLayout
             android:id="@+id/right_content"
             android:layout_width="match_parent"
@@ -47,55 +35,59 @@
             android:paddingTop="6dp"
             android:paddingBottom="6dp">
 
+            <!-- Item title -->
             <TextView
                 android:id="@+id/item_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Muffins with cocoa cream"
-                android:textSize="14sp"
+                android:text="Apples"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/brown_letters" />
 
+            <!-- Item description -->
             <TextView
                 android:id="@+id/item_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mix the flours, salt, cinnamon..."
+                android:text="Fresh red apples, perfect for snacks or pies."
                 android:textSize="13sp"
                 android:textColor="@color/brown_letters"
-                android:layout_marginTop="6dp" />
+                android:layout_marginTop="4dp" />
 
+            <!-- Category -->
             <TextView
-                android:id="@+id/item_chef"
+                android:id="@+id/item_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="By Chef Jhon"
-                android:textSize="12sp"
+                android:text="Fruit"
+                android:textSize="13sp"
                 android:textColor="@color/dark_brown"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="6dp" />
 
+            <!-- Expiry + Quantity in one row -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical">
+                android:layout_marginTop="6dp">
+
                 <TextView
-                    android:id="@+id/item_time"
+                    android:id="@+id/item_expiry"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="30min"
+                    android:text="Exp: 15/9/2025"
                     android:textSize="12sp"
                     android:textColor="@color/dark_brown" />
 
                 <TextView
-                    android:id="@+id/item_difficulty"
+                    android:id="@+id/item_quantity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" • Easy"
+                    android:text="   Quantity: 3"
                     android:textSize="12sp"
                     android:textColor="@color/dark_brown"
-                    android:layout_marginStart="8dp"/>
+                    android:layout_marginStart="12dp" />
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
