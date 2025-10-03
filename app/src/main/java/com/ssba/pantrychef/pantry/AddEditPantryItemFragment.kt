@@ -100,7 +100,7 @@ class AddEditPantryItemFragment : Fragment() {
         saveButton.setOnClickListener {
             viewModel.saveCurrentItem()
             Toast.makeText(requireContext(), "Item saved", Toast.LENGTH_SHORT).show()
-            requireActivity().onBackPressed()
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }
 
