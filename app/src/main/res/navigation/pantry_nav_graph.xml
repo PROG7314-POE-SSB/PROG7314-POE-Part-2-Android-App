@@ -37,8 +37,8 @@
     <!-- Optional: Add/Edit Pantry Item -->
     <fragment
         android:id="@+id/nav_add_item"
-        android:name="com.ssba.pantrychef.AddPantryItemFragment"
+        android:name="com.ssba.pantrychef.pantry.AddEditPantryItemFragment"
         android:label="Add Pantry Item"
-        tools:layout="@layout/fragment_add_pantry_item" />
+        tools:layout="@layout/fragment_add_edit_item" />
 
 </navigation>
