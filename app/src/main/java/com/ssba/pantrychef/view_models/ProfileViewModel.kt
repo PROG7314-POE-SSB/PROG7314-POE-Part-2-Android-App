@@ -24,9 +24,24 @@ class ProfileViewModel : ViewModel() {
     private val db: FirebaseFirestore = Firebase.firestore
     private val userId: String? get() = auth.currentUser?.uid
 
+    // --- LiveData for Profile Data ---
     private val _userProfile = MutableLiveData<UserProfile?>()
     val userProfile: LiveData<UserProfile?> = _userProfile
 
+    // --- LiveData for Settings Data ---
+    private val _dietaryPreferences = MutableLiveData<Map<String, Boolean>>()
+    val dietaryPreferences: LiveData<Map<String, Boolean>> = _dietaryPreferences
+
+    private val _allergies = MutableLiveData<Map<String, Boolean>>()
+    val allergies: LiveData<Map<String, Boolean>> = _allergies
+
+    private val _notificationPreferences = MutableLiveData<Map<String, Any>>()
+    val notificationPreferences: LiveData<Map<String, Any>> = _notificationPreferences
+
+    private val _languagePreference = MutableLiveData<String>()
+    val languagePreference: LiveData<String> = _languagePreference
+
+    // --- LiveData for Operation State ---
     private val _operationResult = MutableLiveData<Result<String>?>()
     val operationResult: LiveData<Result<String>?> = _operationResult
 
@@ -41,20 +56,18 @@ class ProfileViewModel : ViewModel() {
     }
 
     init {
-        fetchUserProfile()
+        fetchUserData()
     }
 
-    private fun fetchUserProfile() {
+    private fun fetchUserData() {
         val currentUserId = userId ?: return
         db.collection("users").document(currentUserId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    Log.w(TAG, "Listen failed.", error)
-                    _operationResult.value = Result.failure(error)
-                    return@addSnapshotListener
+                    Log.w(TAG, "Listen failed.", error); return@addSnapshotListener
                 }
-
                 if (snapshot != null && snapshot.exists()) {
+                    // Profile Data
                     val profileMap = snapshot.get("profile") as? Map<String, Any>
                     _userProfile.value = profileMap?.let {
                         UserProfile(
@@ -64,9 +77,39 @@ class ProfileViewModel : ViewModel() {
                             authProvider = it["authProvider"] as? String
                         )
                     }
-                } else {
-                    Log.d(TAG, "Current data: null")
+
+                    // Onboarding/Settings Data
+                    val onboardingMap = snapshot.get("onboarding") as? Map<String, Any>
+                    onboardingMap?.let {
+                        _dietaryPreferences.value = it["dietaryPreferences"] as? Map<String, Boolean> ?: emptyMap()
+                        _allergies.value = it["allergies"] as? Map<String, Boolean> ?: emptyMap()
+                        val prefs = it["preferences"] as? Map<String, Any>
+                        prefs?.let { p ->
+                            _languagePreference.value = p["language"] as? String ?: "en"
+                            _notificationPreferences.value = p
+                        }
+                    }
                 }
+            }
+    }
+
+    /**
+     * Updates a specific field within the 'onboarding' map in Firestore.
+     * Examples: updateOnboardingField("dietaryPreferences", newMap)
+     * updateOnboardingField("preferences.language", "af")
+     */
+    fun updateOnboardingField(fieldPath: String, data: Any) {
+        userId ?: return
+        _isLoading.value = true
+        db.collection("users").document(userId!!)
+            .update("onboarding.$fieldPath", data)
+            .addOnSuccessListener {
+                _isLoading.value = false
+                _operationResult.value = Result.success("Preferences updated")
+            }
+            .addOnFailureListener { e ->
+                _isLoading.value = false
+                _operationResult.value = Result.failure(e)
             }
     }
 
