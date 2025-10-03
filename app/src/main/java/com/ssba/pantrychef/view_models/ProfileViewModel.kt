@@ -24,11 +24,9 @@ class ProfileViewModel : ViewModel() {
     private val db: FirebaseFirestore = Firebase.firestore
     private val userId: String? get() = auth.currentUser?.uid
 
-    // --- LiveData for Profile Data ---
     private val _userProfile = MutableLiveData<UserProfile?>()
     val userProfile: LiveData<UserProfile?> = _userProfile
 
-    // --- LiveData for Settings Data ---
     private val _dietaryPreferences = MutableLiveData<Map<String, Boolean>>()
     val dietaryPreferences: LiveData<Map<String, Boolean>> = _dietaryPreferences
 
@@ -41,7 +39,6 @@ class ProfileViewModel : ViewModel() {
     private val _languagePreference = MutableLiveData<String>()
     val languagePreference: LiveData<String> = _languagePreference
 
-    // --- LiveData for Operation State ---
     private val _operationResult = MutableLiveData<Result<String>?>()
     val operationResult: LiveData<Result<String>?> = _operationResult
 
@@ -67,7 +64,6 @@ class ProfileViewModel : ViewModel() {
                     Log.w(TAG, "Listen failed.", error); return@addSnapshotListener
                 }
                 if (snapshot != null && snapshot.exists()) {
-                    // Profile Data
                     val profileMap = snapshot.get("profile") as? Map<String, Any>
                     _userProfile.value = profileMap?.let {
                         UserProfile(
@@ -77,8 +73,6 @@ class ProfileViewModel : ViewModel() {
                             authProvider = it["authProvider"] as? String
                         )
                     }
-
-                    // Onboarding/Settings Data
                     val onboardingMap = snapshot.get("onboarding") as? Map<String, Any>
                     onboardingMap?.let {
                         _dietaryPreferences.value = it["dietaryPreferences"] as? Map<String, Boolean> ?: emptyMap()
@@ -93,11 +87,6 @@ class ProfileViewModel : ViewModel() {
             }
     }
 
-    /**
-     * Updates a specific field within the 'onboarding' map in Firestore.
-     * Examples: updateOnboardingField("dietaryPreferences", newMap)
-     * updateOnboardingField("preferences.language", "af")
-     */
     fun updateOnboardingField(fieldPath: String, data: Any) {
         userId ?: return
         _isLoading.value = true
@@ -116,24 +105,42 @@ class ProfileViewModel : ViewModel() {
     fun updateProfile(newDisplayName: String, imageBytes: ByteArray?) {
         val user = auth.currentUser ?: return
         _isLoading.value = true
+
         viewModelScope.launch {
             try {
-                val photoUrl = if (imageBytes != null) {
+                // Step 1: Upload to Supabase if a new image exists.
+                val newPhotoUrl = if (imageBytes != null) {
+                    Log.d(TAG, "Uploading new profile image to Supabase.")
                     SupabaseUtils.uploadProfileImageToStorage("${user.uid}/profile.jpg", imageBytes)
                 } else {
-                    _userProfile.value?.photoURL
+                    _userProfile.value?.photoURL // Keep the existing URL if no new image.
                 }
+
+                // Step 2: Update the profile in Firebase Authentication.
+                Log.d(TAG, "Updating Firebase Auth profile.")
                 val profileUpdates = UserProfileChangeRequest.Builder()
                     .setDisplayName(newDisplayName)
-                    .setPhotoUri(photoUrl?.let { Uri.parse(it) })
+                    .setPhotoUri(newPhotoUrl?.let { Uri.parse(it) })
                     .build()
                 user.updateProfile(profileUpdates).await()
-                val firestoreUpdate = mapOf("profile.displayName" to newDisplayName, "profile.photoURL" to (photoUrl ?: ""))
+
+                // Step 3: Update the profile data in Firestore.
+                Log.d(TAG, "Updating Firestore document with new photo URL: $newPhotoUrl")
+                val firestoreUpdate = mapOf(
+                    "profile.displayName" to newDisplayName,
+                    "profile.photoURL" to (newPhotoUrl ?: "")
+                )
                 db.collection("users").document(user.uid).update(firestoreUpdate).await()
+
+                // If all steps succeed, post the success result.
                 _operationResult.value = Result.success("Profile updated successfully")
+
             } catch (e: Exception) {
+                // If any of the `await()` calls fail, the catch block will execute.
+                Log.e(TAG, "Failed to update profile", e)
                 _operationResult.value = Result.failure(e)
             } finally {
+                // This ensures the loading indicator is always hidden, even on failure.
                 _isLoading.value = false
             }
         }
@@ -158,26 +165,17 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    /**
-     * Updates the user's password in Firebase Authentication after re-authenticating.
-     */
     fun updateUserPassword(currentPassword: String, newPassword: String) {
         val user = auth.currentUser ?: return
         val currentEmail = user.email ?: return
         _isLoading.value = true
         viewModelScope.launch {
             try {
-                // Step 1: Re-authenticate with the current password.
                 val credential = EmailAuthProvider.getCredential(currentEmail, currentPassword)
                 user.reauthenticate(credential).await()
-
-                // Step 2: If re-authentication is successful, update to the new password.
                 user.updatePassword(newPassword).await()
-
                 _operationResult.value = Result.success("Password updated successfully")
             } catch (e: Exception) {
-                // This will catch errors from both re-authentication (e.g., wrong password)
-                // and the password update itself.
                 _operationResult.value = Result.failure(e)
             } finally {
                 _isLoading.value = false
@@ -193,12 +191,9 @@ class ProfileViewModel : ViewModel() {
             try {
                 val credential = EmailAuthProvider.getCredential(currentEmail, currentPassword)
                 user.reauthenticate(credential).await()
-
                 db.collection("users").document(user.uid).delete().await()
                 SupabaseUtils.deleteProfileImage("${user.uid}/profile.jpg")
-
                 user.delete().await()
-
                 _operationResult.value = Result.success("Account deleted successfully")
                 _logoutUser.value = true
             } catch (e: Exception) {
