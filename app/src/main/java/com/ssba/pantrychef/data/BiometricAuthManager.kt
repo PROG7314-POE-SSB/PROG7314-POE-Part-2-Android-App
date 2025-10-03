@@ -2,6 +2,7 @@
 package com.ssba.pantrychef.data
 
 import android.content.Context
+import androidx.biometric.BiometricManager
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 
@@ -45,5 +46,23 @@ object BiometricAuthManager {
     fun credentialsExist(context: Context): Boolean {
         val (email, password) = getCredentials(context)
         return !email.isNullOrEmpty() && !password.isNullOrEmpty()
+    }
+
+    fun clearCredentials(context: Context) {
+        val sharedPreferences = getEncryptedSharedPreferences(context)
+        with(sharedPreferences.edit()) {
+            remove(KEY_USER_EMAIL)
+            remove(KEY_USER_PASSWORD)
+            apply()
+        }
+    }
+
+    fun isBiometricAuthAvailable(context: Context): Boolean {
+        val biometricManager = BiometricManager.from(context)
+        // Checks for strong or weak biometrics (e.g., fingerprint, face)
+        return when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.BIOMETRIC_WEAK)) {
+            BiometricManager.BIOMETRIC_SUCCESS -> true
+            else -> false
+        }
     }
 }

@@ -2,6 +2,7 @@
 agp = "8.13.0"
 biometricKtx = "1.2.0-alpha05"
 bom = "3.2.4"
+circleimageview = "3.1.0"
 converterGson = "3.0.0"
 coreSplashscreen = "1.0.1"
 firebaseBom = "34.3.0"
@@ -39,6 +40,7 @@ androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref =
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationFragmentKtx" }
 bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "bom" }
+circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
