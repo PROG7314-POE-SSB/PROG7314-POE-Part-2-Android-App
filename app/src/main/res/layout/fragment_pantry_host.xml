@@ -98,7 +98,7 @@
         android:layout_height="56dp"
         android:layout_margin="24dp"
         android:src="@drawable/ic_add"
-        app:backgroundTint="@color/fab_yellow"
+        app:backgroundTint="@color/yellow"
         app:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

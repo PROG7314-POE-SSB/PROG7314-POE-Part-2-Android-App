@@ -42,6 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Title"
+            android:backgroundTint="@color/yellow"
             android:inputType="text"
             android:layout_marginBottom="8dp" />
 
@@ -53,6 +54,7 @@
             android:hint="Description"
             android:inputType="textMultiLine"
             android:minLines="3"
+            android:backgroundTint="@color/yellow"
             android:layout_marginBottom="8dp" />
 
         <!-- Expiry -->
@@ -62,6 +64,7 @@
             android:layout_height="wrap_content"
             android:hint="Expiry date (timestamp)"
             android:inputType="number"
+            android:backgroundTint="@color/yellow"
             android:layout_marginBottom="8dp" />
 
         <!-- Quantity -->
@@ -70,6 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Quantity"
+            android:backgroundTint="@color/yellow"
             android:inputType="number"
             android:layout_marginBottom="8dp" />
 
@@ -80,6 +84,7 @@
             android:layout_height="wrap_content"
             android:hint="Category"
             android:inputType="text"
+            android:backgroundTint="@color/yellow"
             android:layout_marginBottom="8dp" />
 
         <!-- Location -->
@@ -94,6 +99,7 @@
             android:id="@+id/btn_save"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/yellow"
             android:text="Save" />
 
     </LinearLayout>
