@@ -1,11 +1,13 @@
 package com.ssba.pantrychef.view_models
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.auth
@@ -14,106 +16,161 @@ import com.google.firebase.firestore.firestore
 import com.ssba.pantrychef.data.UserProfile
 import com.ssba.pantrychef.helpers.SupabaseUtils
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
-/**
- * ViewModel to manage all data and logic for the user's profile and settings screens.
- */
 class ProfileViewModel : ViewModel() {
 
     private val auth: FirebaseAuth = Firebase.auth
     private val db: FirebaseFirestore = Firebase.firestore
+    private val userId: String? get() = auth.currentUser?.uid
 
-    // --- LiveData for UI State ---
-
-    // Holds the user's profile data from Firestore
     private val _userProfile = MutableLiveData<UserProfile?>()
     val userProfile: LiveData<UserProfile?> = _userProfile
 
-    // Represents the result of an update operation (e.g., success, error)
-    private val _updateResult = MutableLiveData<Event<Boolean>>()
-    val updateResult: LiveData<Event<Boolean>> = _updateResult
+    private val _operationResult = MutableLiveData<Result<String>?>()
+    val operationResult: LiveData<Result<String>?> = _operationResult
 
-    // Triggers navigation back from a settings screen
-    private val _navigateBack = MutableLiveData<Event<Unit>>()
-    val navigateBack: LiveData<Event<Unit>> = _navigateBack
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
+    private val _logoutUser = MutableLiveData<Boolean>()
+    val logoutUser: LiveData<Boolean> = _logoutUser
+
+    companion object {
+        private const val TAG = "ProfileViewModel"
+    }
 
     init {
         fetchUserProfile()
     }
 
-    /**
-     * Fetches the user's profile data from Firestore and listens for real-time updates.
-     */
     private fun fetchUserProfile() {
-        val userId = auth.currentUser?.uid ?: return
-        db.collection("users").document(userId)
+        val currentUserId = userId ?: return
+        db.collection("users").document(currentUserId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    // Handle error
+                    Log.w(TAG, "Listen failed.", error)
+                    _operationResult.value = Result.failure(error)
                     return@addSnapshotListener
                 }
-                // We get the 'profile' map from the document
-                val profileMap = snapshot?.get("profile") as? Map<String, Any>
-                _userProfile.value = profileMap?.let {
-                    UserProfile(
-                        email = it["email"] as? String,
-                        displayName = it["displayName"] as? String,
-                        photoURL = it["photoURL"] as? String,
-                        authProvider = it["authProvider"] as? String
-                        // 'createdAt' is not directly used in the UI but could be fetched here
-                    )
+
+                if (snapshot != null && snapshot.exists()) {
+                    val profileMap = snapshot.get("profile") as? Map<String, Any>
+                    _userProfile.value = profileMap?.let {
+                        UserProfile(
+                            email = it["email"] as? String,
+                            displayName = it["displayName"] as? String,
+                            photoURL = it["photoURL"] as? String,
+                            authProvider = it["authProvider"] as? String
+                        )
+                    }
+                } else {
+                    Log.d(TAG, "Current data: null")
                 }
             }
+    }
+
+    fun updateProfile(newDisplayName: String, imageBytes: ByteArray?) {
+        val user = auth.currentUser ?: return
+        _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                val photoUrl = if (imageBytes != null) {
+                    SupabaseUtils.uploadProfileImageToStorage("${user.uid}/profile.jpg", imageBytes)
+                } else {
+                    _userProfile.value?.photoURL
+                }
+                val profileUpdates = UserProfileChangeRequest.Builder()
+                    .setDisplayName(newDisplayName)
+                    .setPhotoUri(photoUrl?.let { Uri.parse(it) })
+                    .build()
+                user.updateProfile(profileUpdates).await()
+                val firestoreUpdate = mapOf("profile.displayName" to newDisplayName, "profile.photoURL" to (photoUrl ?: ""))
+                db.collection("users").document(user.uid).update(firestoreUpdate).await()
+                _operationResult.value = Result.success("Profile updated successfully")
+            } catch (e: Exception) {
+                _operationResult.value = Result.failure(e)
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun updateUserEmail(newEmail: String, currentPassword: String) {
+        val user = auth.currentUser ?: return
+        val currentEmail = user.email ?: return
+        _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                val credential = EmailAuthProvider.getCredential(currentEmail, currentPassword)
+                user.reauthenticate(credential).await()
+                user.updateEmail(newEmail).await()
+                db.collection("users").document(user.uid).update("profile.email", newEmail).await()
+                _operationResult.value = Result.success("Email updated successfully")
+            } catch (e: Exception) {
+                _operationResult.value = Result.failure(e)
+            } finally {
+                _isLoading.value = false
+            }
+        }
     }
 
     /**
-     * Updates the user's display name and profile picture.
+     * Updates the user's password in Firebase Authentication after re-authenticating.
      */
-    fun updateProfile(newDisplayName: String, newProfileImageUri: Uri?, imageBytes: ByteArray?) {
+    fun updateUserPassword(currentPassword: String, newPassword: String) {
+        val user = auth.currentUser ?: return
+        val currentEmail = user.email ?: return
+        _isLoading.value = true
         viewModelScope.launch {
-            val user = auth.currentUser ?: return@launch
-            var photoUrl = _userProfile.value?.photoURL // Keep old URL by default
+            try {
+                // Step 1: Re-authenticate with the current password.
+                val credential = EmailAuthProvider.getCredential(currentEmail, currentPassword)
+                user.reauthenticate(credential).await()
 
-            // 1. If a new image is provided, upload it to Supabase
-            if (imageBytes != null) {
-                photoUrl = SupabaseUtils.uploadProfileImageToStorage(user.uid, imageBytes)
-            }
+                // Step 2: If re-authentication is successful, update to the new password.
+                user.updatePassword(newPassword).await()
 
-            // 2. Update Firebase Auth profile
-            val profileUpdates = UserProfileChangeRequest.Builder()
-                .setDisplayName(newDisplayName)
-                .setPhotoUri(photoUrl?.let { Uri.parse(it) })
-                .build()
-            user.updateProfile(profileUpdates).addOnCompleteListener { authTask ->
-                if (authTask.isSuccessful) {
-                    // 3. Update Firestore profile
-                    val profileData = mapOf(
-                        "profile.displayName" to newDisplayName,
-                        "profile.photoURL" to photoUrl
-                    )
-                    db.collection("users").document(user.uid)
-                        .update(profileData)
-                        .addOnSuccessListener {
-                            _updateResult.value = Event(true) // Success
-                            _navigateBack.value = Event(Unit)
-                        }
-                        .addOnFailureListener { _updateResult.value = Event(false) }
-                } else {
-                    _updateResult.value = Event(false)
-                }
+                _operationResult.value = Result.success("Password updated successfully")
+            } catch (e: Exception) {
+                // This will catch errors from both re-authentication (e.g., wrong password)
+                // and the password update itself.
+                _operationResult.value = Result.failure(e)
+            } finally {
+                _isLoading.value = false
             }
         }
     }
-}
 
-// Helper class to handle one-time events like navigation or toasts
-open class Event<out T>(private val content: T) {
-    var hasBeenHandled = false
-        private set
-    fun getContentIfNotHandled(): T? {
-        return if (hasBeenHandled) null else {
-            hasBeenHandled = true
-            content
+    fun deleteUserAccount(currentPassword: String) {
+        val user = auth.currentUser ?: return
+        val currentEmail = user.email ?: return
+        _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                val credential = EmailAuthProvider.getCredential(currentEmail, currentPassword)
+                user.reauthenticate(credential).await()
+
+                db.collection("users").document(user.uid).delete().await()
+                SupabaseUtils.deleteProfileImage("${user.uid}/profile.jpg")
+
+                user.delete().await()
+
+                _operationResult.value = Result.success("Account deleted successfully")
+                _logoutUser.value = true
+            } catch (e: Exception) {
+                _operationResult.value = Result.failure(e)
+            } finally {
+                _isLoading.value = false
+            }
         }
+    }
+
+    fun clearOperationResult() {
+        _operationResult.value = null
+    }
+
+    fun onLogoutComplete() {
+        _logoutUser.value = false
     }
 }

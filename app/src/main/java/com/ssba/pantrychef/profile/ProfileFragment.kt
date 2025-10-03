@@ -8,8 +8,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.materialswitch.MaterialSwitch
@@ -30,7 +30,7 @@ import com.ssba.pantrychef.view_models.ProfileViewModel
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     // A ViewModel to hold and manage profile data (we will build this out later).
-    private val viewModel: ProfileViewModel by viewModels()
+    private val viewModel: ProfileViewModel by navGraphViewModels(R.id.profile_nav_graph)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
