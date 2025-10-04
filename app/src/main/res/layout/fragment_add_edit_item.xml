@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Image Picker -->
+        <FrameLayout
+            android:id="@+id/image_picker_container"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp"
+
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/item_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Upload an image"
+                android:src="@drawable/ic_add" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Click here to add image"
+                android:textColor="@android:color/darker_gray"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
+        <!-- Title -->
+        <EditText
+            android:id="@+id/edit_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Title"
+            android:backgroundTint="@color/yellow"
+            android:inputType="text"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Description -->
+        <EditText
+            android:id="@+id/edit_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:backgroundTint="@color/yellow"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Expiry -->
+        <EditText
+            android:id="@+id/edit_expiry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Expiry date (timestamp)"
+            android:inputType="number"
+            android:backgroundTint="@color/yellow"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Quantity -->
+        <EditText
+            android:id="@+id/edit_quantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Quantity"
+            android:backgroundTint="@color/yellow"
+            android:inputType="number"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Category -->
+        <EditText
+            android:id="@+id/edit_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Category"
+            android:inputType="text"
+            android:backgroundTint="@color/yellow"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Location -->
+        <Spinner
+            android:id="@+id/location_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/yellow"
+            android:text="Save" />
+
+    </LinearLayout>
+</ScrollView>
