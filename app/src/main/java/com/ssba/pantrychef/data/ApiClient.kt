@@ -14,7 +14,8 @@ object ApiClient {
 
     // --- FOR YOUR TEAM: IMPORTANT! ---
     // Replace this with the actual base URL of the Node.js API.
-    private const val BASE_URL = "https://your-api-goes-here.com/api/v1/"
+    // The default below is just a fallback. Each developer can inject their own tunnel URL when testing.
+    private const val DEFAULT_BASE_URL = "https://your-api-goes-here.com/api/v1/"
 
     /**
      * This is where your team will define all the API endpoints.
@@ -26,15 +27,19 @@ object ApiClient {
         // suspend fun getTrendingRecipes(): List<Recipe>
     }
 
-    // Use `lazy` to ensure the Retrofit instance is created only once, when it's first needed.
-    val instance: PantryChefApiService by lazy {
-
+    /**
+     * Builds a Retrofit API service with the specified base URL.
+     * If no URL is provided, it falls back to the default.
+     *
+     * Example:
+     * val api = ApiClient.create("https://pantry-chef-shravan.loca.lt/api/")
+     */
+    fun create(baseUrl: String = DEFAULT_BASE_URL): PantryChefApiService {
         // 1. Create a logging interceptor to see request/response logs in Logcat.
         //    This is extremely useful for debugging.
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
-
         // 2. Build the OkHttpClient, adding our custom AuthInterceptor first,
         //    followed by the logging interceptor. The order matters.
         val okHttpClient = OkHttpClient.Builder()
@@ -44,12 +49,19 @@ object ApiClient {
 
         // 3. Build the Retrofit instance.
         val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(baseUrl)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         // 4. Create an implementation of our API service interface and return it.
-        retrofit.create(PantryChefApiService::class.java)
+        return retrofit.create(PantryChefApiService::class.java)
+    }
+
+    /**
+     * For backward compatibility — default singleton instance using the default base URL.
+     */
+    val instance: PantryChefApiService by lazy {
+        create(DEFAULT_BASE_URL)
     }
 }
