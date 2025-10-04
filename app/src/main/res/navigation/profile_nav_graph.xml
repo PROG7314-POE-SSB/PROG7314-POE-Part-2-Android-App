@@ -5,19 +5,64 @@
     android:id="@+id/profile_nav_graph"
     app:startDestination="@id/profileFragment">
 
+    <!-- The main profile screen is the starting point of this graph -->
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.ssba.pantrychef.profile.ProfileFragment"
-        android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" >
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
+
+        <!-- Each "action" defines a pathway from this fragment to another -->
         <action
-            android:id="@+id/action_profileFragment_to_accountManagementFragment"
-            app:destination="@id/accountManagementFragment" />
+            android:id="@+id/action_profileFragment_to_profileManagementFragment"
+            app:destination="@id/profileManagementFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_profileDietaryFragment"
+            app:destination="@id/profileDietaryFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_profileAllergiesFragment"
+            app:destination="@id/profileAllergiesFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_profileNotificationsFragment"
+            app:destination="@id/profileNotificationsFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_profileLanguageFragment"
+            app:destination="@id/profileLanguageFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_profileDataManagementFragment"
+            app:destination="@id/profileDataManagementFragment" />
     </fragment>
 
+    <!-- Define all the sub-menu fragments as destinations -->
     <fragment
-        android:id="@+id/accountManagementFragment"
-        android:name="com.ssba.pantrychef.profile.AccountManagementFragment"
-        android:label="fragment_account_management"
-        tools:layout="@layout/fragment_account_management" />
+        android:id="@+id/profileManagementFragment"
+        android:name="com.ssba.pantrychef.profile.ProfileManagementFragment"
+        android:label="Profile Management"
+        tools:layout="@layout/fragment_profile_management" />
+    <fragment
+        android:id="@+id/profileDietaryFragment"
+        android:name="com.ssba.pantrychef.profile.ProfileDietaryFragment"
+        android:label="Dietary Preferences"
+        tools:layout="@layout/fragment_profile_dietary" />
+    <fragment
+        android:id="@+id/profileAllergiesFragment"
+        android:name="com.ssba.pantrychef.profile.ProfileAllergiesFragment"
+        android:label="Allergies"
+        tools:layout="@layout/fragment_profile_allergies" />
+    <fragment
+        android:id="@+id/profileNotificationsFragment"
+        android:name="com.ssba.pantrychef.profile.ProfileNotificationsFragment"
+        android:label="Notification Preferences"
+        tools:layout="@layout/fragment_profile_notifications" />
+    <fragment
+        android:id="@+id/profileLanguageFragment"
+        android:name="com.ssba.pantrychef.profile.ProfileLanguageFragment"
+        android:label="Language"
+        tools:layout="@layout/fragment_profile_language" />
+    <fragment
+        android:id="@+id/profileDataManagementFragment"
+        android:name="com.ssba.pantrychef.profile.DataManagementFragment"
+        android:label="Data Management"
+        tools:layout="@layout/fragment_data_management" />
+
 </navigation>
