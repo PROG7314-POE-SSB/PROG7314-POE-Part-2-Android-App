@@ -4,52 +4,45 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
 
 /**
- * A singleton object that provides a fully configured Retrofit instance
- * for making authenticated API calls.
+ * A singleton object that provides a pre-configured Retrofit builder.
+ * Each feature module can create its own API service interface and pass it to this client.
  */
 object ApiClient {
 
-    // --- FOR YOUR TEAM: IMPORTANT! ---
-    // Replace this with the actual base URL of the Node.js API.
-    private const val BASE_URL = "https://your-api-goes-here.com/api/v1/"
+    // Default base URL (fallback)
+    private const val DEFAULT_BASE_URL = "https://your-api-goes-here.com/api/v1/"
 
     /**
-     * This is where your team will define all the API endpoints.
-     * They just need to add new functions to this interface.
+     * Builds a Retrofit instance with the specified base URL.
+     * If no base URL is provided, uses the default.
      */
-    interface PantryChefApiService {
-        // EXAMPLE ENDPOINT:
-        // @GET("recipes/trending")
-        // suspend fun getTrendingRecipes(): List<Recipe>
-    }
-
-    // Use `lazy` to ensure the Retrofit instance is created only once, when it's first needed.
-    val instance: PantryChefApiService by lazy {
-
-        // 1. Create a logging interceptor to see request/response logs in Logcat.
-        //    This is extremely useful for debugging.
+    fun retrofit(baseUrl: String = DEFAULT_BASE_URL): Retrofit {
+        // Logging for debugging
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
 
-        // 2. Build the OkHttpClient, adding our custom AuthInterceptor first,
-        //    followed by the logging interceptor. The order matters.
+        // OkHttpClient with AuthInterceptor + logging
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor())
             .addInterceptor(loggingInterceptor)
             .build()
 
-        // 3. Build the Retrofit instance.
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
 
-        // 4. Create an implementation of our API service interface and return it.
-        retrofit.create(PantryChefApiService::class.java)
+    /**
+     * Helper function to create a service from a given interface
+     * Example:
+     * val pantryService = ApiClient.createService(PantryApi::class.java)
+     */
+    fun <T> createService(serviceClass: Class<T>, baseUrl: String = DEFAULT_BASE_URL): T {
+        return retrofit(baseUrl).create(serviceClass)
     }
 }
