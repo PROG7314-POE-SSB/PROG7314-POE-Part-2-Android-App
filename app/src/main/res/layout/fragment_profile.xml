@@ -1,71 +1,245 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    tools:context=".profile.ProfileFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:gravity="center_horizontal">
+        android:padding="24dp">
 
+        <!-- Header Section -->
         <TextView
-            android:layout_width="match_parent"
+            style="@style/TextAppearance.Material3.HeadlineMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Profile"
-            style="@style/TextAppearance.Material3.HeadlineSmall"
-            android:layout_marginBottom="16dp"
-            android:layout_height="wrap_content" />
+            android:textColor="?attr/colorPrimary" />
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ivProfileImage"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/ic_placeholder" />
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:src="@drawable/ic_profile_placeholder"
+            app:civ_border_color="?attr/colorPrimary"
+            app:civ_border_width="2dp" />
 
         <TextView
             android:id="@+id/tvProfileName"
+            style="@style/TextAppearance.Material3.TitleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="John Doe"
-            style="@style/TextAppearance.Material3.TitleLarge" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            tools:text="John Doe" />
 
         <TextView
             android:id="@+id/tvProfileJoinDate"
+            style="@style/TextAppearance.Material3.BodyMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Joined: 24 August 2025"
-            style="@style/TextAppearance.Material3.BodyMedium" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="4dp"
+            tools:text="Joined: 24 August 2025" />
 
+        <!-- Menu Items -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardAccountManagement"
+            android:id="@+id/cardProfileManagement"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            app:cardElevation="0dp">
             <TextView
+                style="@style/TextAppearance.Material3.BodyLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawablePadding="16dp"
+                android:gravity="center_vertical"
                 android:padding="16dp"
-                android:text="Account Management"
-                app:drawableEndCompat="@drawable/ic_placeholder"
-                app:drawableStartCompat="@drawable/ic_placeholder" />
+                android:text="Profile Management"
+                app:drawableEndCompat="@drawable/ic_arrow_forward" />
         </com.google.android.material.card.MaterialCardView>
 
-        <TextView
-            android:id="@+id/tvLogout"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardDietary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Log Out"
-            android:gravity="center_vertical"
-            android:drawablePadding="16dp"
-            android:layout_marginTop="16dp"
-            android:padding="16dp"
-            app:drawableStartCompat="@drawable/ic_placeholder" />
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardElevation="0dp">
+            <TextView
+                style="@style/TextAppearance.Material3.BodyLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:text="Dietary Preferences"
+                app:drawableEndCompat="@drawable/ic_arrow_forward" />
+        </com.google.android.material.card.MaterialCardView>
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardAllergies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardElevation="0dp">
+            <TextView
+                style="@style/TextAppearance.Material3.BodyLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:text="Allergies"
+                app:drawableEndCompat="@drawable/ic_arrow_forward" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardNotifications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardElevation="0dp">
+            <TextView
+                style="@style/TextAppearance.Material3.BodyLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:text="Notification Preferences"
+                app:drawableEndCompat="@drawable/ic_arrow_forward" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardLanguage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardElevation="0dp">
+            <TextView
+                style="@style/TextAppearance.Material3.BodyLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:text="Language"
+                app:drawableEndCompat="@drawable/ic_arrow_forward" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardDataManagement"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardElevation="0dp">
+            <TextView
+                style="@style/TextAppearance.Material3.BodyLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:text="Data Management"
+                app:drawableEndCompat="@drawable/ic_arrow_forward" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Dark Mode with a Switch -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardElevation="0dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    style="@style/TextAppearance.Material3.BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="16dp"
+                    android:gravity="center_vertical"
+                    android:padding="16dp"
+                    android:text="Dark Mode" />
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchDarkMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="16dp" />
+            </RelativeLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Biometrics with a Switch -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardElevation="0dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    style="@style/TextAppearance.Material3.BodyLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="16dp"
+                    android:gravity="center_vertical"
+                    android:padding="16dp"
+                    android:text="Biometrics" />
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchBiometrics"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="16dp" />
+            </RelativeLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardLogout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@android:color/holo_red_dark" >
+
+            <TextView
+                android:id="@+id/tvLogout"
+                style="@style/TextAppearance.Material3.BodyLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                android:text="Log Out"
+                android:textColor="@android:color/white"
+                app:drawableStartCompat="@drawable/ic_logout"
+                app:drawableTint="@android:color/white" />
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 </ScrollView>
