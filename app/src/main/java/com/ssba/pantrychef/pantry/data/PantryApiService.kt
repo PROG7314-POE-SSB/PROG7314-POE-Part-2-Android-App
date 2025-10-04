@@ -6,9 +6,3 @@ import retrofit2.Retrofit
 private interface PantryApiService {
 
 }
-class myCLass{
-    val client: Retrofit  by Lazy{
-        ApiClient.create("sdfljks")
-
-    }
-}
