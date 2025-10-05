@@ -28,7 +28,7 @@ sealed class PantryUiEvent {
 }
 
 class PantryViewModel(
-    baseUrl: String = "https://your-api-goes-here.com/api/v1/"
+    baseUrl: String = "https://pantry-chef-shravan.loca.lt"
 ) : ViewModel() {
 
     private val apiService = PantryApiService(baseUrl)

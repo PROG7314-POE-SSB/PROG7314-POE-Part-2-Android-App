@@ -178,10 +178,14 @@ class AddEditPantryItemFragment : Fragment() {
                         val publicUrl = SupabaseUtils.uploadPantryItemToStorage(uid, bytes)
                         viewModel.updateImage(publicUrl)
 
+                    }else {
+                        Toast.makeText(context, "Could not read image", Toast.LENGTH_SHORT).show()
+                        return@launch
                     }
                 }
-
+                saveButton.isEnabled = false
                 viewModel.saveCurrentItem()
+                saveButton.isEnabled = true
                 Toast.makeText(requireContext(), "Item saved", Toast.LENGTH_SHORT).show()
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }
