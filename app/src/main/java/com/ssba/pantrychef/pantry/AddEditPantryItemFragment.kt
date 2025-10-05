@@ -6,7 +6,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.Spinner
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.core.widget.doAfterTextChanged
@@ -14,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.ssba.pantrychef.R
+import com.ssba.pantrychef.helpers.SupabaseUtils
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.File
@@ -59,12 +68,13 @@ class AddEditPantryItemFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val itemId = arguments?.getString(ARG_ITEM_ID)
         viewModel.loadItem(itemId)
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         return inflater.inflate(R.layout.fragment_add_edit_item, container, false)
     }
@@ -100,6 +110,7 @@ class AddEditPantryItemFragment : Fragment() {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
                 viewModel.updateLocation(PantryLocation.values()[pos])
             }
+
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
     }
@@ -111,7 +122,11 @@ class AddEditPantryItemFragment : Fragment() {
             if (isAiCameraEnabled) {
                 cameraLauncher.launch(null)
             } else {
-                Toast.makeText(requireContext(), "Camera feature is currently disabled", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Camera feature is currently disabled",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
@@ -140,15 +155,36 @@ class AddEditPantryItemFragment : Fragment() {
         titleEdit.doAfterTextChanged { viewModel.updateTitle(it.toString()) }
         descEdit.doAfterTextChanged { viewModel.updateDescription(it.toString()) }
         expiryEdit.doAfterTextChanged { viewModel.updateExpiryDate(it.toString()) }
-        quantityEdit.doAfterTextChanged { viewModel.updateQuantity(it.toString().toIntOrNull() ?: 0) }
+        quantityEdit.doAfterTextChanged {
+            viewModel.updateQuantity(
+                it.toString().toIntOrNull() ?: 0
+            )
+        }
         categoryEdit.doAfterTextChanged { viewModel.updateCategory(it.toString()) }
     }
 
     private fun setupSaveButton() {
         saveButton.setOnClickListener {
-            viewModel.saveCurrentItem()
-            Toast.makeText(requireContext(), "Item saved", Toast.LENGTH_SHORT).show()
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+            lifecycleScope.launch {
+                val imageUri = viewModel.currentItemState.value.imageUri
+                val context = requireContext()
+
+                if (imageUri != null) {
+                    val bytes = context.contentResolver.openInputStream(Uri.parse(imageUri))
+                        ?.use { it.readBytes() }
+                    if (bytes != null && bytes.isNotEmpty()) {
+                        // Assuming user is logged in with Firebase
+                        val uid = viewModel.generateNewId()
+                        val publicUrl = SupabaseUtils.uploadPantryItemToStorage(uid, bytes)
+                        viewModel.updateImage(publicUrl)
+
+                    }
+                }
+
+                viewModel.saveCurrentItem()
+                Toast.makeText(requireContext(), "Item saved", Toast.LENGTH_SHORT).show()
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
         }
     }
 
