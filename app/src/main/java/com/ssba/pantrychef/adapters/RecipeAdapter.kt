@@ -19,8 +19,17 @@ import java.util.*
 
 class RecipeAdapter(
     private val onRecipeClick: (Recipe) -> Unit,
-    private val onDeleteClick: (Recipe) -> Unit
+    private val onDeleteClick: (Recipe) -> Unit,
+    private val onFavoriteClick: (Recipe) -> Unit,
+    private val favoriteRecipeIds: Set<String> = emptySet()
 ) : ListAdapter<Recipe, RecipeAdapter.RecipeViewHolder>(RecipeDiffCallback()) {
+
+    private var currentFavorites = favoriteRecipeIds.toMutableSet()
+
+    fun updateFavorites(favoriteIds: Set<String>) {
+        currentFavorites = favoriteIds.toMutableSet()
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -39,6 +48,7 @@ class RecipeAdapter(
         private val recipeImage: ImageView = itemView.findViewById(R.id.iv_recipe_image)
         private val recipeDescription: TextView = itemView.findViewById(R.id.tv_recipe_description)
         private val servings: TextView = itemView.findViewById(R.id.tv_servings)
+        private val btnFavorite: ImageButton = itemView.findViewById(R.id.btn_favorite_recipe)
         private val btnDelete: ImageButton = itemView.findViewById(R.id.btn_delete_recipe)
 
         fun bind(recipe: Recipe) {
@@ -62,9 +72,25 @@ class RecipeAdapter(
                 .error(R.drawable.ic_default_image)
                 .into(recipeImage)
 
+            // Set favorite button state
+            val isFavorite = currentFavorites.contains(recipe.recipeId)
+            btnFavorite.setImageResource(
+                if (isFavorite) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline
+            )
+
             // Click listeners
             cardView.setOnClickListener {
                 onRecipeClick(recipe)
+            }
+
+            btnFavorite.setOnClickListener {
+                if (isFavorite) {
+                    currentFavorites.remove(recipe.recipeId)
+                } else {
+                    currentFavorites.add(recipe.recipeId)
+                }
+                notifyItemChanged(adapterPosition)
+                onFavoriteClick(recipe)
             }
 
             btnDelete.setOnClickListener {

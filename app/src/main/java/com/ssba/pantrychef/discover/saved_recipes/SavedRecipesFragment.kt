@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
@@ -14,24 +15,29 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.ssba.pantrychef.R
 import com.ssba.pantrychef.adapters.RecipeCategoryAdapter
 import com.ssba.pantrychef.data.recipe_models.RecipeCategory
 import com.ssba.pantrychef.data.repositories.RecipeCategoryRepository
+import com.ssba.pantrychef.data.repositories.RecipeFavoritesRepository
 import kotlinx.coroutines.launch
 
 class SavedRecipesFragment : Fragment() {
 
     private lateinit var adapter: RecipeCategoryAdapter
     private lateinit var repository: RecipeCategoryRepository
+    private lateinit var favoritesRepository: RecipeFavoritesRepository
 
     // Views
     private lateinit var recyclerView: RecyclerView
     private lateinit var emptyStateContainer: LinearLayout
     private lateinit var fabCreateCollection: FloatingActionButton
-    private lateinit var btnCreateFirstCategory: MaterialButton
+    private lateinit var favoritesCard: MaterialCardView
+    private lateinit var tvFavoritesCount: TextView
+    private var btnCreateFirstCategory: MaterialButton? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,13 +50,20 @@ class SavedRecipesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         repository = RecipeCategoryRepository()
+        favoritesRepository = RecipeFavoritesRepository()
 
-        // Bind Items from layout
+        // Bind required views
         val btnBack = view.findViewById<ImageButton>(R.id.btnBack)
         recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view_recipe_collections)
         fabCreateCollection = view.findViewById<FloatingActionButton>(R.id.create_collection_fab)
         emptyStateContainer = view.findViewById<LinearLayout>(R.id.empty_state_container)
-        btnCreateFirstCategory = view.findViewById<MaterialButton>(R.id.btn_create_first_category)
+
+        // Favorites card views (now directly accessible)
+        favoritesCard = view.findViewById<MaterialCardView>(R.id.favorites_card)
+        tvFavoritesCount = view.findViewById<TextView>(R.id.tv_favorites_count)
+
+        // Optional views
+        btnCreateFirstCategory = view.findViewById(R.id.btn_create_first_category)
 
         // Setup RecyclerView
         setupRecyclerView()
@@ -65,19 +78,26 @@ class SavedRecipesFragment : Fragment() {
             showCreateCategoryDialog()
         }
 
-        // Empty state button click listener
-        btnCreateFirstCategory.setOnClickListener {
+        // Empty state button click listener (only if it exists)
+        btnCreateFirstCategory?.setOnClickListener {
             showCreateCategoryDialog()
         }
 
-        // Load categories with updated counts
+        // Favorites card click listener
+        favoritesCard.setOnClickListener {
+            navigateToFavorites()
+        }
+
+        // Load data
         loadCategoriesWithUpdatedCounts()
+        loadFavoritesCount()
     }
 
     override fun onResume() {
         super.onResume()
-        // Refresh counts when returning to this fragment (e.g., after creating/deleting recipes)
+        // Refresh counts when returning to this fragment
         loadCategoriesWithUpdatedCounts()
+        loadFavoritesCount()
     }
 
     private fun setupRecyclerView() {
@@ -89,9 +109,6 @@ class SavedRecipesFragment : Fragment() {
         recyclerView.layoutManager = GridLayoutManager(context, 2)
     }
 
-    /**
-     * Loads categories and updates their recipe counts based on actual recipe subcollections
-     */
     private fun loadCategoriesWithUpdatedCounts() {
         lifecycleScope.launch {
             repository.updateAllRecipeCounts()
@@ -114,27 +131,14 @@ class SavedRecipesFragment : Fragment() {
         }
     }
 
-    /**
-     * Fallback method to load categories without updating counts (for error scenarios)
-     */
-    private fun loadCategories() {
+    private fun loadFavoritesCount() {
         lifecycleScope.launch {
-            repository.getCategories()
-                .onSuccess { categories ->
-                    if (categories.isEmpty()) {
-                        showEmptyState()
-                    } else {
-                        showRecipesList()
-                        adapter.submitList(categories)
-                    }
+            favoritesRepository.getFavoriteCount()
+                .onSuccess { count ->
+                    tvFavoritesCount.text = "$count recipes"
                 }
-                .onFailure { exception ->
-                    Toast.makeText(
-                        context,
-                        "Failed to load categories: ${exception.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    showEmptyState()
+                .onFailure {
+                    tvFavoritesCount.text = "0 recipes"
                 }
         }
     }
@@ -150,23 +154,19 @@ class SavedRecipesFragment : Fragment() {
     }
 
     private fun showCreateCategoryDialog() {
-        // Inflate the custom dialog layout
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_create_category, null)
 
-        // Get references to the views in the dialog
         val etCategoryName = dialogView.findViewById<TextInputEditText>(R.id.et_category_name)
         val etCategoryDescription = dialogView.findViewById<TextInputEditText>(R.id.et_category_description)
         val btnCancel = dialogView.findViewById<MaterialButton>(R.id.btn_cancel)
         val btnCreate = dialogView.findViewById<MaterialButton>(R.id.btn_create)
 
-        // Create the AlertDialog
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
             .setCancelable(true)
             .create()
 
-        // Set up button click listeners
         btnCancel.setOnClickListener {
             dialog.dismiss()
         }
@@ -184,7 +184,6 @@ class SavedRecipesFragment : Fragment() {
             dialog.dismiss()
         }
 
-        // Show the dialog
         dialog.show()
     }
 
@@ -199,7 +198,7 @@ class SavedRecipesFragment : Fragment() {
             repository.createCategory(category)
                 .onSuccess {
                     Toast.makeText(context, "Category created successfully!", Toast.LENGTH_SHORT).show()
-                    loadCategoriesWithUpdatedCounts() // Refresh the list with updated counts
+                    loadCategoriesWithUpdatedCounts()
                 }
                 .onFailure { exception ->
                     Toast.makeText(
@@ -212,7 +211,6 @@ class SavedRecipesFragment : Fragment() {
     }
 
     private fun navigateToRecipeList(category: RecipeCategory) {
-        // Using Bundle arguments instead of Safe Args
         val bundle = Bundle().apply {
             putString(RecipeListFragment.ARG_CATEGORY_NAME, category.categoryName)
         }
@@ -221,5 +219,16 @@ class SavedRecipesFragment : Fragment() {
             R.id.action_SavedRecipesFragment_to_recipeListFragment,
             bundle
         )
+    }
+
+    private fun navigateToFavorites() {
+        try {
+            findNavController().navigate(
+                R.id.action_SavedRecipesFragment_to_favoritesListFragment
+            )
+        } catch (e: Exception) {
+            Toast.makeText(context, "Navigation error: ${e.message}", Toast.LENGTH_LONG).show()
+            e.printStackTrace()
+        }
     }
 }

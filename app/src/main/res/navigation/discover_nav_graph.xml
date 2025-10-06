@@ -26,6 +26,10 @@
         <action
             android:id="@+id/action_SavedRecipesFragment_to_recipeListFragment"
             app:destination="@id/recipeListFragment" />
+
+        <action
+            android:id="@+id/action_SavedRecipesFragment_to_favoritesListFragment"
+            app:destination="@id/favoritesListFragment" />
     </fragment>
 
     <fragment
@@ -55,5 +59,17 @@
         android:name="com.ssba.pantrychef.discover.saved_recipes.CreateRecipeFragment"
         android:label="Create Recipe"
         tools:layout="@layout/fragment_create_recipe" />
+
+    <fragment
+        android:id="@+id/favoritesListFragment"
+        android:name="com.ssba.pantrychef.discover.saved_recipes.FavoritesListFragment"
+        android:label="My Favorites"
+        tools:layout="@layout/fragment_favorites_list">
+
+        <action
+            android:id="@+id/action_favoritesListFragment_to_viewUserRecipeFragment"
+            app:destination="@id/viewUserRecipeFragment" />
+
+    </fragment>
 
 </navigation>

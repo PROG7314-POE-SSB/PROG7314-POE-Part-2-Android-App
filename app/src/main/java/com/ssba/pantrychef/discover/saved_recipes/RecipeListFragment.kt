@@ -19,6 +19,7 @@ import com.ssba.pantrychef.R
 import com.ssba.pantrychef.adapters.RecipeAdapter
 import com.ssba.pantrychef.data.recipe_models.Recipe
 import com.ssba.pantrychef.data.repositories.RecipeRepository
+import com.ssba.pantrychef.data.repositories.RecipeFavoritesRepository
 import com.ssba.pantrychef.helpers.SupabaseUtils
 import kotlinx.coroutines.launch
 
@@ -26,7 +27,9 @@ class RecipeListFragment : Fragment() {
 
     private lateinit var adapter: RecipeAdapter
     private lateinit var repository: RecipeRepository
+    private lateinit var favoritesRepository: RecipeFavoritesRepository
     private var categoryName: String = ""
+    private var favoriteRecipeIds = mutableSetOf<String>()
 
     private lateinit var emptyStateContainer: LinearLayout
     private lateinit var recyclerView: RecyclerView
@@ -46,6 +49,7 @@ class RecipeListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         repository = RecipeRepository()
+        favoritesRepository = RecipeFavoritesRepository()
         categoryName = arguments?.getString(ARG_CATEGORY_NAME) ?: ""
 
         // Bind views
@@ -71,8 +75,15 @@ class RecipeListFragment : Fragment() {
             navigateToCreateRecipe()
         }
 
-        // Load recipes
+        // Load data
+        loadFavoriteIds()
         loadRecipes()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Refresh favorites when returning to this fragment
+        loadFavoriteIds()
     }
 
     private fun setupRecyclerView() {
@@ -82,11 +93,29 @@ class RecipeListFragment : Fragment() {
             },
             onDeleteClick = { recipe ->
                 showDeleteConfirmationDialog(recipe)
-            }
+            },
+            onFavoriteClick = { recipe ->
+                toggleFavorite(recipe)
+            },
+            favoriteRecipeIds = favoriteRecipeIds
         )
 
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
+    }
+
+    private fun loadFavoriteIds() {
+        lifecycleScope.launch {
+            favoritesRepository.getFavoriteRecipes()
+                .onSuccess { favorites ->
+                    favoriteRecipeIds.clear()
+                    favoriteRecipeIds.addAll(
+                        favorites.filter { it.categoryName == categoryName }
+                            .map { it.recipeId }
+                    )
+                    adapter.updateFavorites(favoriteRecipeIds)
+                }
+        }
     }
 
     private fun loadRecipes() {
@@ -108,6 +137,42 @@ class RecipeListFragment : Fragment() {
                     ).show()
                     showEmptyState()
                 }
+        }
+    }
+
+    private fun toggleFavorite(recipe: Recipe) {
+        lifecycleScope.launch {
+            val isFavorite = favoriteRecipeIds.contains(recipe.recipeId)
+
+            if (isFavorite) {
+                // Remove from favorites
+                favoritesRepository.removeFromFavorites(recipe.recipeId, categoryName)
+                    .onSuccess {
+                        favoriteRecipeIds.remove(recipe.recipeId)
+                        Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT).show()
+                    }
+                    .onFailure { exception ->
+                        Toast.makeText(
+                            context,
+                            "Failed to remove from favorites: ${exception.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            } else {
+                // Add to favorites
+                favoritesRepository.addToFavorites(recipe.recipeId, categoryName)
+                    .onSuccess {
+                        favoriteRecipeIds.add(recipe.recipeId)
+                        Toast.makeText(context, "Added to favorites", Toast.LENGTH_SHORT).show()
+                    }
+                    .onFailure { exception ->
+                        Toast.makeText(
+                            context,
+                            "Failed to add to favorites: ${exception.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
         }
     }
 
@@ -150,14 +215,13 @@ class RecipeListFragment : Fragment() {
                 // First delete from Firestore
                 repository.deleteRecipe(categoryName, recipe.recipeId)
                     .onSuccess {
-                        // If Firestore deletion is successful, delete the image from Supabase
+                        // Remove from favorites if it exists
+                        favoritesRepository.removeFromFavorites(recipe.recipeId, categoryName)
+
+                        // Delete image from Supabase if it exists
                         if (recipe.imageURL.isNotEmpty()) {
-                            // Extract filename from recipe ID and delete from Supabase
                             val filename = "${recipe.recipeId}.jpg"
-
-                            // initialise supabase utils
                             SupabaseUtils.init(requireContext())
-
                             SupabaseUtils.deleteRecipeImage(filename)
                         }
 
