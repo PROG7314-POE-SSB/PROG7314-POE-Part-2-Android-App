@@ -1,13 +1,12 @@
 package com.ssba.pantrychef.discover.saved_recipes
 
-import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.ssba.pantrychef.R
 import com.ssba.pantrychef.adapters.RecipeCategoryAdapter
@@ -22,18 +22,21 @@ import com.ssba.pantrychef.data.recipe_models.RecipeCategory
 import com.ssba.pantrychef.data.repositories.RecipeCategoryRepository
 import kotlinx.coroutines.launch
 
-
 class SavedRecipesFragment : Fragment() {
 
     private lateinit var adapter: RecipeCategoryAdapter
     private lateinit var repository: RecipeCategoryRepository
 
+    // Views
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var emptyStateContainer: LinearLayout
+    private lateinit var fabCreateCollection: FloatingActionButton
+    private lateinit var btnCreateFirstCategory: MaterialButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_saved_recipes, container, false)
     }
 
@@ -44,11 +47,13 @@ class SavedRecipesFragment : Fragment() {
 
         // Bind Items from layout
         val btnBack = view.findViewById<ImageButton>(R.id.btnBack)
-        val rvRecipeCollections = view.findViewById<RecyclerView>(R.id.recycler_view_recipe_collections)
-        val fabCreateCollection = view.findViewById<ImageButton>(R.id.create_collection_fab)
+        recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view_recipe_collections)
+        fabCreateCollection = view.findViewById<FloatingActionButton>(R.id.create_collection_fab)
+        emptyStateContainer = view.findViewById<LinearLayout>(R.id.empty_state_container)
+        btnCreateFirstCategory = view.findViewById<MaterialButton>(R.id.btn_create_first_category)
 
         // Setup RecyclerView
-        setupRecyclerView(rvRecipeCollections)
+        setupRecyclerView()
 
         // Back button functionality
         btnBack.setOnClickListener {
@@ -60,11 +65,16 @@ class SavedRecipesFragment : Fragment() {
             showCreateCategoryDialog()
         }
 
+        // Empty state button click listener
+        btnCreateFirstCategory.setOnClickListener {
+            showCreateCategoryDialog()
+        }
+
         // Load categories
         loadCategories()
     }
 
-    private fun setupRecyclerView(recyclerView: RecyclerView) {
+    private fun setupRecyclerView() {
         adapter = RecipeCategoryAdapter { category ->
             navigateToRecipeList(category)
         }
@@ -77,7 +87,12 @@ class SavedRecipesFragment : Fragment() {
         lifecycleScope.launch {
             repository.getCategories()
                 .onSuccess { categories ->
-                    adapter.submitList(categories)
+                    if (categories.isEmpty()) {
+                        showEmptyState()
+                    } else {
+                        showRecipesList()
+                        adapter.submitList(categories)
+                    }
                 }
                 .onFailure { exception ->
                     Toast.makeText(
@@ -85,8 +100,19 @@ class SavedRecipesFragment : Fragment() {
                         "Failed to load categories: ${exception.message}",
                         Toast.LENGTH_SHORT
                     ).show()
+                    showEmptyState()
                 }
         }
+    }
+
+    private fun showEmptyState() {
+        emptyStateContainer.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+    }
+
+    private fun showRecipesList() {
+        emptyStateContainer.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
     }
 
     private fun showCreateCategoryDialog() {
@@ -152,17 +178,14 @@ class SavedRecipesFragment : Fragment() {
     }
 
     private fun navigateToRecipeList(category: RecipeCategory) {
-        // TODO: Navigate to recipe list fragment
-        // Pass the category name as an argument
-        Toast.makeText(
-            context,
-            "Opening recipes for ${category.categoryName}",
-            Toast.LENGTH_SHORT
-        ).show()
+        // Using Bundle arguments instead of Safe Args
+        val bundle = Bundle().apply {
+            putString(RecipeListFragment.ARG_CATEGORY_NAME, category.categoryName)
+        }
 
-        // Example navigation (you'll need to create the destination):
-        // val action = SavedRecipesFragmentDirections
-        //     .actionSavedRecipesToRecipeList(category.categoryName)
-        // findNavController().navigate(action)
+        findNavController().navigate(
+            R.id.action_SavedRecipesFragment_to_recipeListFragment,
+            bundle
+        )
     }
 }

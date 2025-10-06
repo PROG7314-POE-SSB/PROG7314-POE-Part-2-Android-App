@@ -1,46 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".discover.saved_recipes.SavedRecipesFragment"
-    android:background="@color/beige_bg">
+    android:background="@color/beige_bg"
+    tools:context=".discover.saved_recipes.RecipeListFragment">
 
     <!-- Header -->
     <LinearLayout
         android:id="@+id/header_container"
         android:layout_width="0dp"
         android:layout_height="64dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        android:gravity="center_vertical"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/btnBack"
             android:layout_width="24dp"
             android:layout_height="25dp"
-            android:contentDescription="BackButton"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back Button"
             android:src="@drawable/vector_arrow_back"
-            android:background="@android:color/transparent"/>
+            app:tint="@color/orange_main" />
 
         <TextView
-            android:id="@+id/header_title"
+            android:id="@+id/tv_category_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Saved Recipes"
-            android:textSize="20sp"
-            android:textColor="@color/orange_main"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
-            android:gravity="center" />
+            android:gravity="center"
+            android:text="Category Name"
+            android:textColor="@color/orange_main"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
     </LinearLayout>
 
-    <!-- Empty State Container -->
+    <!-- Empty State -->
     <LinearLayout
         android:id="@+id/empty_state_container"
         android:layout_width="wrap_content"
@@ -48,7 +52,7 @@
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/create_collection_fab"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header_container">
@@ -56,47 +60,32 @@
         <ImageView
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:alpha="0.6"
+            android:alpha="0.5"
             android:src="@drawable/ic_add"
             app:tint="@color/orange_main" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="No Recipe Categories Yet"
+            android:layout_marginTop="16dp"
+            android:text="No recipes yet"
             android:textColor="@color/orange_main"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginHorizontal="32dp"
-            android:gravity="center"
-            android:text="Start organizing your recipes by creating your first category. Tap the + button below to get started!"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:lineSpacingExtra="4dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_create_first_category"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Create First Category"
-            android:textColor="@android:color/white"
-            app:backgroundTint="@color/orange_main"
-            app:cornerRadius="8dp"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="12dp" />
+            android:text="Tap the + button to create your first recipe"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
 
     </LinearLayout>
 
-    <!-- RecyclerView for saved recipe collections -->
+    <!-- RecyclerView for recipes -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_recipe_collections"
+        android:id="@+id/recycler_view_recipes"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="12dp"
@@ -107,19 +96,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header_container" />
+        app:layout_constraintTop_toBottomOf="@id/header_container"
+        tools:listitem="@layout/item_recipe" />
 
     <!-- Floating Action Button to create a new recipe -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/create_collection_fab"
+        android:id="@+id/fab_create_recipe"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_margin="24dp"
+        android:contentDescription="Create Recipe"
         android:src="@drawable/ic_add"
-        android:contentDescription="Create Category"
         app:backgroundTint="@color/yellow"
-        app:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
