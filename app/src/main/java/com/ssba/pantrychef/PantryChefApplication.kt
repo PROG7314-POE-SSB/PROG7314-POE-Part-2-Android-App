@@ -1,7 +1,6 @@
 package com.ssba.pantrychef
 
 import android.app.Application
-import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import com.ssba.pantrychef.helpers.SupabaseUtils
 
@@ -17,7 +16,7 @@ class PantryChefApplication : Application() {
         SupabaseUtils.init(applicationContext)
 
         // Get the shared preferences for the app.
-        val sharedPreferences = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
 
         // Check if a theme preference has been saved by the user.
         // The "DarkMode" key will store the user's choice. We default to 'false' if it doesn't exist.

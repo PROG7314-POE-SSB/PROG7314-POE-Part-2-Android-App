@@ -170,10 +170,6 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(applicationContext, "Stored credentials not found.", Toast.LENGTH_SHORT).show()
                     }
                 }
-
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    super.onAuthenticationError(errorCode, errString)
-                }
             })
 
         promptInfo = BiometricPrompt.PromptInfo.Builder()

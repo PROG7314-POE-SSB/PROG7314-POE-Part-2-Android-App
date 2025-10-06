@@ -1,6 +1,5 @@
 package com.ssba.pantrychef.view_models
 
-import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,6 +16,7 @@ import com.ssba.pantrychef.data.UserProfile
 import com.ssba.pantrychef.helpers.SupabaseUtils
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import androidx.core.net.toUri
 
 class ProfileViewModel : ViewModel() {
 
@@ -56,6 +56,11 @@ class ProfileViewModel : ViewModel() {
         fetchUserData()
     }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun <T> Any.safeCastToMap(): Map<String, T> {
+        return (this as? Map<String, T>) ?: emptyMap()
+    }
+
     private fun fetchUserData() {
         val currentUserId = userId ?: return
         db.collection("users").document(currentUserId)
@@ -64,7 +69,7 @@ class ProfileViewModel : ViewModel() {
                     Log.w(TAG, "Listen failed.", error); return@addSnapshotListener
                 }
                 if (snapshot != null && snapshot.exists()) {
-                    val profileMap = snapshot.get("profile") as? Map<String, Any>
+                    val profileMap = snapshot.get("profile") as? Map<*, *>
                     _userProfile.value = profileMap?.let {
                         UserProfile(
                             email = it["email"] as? String,
@@ -73,12 +78,14 @@ class ProfileViewModel : ViewModel() {
                             authProvider = it["authProvider"] as? String
                         )
                     }
-                    val onboardingMap = snapshot.get("onboarding") as? Map<String, Any>
+                    val onboardingMap = snapshot.get("onboarding") as? Map<*, *>
                     onboardingMap?.let {
-                        _dietaryPreferences.value = it["dietaryPreferences"] as? Map<String, Boolean> ?: emptyMap()
-                        _allergies.value = it["allergies"] as? Map<String, Boolean> ?: emptyMap()
-                        val prefs = it["preferences"] as? Map<String, Any>
-                        prefs?.let { p ->
+                        _dietaryPreferences.value =
+                            it["dietaryPreferences"]?.safeCastToMap() ?: emptyMap()
+                        _allergies.value = it["allergies"]?.safeCastToMap() ?: emptyMap()
+                        val prefs: Map<String, Any> =
+                            it["preferences"]?.safeCastToMap() ?: emptyMap()
+                        prefs.let { p ->
                             _languagePreference.value = p["language"] as? String ?: "en"
                             _notificationPreferences.value = p
                         }
@@ -119,7 +126,7 @@ class ProfileViewModel : ViewModel() {
                 // Update Auth
                 val profileUpdates = UserProfileChangeRequest.Builder()
                     .setDisplayName(newDisplayName)
-                    .setPhotoUri(newPhotoUrl?.let { Uri.parse(it) })
+                    .setPhotoUri(newPhotoUrl?.toUri())
                     .build()
                 user.updateProfile(profileUpdates).await()
 
@@ -147,7 +154,7 @@ class ProfileViewModel : ViewModel() {
             try {
                 val credential = EmailAuthProvider.getCredential(currentEmail, currentPassword)
                 user.reauthenticate(credential).await()
-                user.updateEmail(newEmail).await()
+                @Suppress("DEPRECATION") user.updateEmail(newEmail).await()
                 db.collection("users").document(user.uid).update("profile.email", newEmail).await()
                 _operationResult.value = Result.success("Email updated successfully")
             } catch (e: Exception) {

@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
@@ -40,7 +41,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         // --- Bind all views from the layout ---
         val ivProfileImage = view.findViewById<ImageView>(R.id.ivProfileImage)
         val tvProfileName = view.findViewById<TextView>(R.id.tvProfileName)
-        val tvProfileJoinDate = view.findViewById<TextView>(R.id.tvProfileJoinDate)
         val cardLogout = view.findViewById<MaterialCardView>(R.id.cardLogout)
         val switchDarkMode = view.findViewById<MaterialSwitch>(R.id.switchDarkMode)
         val switchBiometrics = view.findViewById<MaterialSwitch>(R.id.switchBiometrics)
@@ -82,12 +82,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         // --- Logout Logic ---
         cardLogout.setOnClickListener {
             // Get SharedPreferences instance
-            val sharedPreferences = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+            val sharedPreferences =
+                requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
 
             // Clear the saved Dark Mode preference
-            with(sharedPreferences.edit()) {
+            sharedPreferences.edit {
                 remove("DarkMode")
-                apply()
             }
 
             // Revert to Light Mode immediately upon logout
@@ -110,7 +110,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
      * It sets the initial state and listens for user changes to apply the theme.
      */
     private fun setupDarkModeSwitch(switchDarkMode: MaterialSwitch) {
-        val sharedPreferences = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
 
         // Set the switch's initial state based on the saved preference.
         switchDarkMode.isChecked = sharedPreferences.getBoolean("DarkMode", false)
@@ -125,9 +126,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             AppCompatDelegate.setDefaultNightMode(mode)
 
             // Save the user's choice to SharedPreferences
-            with(sharedPreferences.edit()) {
+            sharedPreferences.edit {
                 putBoolean("DarkMode", isChecked)
-                apply()
             }
         }
     }
@@ -152,13 +152,18 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             if (isChecked) {
                 // To enable biometrics, we need the user's password, which we don't have here.
                 // This is a security measure. The most user-friendly approach is to inform them.
-                Toast.makeText(requireContext(), "Enable this on your next password login.", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Enable this on your next password login.",
+                    Toast.LENGTH_LONG
+                ).show()
                 // Revert the switch to its original state because we can't complete the action.
                 switchBiometrics.isChecked = false
             } else {
                 // If the user is disabling biometrics, we can simply clear the saved credentials.
                 BiometricAuthManager.clearCredentials(requireContext())
-                Toast.makeText(requireContext(), "Biometric login disabled.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Biometric login disabled.", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }

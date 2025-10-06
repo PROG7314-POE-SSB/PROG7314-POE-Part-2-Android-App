@@ -1,16 +1,13 @@
 package com.ssba.pantrychef.profile
 
 import android.Manifest
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.text.InputType
 import android.view.View
 import android.widget.EditText
@@ -32,7 +29,6 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import com.ssba.pantrychef.R
 import com.ssba.pantrychef.entry.WelcomeActivity
 import com.ssba.pantrychef.view_models.ProfileViewModel
@@ -322,14 +318,10 @@ class ProfileManagementFragment : Fragment(R.layout.fragment_profile_management)
     private fun uriToByteArray(uri: Uri): ByteArray? {
         return try {
             val stream = ByteArrayOutputStream()
-            val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                ImageDecoder.decodeBitmap(ImageDecoder.createSource(requireActivity().contentResolver, uri))
-            } else {
-                @Suppress("DEPRECATION") MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, uri)
-            }
+            val bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(requireActivity().contentResolver, uri))
             bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
             stream.toByteArray()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             Toast.makeText(context, "Failed to process image.", Toast.LENGTH_SHORT).show()
             null
         }
