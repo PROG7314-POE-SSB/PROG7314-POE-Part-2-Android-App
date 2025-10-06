@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
+    <!-- Empty State -->
+    <TextView
+        android:id="@+id/emptyTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No shopping lists yet"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:visibility="gone"
+        android:padding="16dp"/>
+
+    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/shoppingListRecyclerView"
         android:layout_width="match_parent"

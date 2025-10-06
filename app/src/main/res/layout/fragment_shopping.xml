@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Layout for the main ShoppingFragment.
-    Team members working on the Shopping List feature will build the UI here.
--->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".shopping.ShoppingFragment">
+    android:padding="16dp"
+    tools:context=".shopping.ShoppingListFragment">
 
+    <!-- Empty state message -->
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/emptyTextView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Shopping Fragment"
-        android:textSize="24sp" />
+        android:text="No shopping lists yet"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:visibility="gone"
+        android:padding="16dp"/>
 
-</FrameLayout>
+    <!-- RecyclerView to show shopping lists -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/shoppingListRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"
+        android:scrollbars="vertical"/>
+</LinearLayout>

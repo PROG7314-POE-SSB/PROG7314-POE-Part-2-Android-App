@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -36,11 +37,20 @@ class ShoppingListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val emptyTextView: TextView = view.findViewById(R.id.emptyTextView)
+
+        viewModel.fetchShoppingLists()
         viewModel.shoppingLists.observe(viewLifecycleOwner) { lists ->
             adapter.submitList(lists)
+            if (lists.isEmpty()) {
+                emptyTextView.visibility = View.VISIBLE
+                recyclerView.visibility = View.GONE
+            } else {
+                emptyTextView.visibility = View.GONE
+                recyclerView.visibility = View.VISIBLE
+            }
         }
 
-        // TODO: Trigger fetching lists
-        viewModel.fetchShoppingLists()
+
     }
 }

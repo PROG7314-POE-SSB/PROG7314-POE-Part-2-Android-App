@@ -23,10 +23,12 @@ class PantryHostFragment : Fragment() {
     private val tabTitles = arrayOf("Fridge", "Freezer", "Pantry")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
         return inflater.inflate(R.layout.fragment_pantry_host, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         viewPager = view.findViewById(R.id.pantry_viewpager)
         tabLayout = view.findViewById(R.id.tab_layout)
 
