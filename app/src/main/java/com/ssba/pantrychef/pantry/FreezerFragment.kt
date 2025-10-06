@@ -32,7 +32,7 @@ class FreezerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel = ViewModelProvider(requireActivity()).get(PantryViewModel::class.java)
 
-        recycler = view.findViewById(R.id.recycler_shelf)
+        recycler = view.findViewById(R.id.recycler_freezer)
         recycler.layoutManager = LinearLayoutManager(requireContext())
 
         // Adapter now only handles clicks
@@ -46,11 +46,13 @@ class FreezerFragment : Fragment() {
         recycler.adapter = adapter
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.allItems.collectLatest { list ->
-                    adapter.submitList(list.filter { it.location == PantryLocation.PANTRY })
-                }
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {viewModel.allItems.observe(viewLifecycleOwner) { list ->
+                adapter.submitList(list.filter { it.location == PantryLocation.FREEZER })
             }
+            }
+        }
+        viewModel.searchQuery.observe(viewLifecycleOwner) { query ->
+            adapter.filter(query)
         }
     }
 }

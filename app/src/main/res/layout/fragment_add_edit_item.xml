@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+
+        android:padding="24dp">
 
         <!-- Image Picker -->
         <FrameLayout
             android:id="@+id/image_picker_container"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginBottom="16dp"
-
+            android:background="@drawable/field_background"
             android:clickable="true"
             android:focusable="true">
 
@@ -24,83 +25,161 @@
                 android:id="@+id/item_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
                 android:contentDescription="Upload an image"
-                android:src="@drawable/ic_add" />
+                android:scaleType="centerCrop"
+                android:src="@android:color/transparent" />
 
             <TextView
+                android:id="@+id/text_add_image_prompt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:drawablePadding="8dp"
+                android:gravity="center"
                 android:text="Click here to add image"
                 android:textColor="@android:color/darker_gray"
-                android:layout_gravity="center" />
+                app:drawableTopCompat="@drawable/ic_add" />
         </FrameLayout>
 
         <!-- Title -->
-        <EditText
-            android:id="@+id/edit_title"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Title"
-            android:backgroundTint="@color/yellow"
-            android:inputType="text"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginTop="24dp"
+            android:hint="Title">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Description -->
-        <EditText
-            android:id="@+id/edit_description"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Description"
-            android:inputType="textMultiLine"
-            android:minLines="3"
-            android:backgroundTint="@color/yellow"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginTop="16dp"
+            android:hint="Description">
 
-        <!-- Expiry -->
-        <EditText
-            android:id="@+id/edit_expiry"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Expiry date (timestamp)"
-            android:inputType="number"
-            android:backgroundTint="@color/yellow"
-            android:layout_marginBottom="8dp" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:background="@drawable/edit_text_background"
+                android:minLines="3" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Quantity -->
-        <EditText
-            android:id="@+id/edit_quantity"
+        <!-- Expiry Date Picker -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:labelFor="@+id/text_expiry_date"
+            android:text="Expiry Date"
+            android:textAppearance="?attr/textAppearanceCaption" />
+
+        <TextView
+            android:id="@+id/text_expiry_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Quantity"
-            android:backgroundTint="@color/yellow"
-            android:inputType="number"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginTop="4dp"
+            android:background="@drawable/field_background"
+            android:drawableEnd="@drawable/ic_baseline_calendar_today_24"
+            android:drawablePadding="12dp"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:text="Select Date"
+            android:textAppearance="?attr/textAppearanceBody1" />
+
+        <!-- Quantity and Unit -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:hint="Quantity">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_quantity"
+                    android:background="@drawable/field_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/unit_menu"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:hint="Unit">
+
+                <AutoCompleteTextView
+                    android:id="@+id/unit_autocomplete"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/field_background"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
 
         <!-- Category -->
-        <EditText
-            android:id="@+id/edit_category"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Category"
-            android:inputType="text"
-            android:backgroundTint="@color/yellow"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginTop="16dp"
+            android:hint="Category">
 
-        <!-- Location -->
-        <Spinner
-            android:id="@+id/location_spinner"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/field_background"
+                android:inputType="textCapWords" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Location Dropdown -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/location_menu"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginTop="16dp"
+
+            android:hint="Pantry Location">
+
+            <AutoCompleteTextView
+                android:id="@+id/location_autocomplete"
+                android:layout_width="match_parent"
+                android:background="@drawable/field_background"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <!-- Save Button -->
         <Button
             android:id="@+id/btn_save"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
             android:backgroundTint="@color/yellow"
-            android:text="Save" />
+            android:padding="14dp"
+            android:text="Save"
+            android:textSize="16sp" />
 
     </LinearLayout>
 </ScrollView>

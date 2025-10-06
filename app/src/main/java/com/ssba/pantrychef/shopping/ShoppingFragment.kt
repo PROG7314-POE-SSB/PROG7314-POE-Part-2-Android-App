@@ -4,34 +4,53 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ssba.pantrychef.R
+import kotlinx.coroutines.flow.collect
 
-/**
- * This is the main fragment for the 'Shopping' section.
- */
-class ShoppingFragment : Fragment() {
+class ShoppingListFragment : Fragment() {
+
+    private val viewModel: ShoppingListViewModel by viewModels()
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: ShoppingListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_shopping, container, false)
+        val view = inflater.inflate(R.layout.fragment_shopping_list, container, false)
+        recyclerView = view.findViewById(R.id.shoppingListRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        adapter = ShoppingListAdapter { listId ->
+            viewModel.selectList(listId)
+            findNavController().navigate(R.id.action_shoppingFragment_to_shoppingDetailFragment)
+        }
+        recyclerView.adapter = adapter
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val emptyTextView: TextView = view.findViewById(R.id.emptyTextView)
 
-        // --- HOW TO NAVIGATE FROM THIS SCREEN (GUIDE FOR TEAM) ---
-        //
-        // To navigate to a new screen (e.g., ShoppingListDetailsFragment):
-        //
-        // 1. Open `res/navigation/shopping_nav_graph.xml`.
-        // 2. Add your new fragment and define an action to navigate to it.
-        // 3. In this file, find the button or view that triggers navigation.
-        // 4. Set an OnClickListener on that view.
-        // 5. Inside the listener, call:
-        //    findNavController().navigate(R.id.your_action_id_from_the_graph)
+        viewModel.fetchShoppingLists()
+        viewModel.shoppingLists.observe(viewLifecycleOwner) { lists ->
+            adapter.submitList(lists)
+            if (lists.isEmpty()) {
+                emptyTextView.visibility = View.VISIBLE
+                recyclerView.visibility = View.GONE
+            } else {
+                emptyTextView.visibility = View.GONE
+                recyclerView.visibility = View.VISIBLE
+            }
+        }
+
+
     }
 }

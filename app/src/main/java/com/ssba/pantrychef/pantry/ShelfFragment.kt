@@ -13,7 +13,6 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ssba.pantrychef.R
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ShelfFragment : Fragment() {
@@ -47,10 +46,13 @@ class ShelfFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.allItems.collectLatest { list ->
+                viewModel.allItems.observe(viewLifecycleOwner) { list ->
                     adapter.submitList(list.filter { it.location == PantryLocation.PANTRY })
                 }
             }
+        }
+        viewModel.searchQuery.observe(viewLifecycleOwner) { query ->
+            adapter.filter(query) // implement filter in adapter
         }
     }
 }

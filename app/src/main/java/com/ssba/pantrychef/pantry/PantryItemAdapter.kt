@@ -8,11 +8,34 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.ssba.pantrychef.R
 
 class PantryItemAdapter(
     private val onClick: (PantryItem) -> Unit
 ) : ListAdapter<PantryItem, PantryItemAdapter.VH>(DIFF) {
+
+    // Keep a copy of all items for search filtering
+    private var allItems: List<PantryItem> = emptyList()
+
+    override fun submitList(list: List<PantryItem>?) {
+        // Save full list for filtering
+        allItems = list ?: emptyList()
+        super.submitList(list)
+    }
+
+    fun filter(query: String) {
+        val filteredList = if (query.isBlank()) {
+            allItems
+        } else {
+            allItems.filter {
+                it.title.contains(query, ignoreCase = true) ||
+                        it.category.contains(query, ignoreCase = true) ||
+                        it.description.contains(query, ignoreCase = true)
+            }
+        }
+        super.submitList(filteredList)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_pantry, parent, false)
@@ -38,7 +61,7 @@ class PantryItemAdapter(
             quantity.text = "Qty: ${item.quantity}"
             category.text = "Category: ${item.category}"
 
-            /*
+
             item.imageUrl?.let { url ->
                 Glide.with(image.context)
                     .load(url)
@@ -46,7 +69,7 @@ class PantryItemAdapter(
                     .error(R.drawable.sample_food)
                     .into(image)
             }
-            */
+
 
             view.setOnClickListener { onClick(item) }
         }

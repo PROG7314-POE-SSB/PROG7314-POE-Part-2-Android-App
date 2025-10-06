@@ -30,7 +30,7 @@ class FridgeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel = ViewModelProvider(requireActivity()).get(PantryViewModel::class.java)
 
-        recycler = view.findViewById(R.id.recycler_shelf)
+        recycler = view.findViewById(R.id.recycler_fridge)
         recycler.layoutManager = LinearLayoutManager(requireContext())
 
         // Adapter now only handles clicks
@@ -46,10 +46,13 @@ class FridgeFragment : Fragment() {
         // collect and filter
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.allItems.collectLatest { list ->
-                    adapter.submitList(list.filter { it.location == PantryLocation.PANTRY })
+                viewModel.allItems.observe(viewLifecycleOwner) { list ->
+                    adapter.submitList(list.filter { it.location == PantryLocation.FRIDGE })
                 }
             }
+        }
+        viewModel.searchQuery.observe(viewLifecycleOwner) { query ->
+            adapter.filter(query)
         }
     }
 }

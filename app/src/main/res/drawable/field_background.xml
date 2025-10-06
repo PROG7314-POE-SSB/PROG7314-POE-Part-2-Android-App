@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#0DFFC107" /> <!-- A very light yellow background -->
+    <corners android:radius="8dp" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/yellow" /> <!-- Your existing yellow color for the border -->
+</shape>
