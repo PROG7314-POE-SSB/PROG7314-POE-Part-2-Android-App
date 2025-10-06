@@ -1,5 +1,6 @@
 package com.ssba.pantrychef.profile
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -7,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
@@ -39,7 +41,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         // --- Bind all views from the layout ---
         val ivProfileImage = view.findViewById<ImageView>(R.id.ivProfileImage)
         val tvProfileName = view.findViewById<TextView>(R.id.tvProfileName)
-        val tvProfileJoinDate = view.findViewById<TextView>(R.id.tvProfileJoinDate)
         val cardLogout = view.findViewById<MaterialCardView>(R.id.cardLogout)
         val switchDarkMode = view.findViewById<MaterialSwitch>(R.id.switchDarkMode)
         val switchBiometrics = view.findViewById<MaterialSwitch>(R.id.switchBiometrics)
@@ -80,9 +81,23 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         // --- Logout Logic ---
         cardLogout.setOnClickListener {
+            // Get SharedPreferences instance
+            val sharedPreferences =
+                requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+
+            // Clear the saved Dark Mode preference
+            sharedPreferences.edit {
+                remove("DarkMode")
+            }
+
+            // Revert to Light Mode immediately upon logout
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+            // Sign out from Firebase and clear biometric credentials
             Firebase.auth.signOut()
-            // Also clear any saved biometric credentials on logout
             BiometricAuthManager.clearCredentials(requireContext())
+
+            // Navigate to the welcome screen
             val intent = Intent(requireActivity(), WelcomeActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
@@ -95,15 +110,25 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
      * It sets the initial state and listens for user changes to apply the theme.
      */
     private fun setupDarkModeSwitch(switchDarkMode: MaterialSwitch) {
-        // Set the switch to the correct state based on the current app theme
-        switchDarkMode.isChecked = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+
+        // Set the switch's initial state based on the saved preference.
+        switchDarkMode.isChecked = sharedPreferences.getBoolean("DarkMode", false)
+
         switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
+            // Apply the theme change immediately
             val mode = if (isChecked) {
                 AppCompatDelegate.MODE_NIGHT_YES
             } else {
                 AppCompatDelegate.MODE_NIGHT_NO
             }
             AppCompatDelegate.setDefaultNightMode(mode)
+
+            // Save the user's choice to SharedPreferences
+            sharedPreferences.edit {
+                putBoolean("DarkMode", isChecked)
+            }
         }
     }
 
@@ -127,13 +152,18 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             if (isChecked) {
                 // To enable biometrics, we need the user's password, which we don't have here.
                 // This is a security measure. The most user-friendly approach is to inform them.
-                Toast.makeText(requireContext(), "Enable this on your next password login.", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Enable this on your next password login.",
+                    Toast.LENGTH_LONG
+                ).show()
                 // Revert the switch to its original state because we can't complete the action.
                 switchBiometrics.isChecked = false
             } else {
                 // If the user is disabling biometrics, we can simply clear the saved credentials.
                 BiometricAuthManager.clearCredentials(requireContext())
-                Toast.makeText(requireContext(), "Biometric login disabled.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Biometric login disabled.", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
