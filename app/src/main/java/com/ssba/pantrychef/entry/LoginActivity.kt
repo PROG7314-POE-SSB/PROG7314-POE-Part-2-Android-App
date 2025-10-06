@@ -4,6 +4,7 @@ package com.ssba.pantrychef.entry
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,22 +13,32 @@ import androidx.appcompat.app.AlertDialog
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import com.ssba.pantrychef.MainActivity
 import com.ssba.pantrychef.R
 import com.ssba.pantrychef.data.BiometricAuthManager
+import com.ssba.pantrychef.data.UserProfile
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.util.concurrent.Executor
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
 
@@ -40,6 +51,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var btnBiometric: MaterialButton
     private lateinit var etEmail: TextInputEditText
     private lateinit var etPassword: TextInputEditText
+    private lateinit var tvSignUp: TextView
 
     companion object {
         private const val TAG = "LoginActivity"
@@ -49,20 +61,17 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // Initialize Firebase Auth
-        auth = FirebaseAuth.getInstance()
+        auth = Firebase.auth
+        db = Firebase.firestore
 
-        // --- View Initialization ---
         initViews()
-
-        // --- Setup for different login methods ---
         setupGoogleSignIn()
         setupBiometrics()
 
-        // --- Set Click Listeners ---
         btnLogin.setOnClickListener { performEmailLogin() }
         btnGoogleSso.setOnClickListener { performGoogleSignIn() }
         btnBiometric.setOnClickListener { performBiometricLogin() }
+        tvSignUp.setOnClickListener { startActivity(Intent(this, RegisterActivity::class.java)) }
     }
 
     private fun initViews() {
@@ -71,29 +80,25 @@ class LoginActivity : AppCompatActivity() {
         btnBiometric = findViewById(R.id.btnBiometric)
         etEmail = findViewById(R.id.etEmail)
         etPassword = findViewById(R.id.etPassword)
+        tvSignUp = findViewById(R.id.tvSignUp) // Ensure this ID exists in your activity_login.xml
     }
 
     //region Google Sign-In
     private fun setupGoogleSignIn() {
-        // Configure Google Sign-In to request the user's ID, email address, and basic profile.
-        // ID and basic profile are included in DEFAULT_SIGN_IN.
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        // Register a callback for the Google Sign-In result
         googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 try {
                     val account = task.getResult(ApiException::class.java)!!
-                    Log.d(TAG, "Firebase auth with Google account: ${account.id}")
                     firebaseAuthWithGoogle(account.idToken!!)
                 } catch (e: ApiException) {
                     Log.w(TAG, "Google sign in failed", e)
-                    Toast.makeText(this, "Google Sign-In failed.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -104,18 +109,52 @@ class LoginActivity : AppCompatActivity() {
         googleSignInLauncher.launch(signInIntent)
     }
 
+    /**
+     * FIXED: This function now checks if the user is new and routes them accordingly.
+     */
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    navigateToMainApp()
+        lifecycleScope.launch {
+            try {
+                val authResult = auth.signInWithCredential(credential).await()
+                val isNewUser = authResult.additionalUserInfo?.isNewUser ?: false
+                val firebaseUser = authResult.user ?: throw Exception("User is null")
+
+                if (isNewUser) {
+                    // NEW USER: Create their Firestore profile and send to Onboarding.
+                    Log.d(TAG, "New user signed up with Google. Creating profile...")
+                    createSsoUserProfileInFirestore(firebaseUser)
+                    navigateToOnboarding()
                 } else {
-                    Toast.makeText(this, "Firebase Authentication failed.", Toast.LENGTH_SHORT).show()
+                    // RETURNING USER: Go directly to the main app.
+                    Log.d(TAG, "Returning user logged in with Google.")
+                    navigateToMainApp()
                 }
+            } catch (e: Exception) {
+                Log.w(TAG, "firebaseAuthWithGoogle:failure", e)
+                Toast.makeText(this@LoginActivity, "Authentication failed.", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    /**
+     * Creates a profile document in Firestore for a new user signing up via Google.
+     */
+    private suspend fun createSsoUserProfileInFirestore(user: FirebaseUser) {
+        val authProvider = user.providerData.firstOrNull()?.providerId ?: "google.com"
+        val userProfile = UserProfile(
+            email = user.email,
+            displayName = user.displayName,
+            photoURL = user.photoUrl?.toString() ?: "",
+            authProvider = authProvider
+        )
+        val userData = hashMapOf("profile" to userProfile)
+        db.collection("users").document(user.uid).set(userData).await()
+        Log.d(TAG, "Firestore profile created for new Google user.")
     }
     //endregion
+
+    // ... The rest of your LoginActivity file remains the same ...
 
     //region Biometric Login
     private fun setupBiometrics() {
@@ -124,10 +163,9 @@ class LoginActivity : AppCompatActivity() {
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
-                    // Biometric auth success, now log in with stored credentials
                     val (email, password) = BiometricAuthManager.getCredentials(this@LoginActivity)
                     if (email != null && password != null) {
-                        signInWithEmailPassword(email, password, false) // Don't ask to save again
+                        signInWithEmailPassword(email, password, false)
                     } else {
                         Toast.makeText(applicationContext, "Stored credentials not found.", Toast.LENGTH_SHORT).show()
                     }
@@ -135,17 +173,15 @@ class LoginActivity : AppCompatActivity() {
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
-                    Toast.makeText(applicationContext, "Authentication error: $errString", Toast.LENGTH_SHORT).show()
                 }
             })
 
         promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Biometric Login for PantryChef")
+            .setTitle("Biometric Login")
             .setSubtitle("Log in using your biometric credential")
             .setNegativeButtonText("Use account password")
             .build()
 
-        // Check if biometrics can be used and if credentials are saved
         val biometricManager = BiometricManager.from(this)
         if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS &&
             BiometricAuthManager.credentialsExist(this)) {
@@ -169,7 +205,7 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this, "Please enter both email and password.", Toast.LENGTH_SHORT).show()
             return
         }
-        signInWithEmailPassword(email, password, true) // Ask to save credentials on manual login
+        signInWithEmailPassword(email, password, true)
     }
 
     private fun signInWithEmailPassword(email: String, password: String, askToSave: Boolean) {
@@ -190,7 +226,6 @@ class LoginActivity : AppCompatActivity() {
     private fun showEnableBiometricsDialog(email: String, password: String) {
         val biometricManager = BiometricManager.from(this)
         if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) != BiometricManager.BIOMETRIC_SUCCESS) {
-            // If device doesn't support biometrics, just navigate to main app
             navigateToMainApp()
             return
         }
@@ -209,10 +244,19 @@ class LoginActivity : AppCompatActivity() {
     }
     //endregion
 
+    //region Navigation Helpers
     private fun navigateToMainApp() {
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         startActivity(intent)
     }
+
+    private fun navigateToOnboarding() {
+        val intent = Intent(this, OnboardingActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        startActivity(intent)
+    }
+    //endregion
 }
