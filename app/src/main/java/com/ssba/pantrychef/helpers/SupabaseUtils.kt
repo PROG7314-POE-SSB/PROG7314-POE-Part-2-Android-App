@@ -168,4 +168,19 @@ object SupabaseUtils
             Log.e("SupabaseUtils", "Error deleting image from Supabase", e)
         }
     }
+
+    /**
+     * Deletes a recipe image from the Supabase storage bucket.
+     *
+     * @param filePath The path to the file to be deleted (image name [recipeId.jpg]]).
+     */
+    suspend fun deleteRecipeImage(filePath: String) {
+        val client = supabaseClient ?: return
+        try {
+            client.storage.from(RECIPE_BUCKET).delete(filePath)
+            Log.d("SupabaseUtils", "Successfully deleted image at path: $filePath")
+        } catch (e: Exception) {
+            Log.e("SupabaseUtils", "Error deleting image from Supabase", e)
+        }
+    }
 }

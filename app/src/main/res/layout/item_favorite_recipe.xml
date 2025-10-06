@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@android:color/holo_red_dark"
+    app:strokeWidth="1dp"
+    android:id="@+id/favorite_recipe_card">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Recipe Title -->
+        <TextView
+            android:id="@+id/tv_recipe_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Recipe Title"
+            android:textColor="@color/orange_main"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/btn_remove_favorite"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Chocolate Chip Cookies" />
+
+        <!-- Remove Favorite Button -->
+        <ImageButton
+            android:id="@+id/btn_remove_favorite"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Remove from Favorites"
+            android:src="@drawable/ic_heart_filled"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@android:color/holo_red_dark" />
+
+        <!-- Category Name -->
+        <TextView
+            android:id="@+id/tv_category_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/category_badge_bg"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:text="Category"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_recipe_title"
+            tools:text="Desserts" />
+
+        <!-- Date Created -->
+        <TextView
+            android:id="@+id/tv_date_created"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="9dp"
+            android:text="Favorited Oct 6"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/tv_category_name"
+            app:layout_constraintTop_toBottomOf="@+id/tv_recipe_title"
+            tools:text="Favorited Oct 6" />
+
+        <!-- Recipe Image -->
+        <ImageView
+            android:id="@+id/iv_recipe_image"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/image_placeholder_bg"
+            android:contentDescription="Recipe Image"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_category_name"
+            tools:src="@drawable/ic_default_image" />
+
+        <!-- Recipe Description -->
+        <TextView
+            android:id="@+id/tv_recipe_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="Recipe description goes here..."
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_recipe_image"
+            tools:text="Delicious homemade chocolate chip cookies that are crispy on the outside and chewy on the inside." />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

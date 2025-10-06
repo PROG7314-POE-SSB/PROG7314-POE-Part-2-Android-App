@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige_bg"
+    tools:context=".discover.saved_recipes.ViewUserRecipeFragment">
+
+    <!-- Header -->
+    <LinearLayout
+        android:id="@+id/header_container"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="24dp"
+            android:layout_height="25dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back Button"
+            android:src="@drawable/vector_arrow_back"
+            app:tint="@color/orange_main" />
+
+        <TextView
+            android:id="@+id/tv_recipe_title_header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Recipe Title"
+            android:textColor="@color/orange_main"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="Chocolate Chip Cookies" />
+
+        <ImageButton
+            android:id="@+id/btnShare"
+            android:layout_width="24dp"
+            android:layout_height="25dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Share Recipe"
+            android:src="@drawable/ic_share"
+            app:tint="@color/orange_main" />
+
+    </LinearLayout>
+
+    <!-- ScrollView for content -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_container">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <!-- Recipe Image -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/image_card"
+                android:layout_width="0dp"
+                android:layout_height="250dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:strokeColor="@color/orange_main"
+                app:strokeWidth="1dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/iv_recipe_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Recipe Image"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_default_image" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Recipe Title -->
+            <TextView
+                android:id="@+id/tv_recipe_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Recipe Title"
+                android:textColor="@color/orange_main"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/image_card"
+                tools:text="Chocolate Chip Cookies" />
+
+            <!-- Recipe Details Row -->
+            <LinearLayout
+                android:id="@+id/details_row"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_recipe_title">
+
+                <TextView
+                    android:id="@+id/tv_servings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:text="Serves 4"
+                    android:textColor="@color/orange_main"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="Serves 6" />
+
+                <TextView
+                    android:id="@+id/tv_date_created"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/recipe_count_bg"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:text="Oct 6, 2025"
+                    android:textColor="@color/orange_main"
+                    android:textSize="14sp"
+                    tools:text="Oct 6, 2025" />
+
+            </LinearLayout>
+
+            <!-- Recipe Description -->
+            <TextView
+                android:id="@+id/tv_recipe_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Recipe description goes here..."
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:lineSpacingExtra="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/details_row"
+                tools:text="Delicious homemade chocolate chip cookies that are crispy on the outside and chewy on the inside. Perfect for any occasion!" />
+
+            <!-- Ingredients Section -->
+            <TextView
+                android:id="@+id/tv_ingredients_header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Ingredients"
+                android:textColor="@color/orange_main"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_recipe_description" />
+
+            <!-- Ingredients RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_ingredients"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:nestedScrollingEnabled="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_ingredients_header"
+                tools:itemCount="1"
+                tools:listitem="@layout/item_ingredient_view" />
+
+            <!-- Generate Shopping List Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_generate_shopping_list"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingVertical="12dp"
+                android:text="Generate Shopping List"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                app:backgroundTint="@color/yellow"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_shopping_list"
+                app:iconTint="@android:color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rv_ingredients" />
+
+            <!-- Instructions Section -->
+            <TextView
+                android:id="@+id/tv_instructions_header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Instructions"
+                android:textColor="@color/orange_main"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btn_generate_shopping_list" />
+
+            <!-- Instructions RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_instructions"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:nestedScrollingEnabled="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_instructions_header"
+                tools:itemCount="1"
+                tools:listitem="@layout/item_instruction_view" />
+
+            <!-- Chat with CulinaryGPT Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_chat_culinary_gpt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:paddingVertical="12dp"
+                android:text="Chat with CulinaryGPT"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                app:backgroundTint="@color/orange_main"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_chat"
+                app:iconTint="@android:color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rv_instructions" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
