@@ -11,5 +11,5 @@
     <color name="favorites_bg">#FFEBEE</color>
     <color name="gray_text">#757575</color>
     <color name="recipe_card_bg">#FFF8E1</color>
-
+    <color name="pantry_placeholder_bg">#F5F5F5</color>
 </resources>

@@ -1,39 +1,303 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Layout for the main HomeFragment.
-    Team members should build the home screen UI in this file.
--->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/beige_bg"
+    android:fillViewport="true"
     tools:context=".home.HomeFragment">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center"
-        android:gravity="center">
+        android:paddingBottom="24dp">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- Header Section with Greeting -->
+        <LinearLayout
+            android:id="@+id/header_container"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Home Fragment"
-            android:textSize="24sp" />
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingTop="24dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <!--
-            EXAMPLE: This is a placeholder button. A developer can use this
-            to navigate to a new screen they create, like a recipe details page.
-            They would add an ID to it and reference it in HomeFragment.kt.
-        -->
-        <Button
-            android:id="@+id/btn_navigate_to_details"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/tv_greeting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hi, Sashveer!"
+                android:textColor="@color/orange_main"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                tools:text="Hi, Sashveer!" />
+
+            <TextView
+                android:id="@+id/tv_subtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="What are you cooking today?"
+                android:textColor="@color/gray_text"
+                android:textSize="18sp"
+                android:alpha="0.9" />
+
+        </LinearLayout>
+
+        <!-- Favorite Recipe Section -->
+        <LinearLayout
+            android:id="@+id/favorite_section_header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_container">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_heart_filled"
+                app:tint="@android:color/holo_red_dark"
+                android:contentDescription="Favorite Icon" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Favorite Recipe"
+                android:textColor="@color/orange_main"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Favorite Recipe Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/favorite_recipe_card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            app:strokeColor="@android:color/holo_red_dark"
+            app:strokeWidth="1dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/favorite_section_header">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <!-- Recipe Image -->
+                <ImageView
+                    android:id="@+id/iv_favorite_recipe_image"
+                    android:layout_width="0dp"
+                    android:layout_height="180dp"
+                    android:background="@drawable/image_placeholder_bg"
+                    android:contentDescription="Favorite Recipe Image"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/ic_default_image" />
+
+                <!-- Recipe Title -->
+                <TextView
+                    android:id="@+id/tv_favorite_recipe_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Recipe Title"
+                    android:textColor="@color/orange_main"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/iv_favorite_recipe_image"
+                    tools:text="Chocolate Chip Cookies" />
+
+                <!-- Category Tag -->
+                <TextView
+                    android:id="@+id/tv_favorite_recipe_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/category_tag_bg"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:text="Desserts"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_favorite_recipe_title"
+                    tools:text="Desserts" />
+
+                <!-- Recipe Description -->
+                <TextView
+                    android:id="@+id/tv_favorite_recipe_description"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="Recipe description goes here..."
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_favorite_recipe_category"
+                    tools:text="Delicious homemade chocolate chip cookies perfect for any occasion." />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- According to Your Taste Section -->
+        <LinearLayout
+            android:id="@+id/taste_section_header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="24dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/favorite_recipe_card">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_restaurant"
+                app:tint="@color/orange_main"
+                android:contentDescription="Taste Icon" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="According to Your Taste"
+                android:textColor="@color/orange_main"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Horizontal RecyclerView for Taste Recommendations -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_taste_recommendations"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Go to Recipe Details (Example)" />
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/taste_section_header"
+            tools:listitem="@layout/item_home_recipe"
+            tools:itemCount="1"/>
 
-    </LinearLayout>
 
-</FrameLayout>
+        <!-- Your Pantry Section -->
+        <LinearLayout
+            android:id="@+id/pantry_section_header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="24dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rv_taste_recommendations">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_pantry"
+                app:tint="@color/orange_main"
+                android:contentDescription="Pantry Icon" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Your Pantry"
+                android:textColor="@color/orange_main"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Pantry Placeholder Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/pantry_placeholder_card"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="20dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:strokeColor="@color/orange_main"
+            app:strokeWidth="1dp"
+            app:cardBackgroundColor="@color/pantry_placeholder_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pantry_section_header">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_pantry"
+                    app:tint="@color/orange_main"
+                    android:alpha="0.6"
+                    android:contentDescription="Pantry Placeholder" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Coming Soon!"
+                    android:textColor="@color/gray_text"
+                    android:textSize="16sp"
+                    android:textStyle="italic" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>
