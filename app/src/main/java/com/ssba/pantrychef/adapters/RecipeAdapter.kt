@@ -51,6 +51,7 @@ class RecipeAdapter(
         private val btnFavorite: ImageButton = itemView.findViewById(R.id.btn_favorite_recipe)
         private val btnDelete: ImageButton = itemView.findViewById(R.id.btn_delete_recipe)
 
+        @Suppress("DEPRECATION")
         fun bind(recipe: Recipe) {
             recipeTitle.text = recipe.title
             recipeDescription.text = recipe.description.ifBlank { "No description available" }

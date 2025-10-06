@@ -9,6 +9,17 @@
         android:id="@+id/homeFragment"
         android:name="com.ssba.pantrychef.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_homeFragment_to_viewUserRecipeFragment"
+            app:destination="@id/viewUserRecipeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/viewUserRecipeFragment"
+        android:name="com.ssba.pantrychef.discover.saved_recipes.ViewUserRecipeFragment"
+        android:label="View Recipe"
+        tools:layout="@layout/fragment_view_user_recipe" />
 
 </navigation>

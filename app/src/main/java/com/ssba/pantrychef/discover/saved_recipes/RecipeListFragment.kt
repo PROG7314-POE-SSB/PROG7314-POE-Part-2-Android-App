@@ -20,6 +20,7 @@ import com.ssba.pantrychef.adapters.RecipeAdapter
 import com.ssba.pantrychef.data.recipe_models.Recipe
 import com.ssba.pantrychef.data.repositories.RecipeRepository
 import com.ssba.pantrychef.data.repositories.RecipeFavoritesRepository
+import com.ssba.pantrychef.data.repositories.RecipeCategoryRepository
 import com.ssba.pantrychef.helpers.SupabaseUtils
 import kotlinx.coroutines.launch
 
@@ -27,12 +28,15 @@ class RecipeListFragment : Fragment() {
 
     private lateinit var adapter: RecipeAdapter
     private lateinit var repository: RecipeRepository
+    private lateinit var categoryRepository: RecipeCategoryRepository
     private lateinit var favoritesRepository: RecipeFavoritesRepository
     private var categoryName: String = ""
     private var favoriteRecipeIds = mutableSetOf<String>()
 
     private lateinit var emptyStateContainer: LinearLayout
     private lateinit var recyclerView: RecyclerView
+    private lateinit var tvCategoryDescription: TextView
+    private lateinit var tvRecipeCount: TextView
 
     companion object {
         const val ARG_CATEGORY_NAME = "categoryName"
@@ -49,12 +53,15 @@ class RecipeListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         repository = RecipeRepository()
+        categoryRepository = RecipeCategoryRepository()
         favoritesRepository = RecipeFavoritesRepository()
         categoryName = arguments?.getString(ARG_CATEGORY_NAME) ?: ""
 
         // Bind views
         val btnBack = view.findViewById<ImageButton>(R.id.btnBack)
         val tvCategoryName = view.findViewById<TextView>(R.id.tv_category_name)
+        tvCategoryDescription = view.findViewById<TextView>(R.id.tv_category_description)
+        tvRecipeCount = view.findViewById<TextView>(R.id.tv_recipe_count)
         recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view_recipes)
         val fabCreateRecipe = view.findViewById<FloatingActionButton>(R.id.fab_create_recipe)
         emptyStateContainer = view.findViewById<LinearLayout>(R.id.empty_state_container)
@@ -76,6 +83,7 @@ class RecipeListFragment : Fragment() {
         }
 
         // Load data
+        loadCategoryInfo()
         loadFavoriteIds()
         loadRecipes()
     }
@@ -84,6 +92,37 @@ class RecipeListFragment : Fragment() {
         super.onResume()
         // Refresh favorites when returning to this fragment
         loadFavoriteIds()
+        loadRecipes() // Also refresh recipe count
+    }
+
+    private fun loadCategoryInfo() {
+        lifecycleScope.launch {
+            categoryRepository.getCategories()
+                .onSuccess { categories ->
+                    val category = categories.find { it.categoryName == categoryName }
+                    if (category != null) {
+                        // Show description if it exists and is not blank
+                        if (!category.categoryDescription.isNullOrBlank()) {
+                            tvCategoryDescription.text = category.categoryDescription
+                            tvCategoryDescription.visibility = View.VISIBLE
+                        } else {
+                            tvCategoryDescription.visibility = View.GONE
+                        }
+
+                        // Update recipe count
+                        updateRecipeCount(category.recipeCount)
+                    }
+                }
+                .onFailure {
+                    tvCategoryDescription.visibility = View.GONE
+                    updateRecipeCount(0)
+                }
+        }
+    }
+
+    private fun updateRecipeCount(count: Int) {
+        val recipeText = if (count == 1) "1 recipe" else "$count recipes"
+        tvRecipeCount.text = recipeText
     }
 
     private fun setupRecyclerView() {
@@ -124,8 +163,10 @@ class RecipeListFragment : Fragment() {
                 .onSuccess { recipes ->
                     if (recipes.isEmpty()) {
                         showEmptyState()
+                        updateRecipeCount(0)
                     } else {
                         showRecipeList()
+                        updateRecipeCount(recipes.size)
                         adapter.submitList(recipes)
                     }
                 }
@@ -136,6 +177,7 @@ class RecipeListFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                     showEmptyState()
+                    updateRecipeCount(0)
                 }
         }
     }

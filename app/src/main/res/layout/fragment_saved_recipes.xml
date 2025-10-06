@@ -7,49 +7,92 @@
     tools:context=".discover.saved_recipes.SavedRecipesFragment"
     android:background="@color/beige_bg">
 
-    <!-- Header -->
-    <LinearLayout
+    <!-- Modern Header Section -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
         android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
         android:paddingStart="20dp"
+        android:paddingTop="20dp"
         android:paddingEnd="20dp"
-        android:gravity="center_vertical"
+        android:paddingBottom="24dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Back Button -->
         <ImageButton
             android:id="@+id/btnBack"
-            android:layout_width="24dp"
-            android:layout_height="25dp"
-            android:contentDescription="BackButton"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/back_button_bg"
+            android:contentDescription="Back Button"
             android:src="@drawable/vector_arrow_back"
-            android:background="@android:color/transparent"/>
+            app:tint="@color/orange_main"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/header_title"
+        <!-- Header Content -->
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Saved Recipes"
-            android:textSize="20sp"
-            android:textColor="@color/orange_main"
             android:layout_marginStart="16dp"
-            android:layout_weight="1"
-            android:gravity="center" />
-    </LinearLayout>
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btnBack"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- Main Title with Icon -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_recipe_book"
+                    app:tint="@color/orange_main"
+                    android:contentDescription="Recipe Collection Icon" />
+
+                <TextView
+                    android:id="@+id/header_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Saved Recipes"
+                    android:textColor="@color/orange_main"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- Subtitle -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Organize and explore your recipe collection"
+                android:textColor="@color/gray_text"
+                android:textSize="16sp"
+                android:alpha="0.9" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Favorites Category Card (Direct implementation) -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/favorites_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="12dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="6dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="8dp"
         app:strokeColor="#F44336"
         app:strokeWidth="2dp"
         android:clickable="true"
@@ -62,12 +105,12 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:padding="24dp">
 
             <ImageView
                 android:id="@+id/iv_favorites_icon"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:src="@drawable/ic_favorite_star"
                 app:tint="#F44336"
                 app:layout_constraintStart_toStartOf="parent"
@@ -77,10 +120,10 @@
                 android:id="@+id/tv_favorites_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="16dp"
                 android:text="My Favorites"
                 android:textColor="#F44336"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/tv_favorites_count"
                 app:layout_constraintStart_toEndOf="@+id/iv_favorites_icon"
@@ -91,8 +134,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/favorites_count_bg"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="6dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
                 android:text="0 recipes"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
@@ -104,11 +147,11 @@
                 android:id="@+id/tv_favorites_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:text="Your saved favorite recipes from all categories"
                 android:textColor="#F44336"
-                android:textSize="14sp"
-                android:alpha="0.8"
+                android:textSize="15sp"
+                android:alpha="0.85"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/tv_favorites_title"
                 app:layout_constraintTop_toBottomOf="@+id/tv_favorites_title" />
@@ -117,21 +160,56 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Section Title for User Categories -->
-    <TextView
-        android:id="@+id/tv_my_categories"
+    <!-- Enhanced Section Header for User Categories -->
+    <LinearLayout
+        android:id="@+id/categories_section_header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="28dp"
         android:layout_marginEnd="20dp"
-        android:text="My Categories"
-        android:textColor="@color/orange_main"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/favorites_card" />
+        app:layout_constraintTop_toBottomOf="@id/favorites_card">
+
+        <!-- Categories Title with Icon -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_category"
+                app:tint="@color/orange_main"
+                android:contentDescription="Categories Icon" />
+
+            <TextView
+                android:id="@+id/tv_my_categories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="My Categories"
+                android:textColor="@color/orange_main"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Categories Subtitle -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Organize your recipes into collections"
+            android:textColor="@color/gray_text"
+            android:textSize="14sp"
+            android:alpha="0.8" />
+
+    </LinearLayout>
 
     <!-- Empty State Container -->
     <LinearLayout
@@ -144,7 +222,7 @@
         app:layout_constraintBottom_toTopOf="@id/create_collection_fab"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_my_categories">
+        app:layout_constraintTop_toBottomOf="@id/categories_section_header">
 
         <ImageView
             android:layout_width="120dp"
@@ -181,7 +259,7 @@
             android:text="Create First Category"
             android:textColor="@android:color/white"
             app:backgroundTint="@color/orange_main"
-            app:cornerRadius="8dp"
+            app:cornerRadius="12dp"
             android:paddingHorizontal="24dp"
             android:paddingVertical="12dp" />
 
@@ -193,16 +271,16 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="12dp"
         android:clipToPadding="false"
         android:paddingBottom="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_my_categories" />
+        app:layout_constraintTop_toBottomOf="@id/categories_section_header" />
 
-    <!-- Floating Action Button to create a new recipe -->
+    <!-- Floating Action Button to create a new recipe category -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/create_collection_fab"
         android:layout_width="56dp"
