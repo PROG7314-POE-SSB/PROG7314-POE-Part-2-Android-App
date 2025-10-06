@@ -5,9 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssba.pantrychef.pantry.data.PantryApiService
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.*
@@ -32,22 +29,25 @@ sealed class PantryUiEvent {
 class PantryViewModel(
     baseUrl: String = "https://pantry-chef-shravan.loca.lt"
 ) : ViewModel() {
-    private val _searchQuery = MutableLiveData("")
-    val searchQuery: LiveData<String> get() = _searchQuery
 
-    fun updateSearchQuery(query: String) {
-        _searchQuery.value = query
-    }
     private val apiService = PantryApiService(baseUrl)
 
-    private val _allItems = MutableStateFlow<List<PantryItem>>(emptyList())
-    val allItems: StateFlow<List<PantryItem>> = _allItems.asStateFlow()
+    // Search query
+    private val _searchQuery = MutableLiveData("")
+    val searchQuery: LiveData<String> get() = _searchQuery
+    fun updateSearchQuery(query: String) { _searchQuery.value = query }
 
-    private val _currentItemState = MutableStateFlow(PantryItemUiState())
-    val currentItemState: StateFlow<PantryItemUiState> = _currentItemState.asStateFlow()
+    // All items
+    private val _allItems = MutableLiveData<List<PantryItem>>(emptyList())
+    val allItems: LiveData<List<PantryItem>> get() = _allItems
 
-    private val _uiEvent = MutableStateFlow<PantryUiEvent>(PantryUiEvent.Idle)
-    val uiEvent: StateFlow<PantryUiEvent> = _uiEvent.asStateFlow()
+    // Current item being edited
+    private val _currentItemState = MutableLiveData(PantryItemUiState())
+    val currentItemState: LiveData<PantryItemUiState> get() = _currentItemState
+
+    // UI event (loading, error, success)
+    private val _uiEvent = MutableLiveData<PantryUiEvent>(PantryUiEvent.Idle)
+    val uiEvent: LiveData<PantryUiEvent> get() = _uiEvent
 
     private var editingItemId: String? = null
 
@@ -56,7 +56,7 @@ class PantryViewModel(
     // -------------------------------------------------------------------------
     fun loadItem(itemId: String?) {
         editingItemId = itemId
-        val item = _allItems.value.find { it.id == itemId }
+        val item = _allItems.value?.find { it.id == itemId }
         _currentItemState.value = if (item != null) {
             PantryItemUiState(
                 title = item.title,
@@ -70,13 +70,17 @@ class PantryViewModel(
         } else PantryItemUiState()
     }
 
-    fun updateTitle(title: String) = _currentItemState.update { it.copy(title = title) }
-    fun updateDescription(desc: String) = _currentItemState.update { it.copy(description = desc) }
-    fun updateExpiryDate(date: String) = _currentItemState.update { it.copy(expiryDate = date) }
-    fun updateQuantity(quantity: Int) = _currentItemState.update { it.copy(quantity = quantity) }
-    fun updateCategory(category: String) = _currentItemState.update { it.copy(category = category) }
-    fun updateLocation(location: PantryLocation) = _currentItemState.update { it.copy(location = location) }
-    fun updateImage(uri: String?) = _currentItemState.update { it.copy(imageUri = uri) }
+    fun updateTitle(title: String) = updateCurrent { it.copy(title = title) }
+    fun updateDescription(desc: String) = updateCurrent { it.copy(description = desc) }
+    fun updateExpiryDate(date: String) = updateCurrent { it.copy(expiryDate = date) }
+    fun updateQuantity(quantity: Int) = updateCurrent { it.copy(quantity = quantity) }
+    fun updateCategory(category: String) = updateCurrent { it.copy(category = category) }
+    fun updateLocation(location: PantryLocation) = updateCurrent { it.copy(location = location) }
+    fun updateImage(uri: String?) = updateCurrent { it.copy(imageUri = uri) }
+
+    private fun updateCurrent(transform: (PantryItemUiState) -> PantryItemUiState) {
+        _currentItemState.value = transform(_currentItemState.value ?: PantryItemUiState())
+    }
 
     // -------------------------------------------------------------------------
     // Network operations
@@ -96,7 +100,7 @@ class PantryViewModel(
     }
 
     fun saveCurrentItem() {
-        val state = _currentItemState.value
+        val state = _currentItemState.value ?: return
         val item = PantryItem(
             id = editingItemId ?: generateNewId(),
             title = state.title,
@@ -116,7 +120,7 @@ class PantryViewModel(
             _uiEvent.value = PantryUiEvent.Loading
             try {
                 val created = apiService.addItem(item)
-                _allItems.value = _allItems.value + created
+                _allItems.value = (_allItems.value ?: emptyList()) + created
                 _uiEvent.value = PantryUiEvent.Success("Item added successfully")
             } catch (e: IOException) {
                 _uiEvent.value = PantryUiEvent.Error(e.message ?: "Failed to add item")
@@ -129,7 +133,7 @@ class PantryViewModel(
             _uiEvent.value = PantryUiEvent.Loading
             try {
                 val result = apiService.updateItem(updated.id, updated)
-                _allItems.value = _allItems.value.map { if (it.id == result.id) result else it }
+                _allItems.value = _allItems.value?.map { if (it.id == result.id) result else it }
                 _uiEvent.value = PantryUiEvent.Success("Item updated successfully")
             } catch (e: IOException) {
                 _uiEvent.value = PantryUiEvent.Error(e.message ?: "Failed to update item")
@@ -142,7 +146,7 @@ class PantryViewModel(
             _uiEvent.value = PantryUiEvent.Loading
             try {
                 apiService.deleteItem(itemId)
-                _allItems.value = _allItems.value.filterNot { it.id == itemId }
+                _allItems.value = _allItems.value?.filterNot { it.id == itemId }
                 _uiEvent.value = PantryUiEvent.Success("Item deleted successfully")
             } catch (e: IOException) {
                 _uiEvent.value = PantryUiEvent.Error(e.message ?: "Failed to delete item")
@@ -156,9 +160,5 @@ class PantryViewModel(
     fun generateNewId(): String = UUID.randomUUID().toString()
 
     fun getItemsFor(location: PantryLocation): List<PantryItem> =
-        _allItems.value.filter { it.location == location }
-
-    private fun <T> MutableStateFlow<T>.update(transform: (T) -> T) {
-        this.value = transform(this.value)
-    }
+        _allItems.value?.filter { it.location == location } ?: emptyList()
 }

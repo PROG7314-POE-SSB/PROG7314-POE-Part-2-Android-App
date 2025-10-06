@@ -46,8 +46,8 @@ class FridgeFragment : Fragment() {
         // collect and filter
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.allItems.collectLatest { list ->
-                    adapter.submitList(list.filter { it.location == PantryLocation.PANTRY })
+                viewModel.allItems.observe(viewLifecycleOwner) { list ->
+                    adapter.submitList(list.filter { it.location == PantryLocation.FRIDGE })
                 }
             }
         }

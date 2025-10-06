@@ -46,10 +46,9 @@ class FreezerFragment : Fragment() {
         recycler.adapter = adapter
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.allItems.collectLatest { list ->
-                    adapter.submitList(list.filter { it.location == PantryLocation.PANTRY })
-                }
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {viewModel.allItems.observe(viewLifecycleOwner) { list ->
+                adapter.submitList(list.filter { it.location == PantryLocation.PANTRY })
+            }
             }
         }
         viewModel.searchQuery.observe(viewLifecycleOwner) { query ->

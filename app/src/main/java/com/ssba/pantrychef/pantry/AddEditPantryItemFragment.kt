@@ -11,11 +11,11 @@ import androidx.core.net.toUri
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ssba.pantrychef.R
 import com.ssba.pantrychef.helpers.SupabaseUtils
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -134,17 +134,15 @@ class AddEditPantryItemFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        lifecycleScope.launch {
-            viewModel.currentItemState.collectLatest { state ->
-                titleEdit.setText(state.title)
-                descEdit.setText(state.description)
-                expiryEdit.setText(state.expiryDate)
-                quantityEdit.setText(state.quantity.toString())
-                categoryEdit.setText(state.category)
-                locationSpinner.setSelection(state.location.ordinal)
-                state.imageUri?.let { imageView.setImageURI(Uri.parse(it)) }
-            }
-        }
+        viewModel.currentItemState.observe(viewLifecycleOwner, Observer { state ->
+            titleEdit.setText(state.title)
+            descEdit.setText(state.description)
+            expiryEdit.setText(state.expiryDate)
+            quantityEdit.setText(state.quantity.toString())
+            categoryEdit.setText(state.category)
+            locationSpinner.setSelection(state.location.ordinal)
+            state.imageUri?.let { imageView.setImageURI(Uri.parse(it)) }
+        })
     }
 
     private fun setupTextWatchers() {
@@ -177,7 +175,6 @@ class AddEditPantryItemFragment : Fragment() {
                 }
             }
 
-            // Save image and data
             lifecycleScope.launch {
                 val context = requireContext()
                 imageUri?.let {
