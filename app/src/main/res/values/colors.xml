@@ -10,5 +10,6 @@
     <color name="black">#FF000000</color>
     <color name="favorites_bg">#FFEBEE</color>
     <color name="gray_text">#757575</color>
+    <color name="recipe_card_bg">#FFF8E1</color>
 
 </resources>
