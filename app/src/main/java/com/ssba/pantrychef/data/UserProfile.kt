@@ -21,3 +21,7 @@ data class UserProfile(
     @ServerTimestamp // This annotation tells Firestore to automatically populate this field
     val createdAt: Timestamp? = null
 )
+{
+    // No-argument constructor for Firestore
+    constructor() : this(null, null, "", null, null)
+}

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="200dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@color/orange_main"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Recipe Image -->
+        <ImageView
+            android:id="@+id/iv_recipe_image"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:background="@drawable/image_placeholder_bg"
+            android:contentDescription="Recipe Image"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_default_image" />
+
+        <!-- Recipe Title -->
+        <TextView
+            android:id="@+id/tv_recipe_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Recipe Title"
+            android:textColor="@color/orange_main"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_recipe_image"
+            tools:text="Pasta Carbonara" />
+
+        <!-- Date and Category Row -->
+        <LinearLayout
+            android:id="@+id/date_category_row"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_recipe_title">
+
+            <TextView
+                android:id="@+id/tv_recipe_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Oct 6"
+                android:textColor="@color/gray_text"
+                android:textSize="12sp"
+                tools:text="Oct 6" />
+
+            <TextView
+                android:id="@+id/tv_recipe_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/category_tag_small_bg"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:text="Category"
+                android:textColor="@color/orange_main"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                tools:text="Italian" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

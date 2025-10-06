@@ -1,0 +1,300 @@
+package com.ssba.pantrychef.discover.saved_recipes
+
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.ssba.pantrychef.R
+import com.ssba.pantrychef.adapters.RecipeAdapter
+import com.ssba.pantrychef.data.recipe_models.Recipe
+import com.ssba.pantrychef.data.repositories.RecipeRepository
+import com.ssba.pantrychef.data.repositories.RecipeFavoritesRepository
+import com.ssba.pantrychef.data.repositories.RecipeCategoryRepository
+import com.ssba.pantrychef.helpers.SupabaseUtils
+import kotlinx.coroutines.launch
+
+class RecipeListFragment : Fragment() {
+
+    private lateinit var adapter: RecipeAdapter
+    private lateinit var repository: RecipeRepository
+    private lateinit var categoryRepository: RecipeCategoryRepository
+    private lateinit var favoritesRepository: RecipeFavoritesRepository
+    private var categoryName: String = ""
+    private var favoriteRecipeIds = mutableSetOf<String>()
+
+    private lateinit var emptyStateContainer: LinearLayout
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var tvCategoryDescription: TextView
+    private lateinit var tvRecipeCount: TextView
+
+    companion object {
+        const val ARG_CATEGORY_NAME = "categoryName"
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_recipe_list, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        repository = RecipeRepository()
+        categoryRepository = RecipeCategoryRepository()
+        favoritesRepository = RecipeFavoritesRepository()
+        categoryName = arguments?.getString(ARG_CATEGORY_NAME) ?: ""
+
+        // Bind views
+        val btnBack = view.findViewById<ImageButton>(R.id.btnBack)
+        val tvCategoryName = view.findViewById<TextView>(R.id.tv_category_name)
+        tvCategoryDescription = view.findViewById<TextView>(R.id.tv_category_description)
+        tvRecipeCount = view.findViewById<TextView>(R.id.tv_recipe_count)
+        recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view_recipes)
+        val fabCreateRecipe = view.findViewById<FloatingActionButton>(R.id.fab_create_recipe)
+        emptyStateContainer = view.findViewById<LinearLayout>(R.id.empty_state_container)
+
+        // Set category name
+        tvCategoryName.text = categoryName
+
+        // Setup RecyclerView
+        setupRecyclerView()
+
+        // Back button functionality
+        btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        // FAB click listener
+        fabCreateRecipe.setOnClickListener {
+            navigateToCreateRecipe()
+        }
+
+        // Load data
+        loadCategoryInfo()
+        loadFavoriteIds()
+        loadRecipes()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Refresh favorites when returning to this fragment
+        loadFavoriteIds()
+        loadRecipes() // Also refresh recipe count
+    }
+
+    private fun loadCategoryInfo() {
+        lifecycleScope.launch {
+            categoryRepository.getCategories()
+                .onSuccess { categories ->
+                    val category = categories.find { it.categoryName == categoryName }
+                    if (category != null) {
+                        // Show description if it exists and is not blank
+                        if (!category.categoryDescription.isNullOrBlank()) {
+                            tvCategoryDescription.text = category.categoryDescription
+                            tvCategoryDescription.visibility = View.VISIBLE
+                        } else {
+                            tvCategoryDescription.visibility = View.GONE
+                        }
+
+                        // Update recipe count
+                        updateRecipeCount(category.recipeCount)
+                    }
+                }
+                .onFailure {
+                    tvCategoryDescription.visibility = View.GONE
+                    updateRecipeCount(0)
+                }
+        }
+    }
+
+    private fun updateRecipeCount(count: Int) {
+        val recipeText = if (count == 1) "1 recipe" else "$count recipes"
+        tvRecipeCount.text = recipeText
+    }
+
+    private fun setupRecyclerView() {
+        adapter = RecipeAdapter(
+            onRecipeClick = { recipe ->
+                onRecipeClick(recipe)
+            },
+            onDeleteClick = { recipe ->
+                showDeleteConfirmationDialog(recipe)
+            },
+            onFavoriteClick = { recipe ->
+                toggleFavorite(recipe)
+            },
+            favoriteRecipeIds = favoriteRecipeIds
+        )
+
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
+    }
+
+    private fun loadFavoriteIds() {
+        lifecycleScope.launch {
+            favoritesRepository.getFavoriteRecipes()
+                .onSuccess { favorites ->
+                    favoriteRecipeIds.clear()
+                    favoriteRecipeIds.addAll(
+                        favorites.filter { it.categoryName == categoryName }
+                            .map { it.recipeId }
+                    )
+                    adapter.updateFavorites(favoriteRecipeIds)
+                }
+        }
+    }
+
+    private fun loadRecipes() {
+        lifecycleScope.launch {
+            repository.getRecipesForCategory(categoryName)
+                .onSuccess { recipes ->
+                    if (recipes.isEmpty()) {
+                        showEmptyState()
+                        updateRecipeCount(0)
+                    } else {
+                        showRecipeList()
+                        updateRecipeCount(recipes.size)
+                        adapter.submitList(recipes)
+                    }
+                }
+                .onFailure { exception ->
+                    Toast.makeText(
+                        context,
+                        "Failed to load recipes: ${exception.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    showEmptyState()
+                    updateRecipeCount(0)
+                }
+        }
+    }
+
+    private fun toggleFavorite(recipe: Recipe) {
+        lifecycleScope.launch {
+            val isFavorite = favoriteRecipeIds.contains(recipe.recipeId)
+
+            if (isFavorite) {
+                // Remove from favorites
+                favoritesRepository.removeFromFavorites(recipe.recipeId, categoryName)
+                    .onSuccess {
+                        favoriteRecipeIds.remove(recipe.recipeId)
+                        Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT).show()
+                    }
+                    .onFailure { exception ->
+                        Toast.makeText(
+                            context,
+                            "Failed to remove from favorites: ${exception.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            } else {
+                // Add to favorites
+                favoritesRepository.addToFavorites(recipe.recipeId, categoryName)
+                    .onSuccess {
+                        favoriteRecipeIds.add(recipe.recipeId)
+                        Toast.makeText(context, "Added to favorites", Toast.LENGTH_SHORT).show()
+                    }
+                    .onFailure { exception ->
+                        Toast.makeText(
+                            context,
+                            "Failed to add to favorites: ${exception.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+        }
+    }
+
+    private fun showEmptyState() {
+        emptyStateContainer.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+    }
+
+    private fun showRecipeList() {
+        emptyStateContainer.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
+    }
+
+    private fun onRecipeClick(recipe: Recipe) {
+        val bundle = Bundle().apply {
+            putString(ViewUserRecipeFragment.ARG_CATEGORY_NAME, categoryName)
+            putString(ViewUserRecipeFragment.ARG_RECIPE_ID, recipe.recipeId)
+        }
+
+        findNavController().navigate(
+            R.id.action_recipeListFragment_to_viewUserRecipeFragment,
+            bundle
+        )
+    }
+
+    private fun showDeleteConfirmationDialog(recipe: Recipe) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Recipe")
+            .setMessage("Are you sure you want to delete recipe - ${recipe.title}?")
+            .setPositiveButton("Delete") { _, _ ->
+                deleteRecipe(recipe)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun deleteRecipe(recipe: Recipe) {
+        lifecycleScope.launch {
+            try {
+                // First delete from Firestore
+                repository.deleteRecipe(categoryName, recipe.recipeId)
+                    .onSuccess {
+                        // Remove from favorites if it exists
+                        favoritesRepository.removeFromFavorites(recipe.recipeId, categoryName)
+
+                        // Delete image from Supabase if it exists
+                        if (recipe.imageURL.isNotEmpty()) {
+                            val filename = "${recipe.recipeId}.jpg"
+                            SupabaseUtils.init(requireContext())
+                            SupabaseUtils.deleteRecipeImage(filename)
+                        }
+
+                        Toast.makeText(context, "Recipe deleted successfully", Toast.LENGTH_SHORT).show()
+                        loadRecipes() // Refresh the list
+                    }
+                    .onFailure { exception ->
+                        Toast.makeText(
+                            context,
+                            "Failed to delete recipe: ${exception.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            } catch (e: Exception) {
+                Toast.makeText(
+                    context,
+                    "Error deleting recipe: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun navigateToCreateRecipe() {
+        val bundle = Bundle().apply {
+            putString(CreateRecipeFragment.ARG_CATEGORY_NAME, categoryName)
+        }
+
+        findNavController().navigate(
+            R.id.action_recipeListFragment_to_createRecipeFragment,
+            bundle
+        )
+    }
+}

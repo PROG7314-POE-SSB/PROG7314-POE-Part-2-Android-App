@@ -9,6 +9,67 @@
         android:id="@+id/discoverFragment"
         android:name="com.ssba.pantrychef.discover.DiscoverFragment"
         android:label="fragment_discover"
-        tools:layout="@layout/fragment_discover" />
+        tools:layout="@layout/fragment_discover">
+
+        <action
+            android:id="@+id/action_discoverFragment_to_SavedRecipesFragment"
+            app:destination="@id/SavedRecipesFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/SavedRecipesFragment"
+        android:name="com.ssba.pantrychef.discover.saved_recipes.SavedRecipesFragment"
+        android:label="Saved Recipes"
+        tools:layout="@layout/fragment_saved_recipes">
+
+        <action
+            android:id="@+id/action_SavedRecipesFragment_to_recipeListFragment"
+            app:destination="@id/recipeListFragment" />
+
+        <action
+            android:id="@+id/action_SavedRecipesFragment_to_favoritesListFragment"
+            app:destination="@id/favoritesListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/recipeListFragment"
+        android:name="com.ssba.pantrychef.discover.saved_recipes.RecipeListFragment"
+        android:label="Recipe List"
+        tools:layout="@layout/fragment_recipe_list">
+
+        <action
+            android:id="@+id/action_recipeListFragment_to_createRecipeFragment"
+            app:destination="@id/createRecipeFragment" />
+
+        <action
+            android:id="@+id/action_recipeListFragment_to_viewUserRecipeFragment"
+            app:destination="@id/viewUserRecipeFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/viewUserRecipeFragment"
+        android:name="com.ssba.pantrychef.discover.saved_recipes.ViewUserRecipeFragment"
+        android:label="View Recipe"
+        tools:layout="@layout/fragment_view_user_recipe" />
+
+    <fragment
+        android:id="@+id/createRecipeFragment"
+        android:name="com.ssba.pantrychef.discover.saved_recipes.CreateRecipeFragment"
+        android:label="Create Recipe"
+        tools:layout="@layout/fragment_create_recipe" />
+
+    <fragment
+        android:id="@+id/favoritesListFragment"
+        android:name="com.ssba.pantrychef.discover.saved_recipes.FavoritesListFragment"
+        android:label="My Favorites"
+        tools:layout="@layout/fragment_favorites_list">
+
+        <action
+            android:id="@+id/action_favoritesListFragment_to_viewUserRecipeFragment"
+            app:destination="@id/viewUserRecipeFragment" />
+
+    </fragment>
 
 </navigation>
