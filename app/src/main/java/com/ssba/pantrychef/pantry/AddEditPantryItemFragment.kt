@@ -1,6 +1,5 @@
 package com.ssba.pantrychef.pantry
 
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +12,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.ssba.pantrychef.R
 import com.ssba.pantrychef.helpers.SupabaseUtils
 import kotlinx.coroutines.flow.collectLatest
@@ -33,7 +33,7 @@ class AddEditPantryItemFragment : Fragment() {
     private lateinit var locationSpinner: Spinner
     private lateinit var saveButton: Button
 
-    private var isAiCameraEnabled = false // AI camera temporarily disabled
+    private var imageUri: Uri? = null
 
     // Gallery launcher
     private val galleryLauncher = registerForActivityResult(
@@ -41,18 +41,20 @@ class AddEditPantryItemFragment : Fragment() {
     ) { uri: Uri? ->
         uri?.let {
             imageView.setImageURI(it)
+            imageUri = it
             viewModel.updateImage(it.toString())
         }
     }
 
     // Camera launcher
     private val cameraLauncher = registerForActivityResult(
-        ActivityResultContracts.TakePicturePreview()
-    ) { bitmap: Bitmap? ->
-        bitmap?.let {
-            imageView.setImageBitmap(it)
-            val uri = saveBitmapToCacheAndGetUri(it)
-            viewModel.updateImage(uri.toString())
+        ActivityResultContracts.TakePicture()
+    ) { success: Boolean ->
+        if (success) {
+            imageUri?.let {
+                imageView.setImageURI(it)
+                viewModel.updateImage(it.toString())
+            }
         }
     }
 
@@ -80,10 +82,10 @@ class AddEditPantryItemFragment : Fragment() {
         saveButton = view.findViewById(R.id.btn_save)
 
         setupLocationSpinner()
-        setupImagePickerDialog() // NEW dialog-based picker
+        setupImagePickerDialog()
         observeViewModel()
         setupTextWatchers()
-        setupSaveButton()
+        setupSaveButtonWithValidation()
     }
 
     private fun setupLocationSpinner() {
@@ -102,17 +104,14 @@ class AddEditPantryItemFragment : Fragment() {
         }
     }
 
-
     private fun setupImagePickerDialog() {
         imagePickerContainer.setOnClickListener {
+            val dialog = BottomSheetDialog(requireContext())
             val dialogView = layoutInflater.inflate(R.layout.dialog_add_image, null)
-            val dialog = android.app.AlertDialog.Builder(requireContext())
-                .setView(dialogView)
-                .create()
+            dialog.setContentView(dialogView)
 
             val btnGallery = dialogView.findViewById<Button>(R.id.btn_pick_gallery)
             val btnCamera = dialogView.findViewById<Button>(R.id.btn_take_photo)
-            val btnAiCamera = dialogView.findViewById<Button>(R.id.btn_ai_camera)
 
             btnGallery.setOnClickListener {
                 galleryLauncher.launch("image/*")
@@ -120,16 +119,18 @@ class AddEditPantryItemFragment : Fragment() {
             }
 
             btnCamera.setOnClickListener {
-                cameraLauncher.launch(null)
+                val uri = createImageUri()
+                cameraLauncher.launch(uri)
                 dialog.dismiss()
-            }
-
-            btnAiCamera.setOnClickListener {
-                Toast.makeText(requireContext(), "AI Camera coming soon!", Toast.LENGTH_SHORT).show()
             }
 
             dialog.show()
         }
+    }
+
+    private fun createImageUri(): Uri {
+        val file = File(requireContext().cacheDir, "camera_image_${System.currentTimeMillis()}.jpg")
+        return file.toUri().also { imageUri = it }
     }
 
     private fun observeViewModel() {
@@ -154,22 +155,39 @@ class AddEditPantryItemFragment : Fragment() {
         categoryEdit.doAfterTextChanged { viewModel.updateCategory(it.toString()) }
     }
 
-    private fun setupSaveButton() {
+    private fun setupSaveButtonWithValidation() {
         saveButton.setOnClickListener {
-            lifecycleScope.launch {
-                val imageUri = viewModel.currentItemState.value.imageUri
-                val context = requireContext()
+            val title = titleEdit.text.toString().trim()
+            val quantity = quantityEdit.text.toString().trim()
+            val category = categoryEdit.text.toString().trim()
 
-                if (imageUri != null) {
-                    val bytes = context.contentResolver.openInputStream(Uri.parse(imageUri))
-                        ?.use { it.readBytes() }
+            // Basic validation
+            when {
+                title.isEmpty() -> {
+                    Toast.makeText(requireContext(), "Title cannot be empty", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                quantity.isEmpty() || quantity.toIntOrNull() == null || quantity.toInt() <= 0 -> {
+                    Toast.makeText(requireContext(), "Enter a valid quantity", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                category.isEmpty() -> {
+                    Toast.makeText(requireContext(), "Category cannot be empty", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+            }
+
+            // Save image and data
+            lifecycleScope.launch {
+                val context = requireContext()
+                imageUri?.let {
+                    val bytes = context.contentResolver.openInputStream(it)?.use { stream ->
+                        stream.readBytes()
+                    }
                     if (bytes != null && bytes.isNotEmpty()) {
                         val uid = viewModel.generateNewId()
                         val publicUrl = SupabaseUtils.uploadPantryItemToStorage(uid, bytes)
                         viewModel.updateImage(publicUrl)
-                    } else {
-                        Toast.makeText(context, "Could not read image", Toast.LENGTH_SHORT).show()
-                        return@launch
                     }
                 }
 
@@ -180,12 +198,6 @@ class AddEditPantryItemFragment : Fragment() {
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }
         }
-    }
-
-    private fun saveBitmapToCacheAndGetUri(bitmap: Bitmap): Uri {
-        val file = File(requireContext().cacheDir, "temp_image_${System.currentTimeMillis()}.png")
-        file.outputStream().use { out -> bitmap.compress(Bitmap.CompressFormat.PNG, 100, out) }
-        return file.toUri()
     }
 
     companion object {
