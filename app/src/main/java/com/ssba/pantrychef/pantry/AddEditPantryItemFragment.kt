@@ -1,16 +1,20 @@
 package com.ssba.pantrychef.pantry
 
 import android.graphics.Bitmap
+import android.icu.util.Calendar
+import android.icu.util.TimeZone
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
@@ -19,9 +23,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.ssba.pantrychef.R
 import com.ssba.pantrychef.helpers.SupabaseUtils
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
 
@@ -31,16 +39,16 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
     private lateinit var imageView: ImageView
     private lateinit var titleEdit: EditText
     private lateinit var descEdit: EditText
-    private lateinit var expiryEdit: EditText
+    private lateinit var expiryText: TextView
     private lateinit var quantityEdit: EditText
     private lateinit var categoryEdit: EditText
-    private lateinit var locationSpinner: Spinner
+    private lateinit var locationAutocomplete: AutoCompleteTextView
     private lateinit var saveButton: Button
-    private lateinit var unitSpinner: Spinner
+    private lateinit var unitAutocomplete: AutoCompleteTextView
 
     // ONLY keep bitmap in memory
     private var imageBitmap: Bitmap? = null
-
+    private val displayDateFormat = SimpleDateFormat("dd / MM / yyyy", Locale.getDefault())
     // Gallery launcher
     private val galleryLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
@@ -81,53 +89,61 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
         imageView = view.findViewById(R.id.item_image)
         titleEdit = view.findViewById(R.id.edit_title)
         descEdit = view.findViewById(R.id.edit_description)
-        expiryEdit = view.findViewById(R.id.edit_expiry)
+        expiryText = view.findViewById(R.id.text_expiry_date) // Updated ID
         quantityEdit = view.findViewById(R.id.edit_quantity)
         categoryEdit = view.findViewById(R.id.edit_category)
-        unitSpinner = view.findViewById(R.id.unit_spinner)
-        locationSpinner = view.findViewById(R.id.location_spinner)
+        unitAutocomplete = view.findViewById(R.id.unit_autocomplete)
+        locationAutocomplete = view.findViewById(R.id.location_autocomplete)
         saveButton = view.findViewById(R.id.btn_save)
 
-        setupUnitSpinner()
-        setupLocationSpinner()
+
+        setupDatePicker()
+        setupUnitDropdown()
         setupImagePickerDialog()
+        setupLocationDropdown()
         observeViewModel()
         setupTextWatchers()
         setupSaveButtonWithValidation()
     }
+    private fun setupDatePicker() {
+        expiryText.setOnClickListener {
+            val datePicker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Select Expiry Date")
+                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                .build()
 
-    private fun setupUnitSpinner() {
-        val units = listOf("g", "kg", "ml", "l", "cup", "tbsp", "tsp", "piece", "pack", "slice")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, units)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        unitSpinner.adapter = adapter
-        unitSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View?,
-                position: Int,
-                id: Long,
-            ) {
-                viewModel.updateUnit(units[position])
+            datePicker.addOnPositiveButtonClickListener { selection ->
+                // The selection is a UTC timestamp. Adjust for timezone.
+                val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                calendar.timeInMillis = selection
+                val localCalendar = Calendar.getInstance()
+                localCalendar.clear()
+                localCalendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+
+                val timestamp = localCalendar.timeInMillis
+                expiryText.text = displayDateFormat.format(Date(timestamp))
+                viewModel.updateExpiryDate(timestamp.toString())
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+            datePicker.show(childFragmentManager, "DATE_PICKER")
         }
     }
 
-    private fun setupLocationSpinner() {
-        locationSpinner.adapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_item,
-            PantryLocation.values()
-        ).also { it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+    private fun setupUnitDropdown() {
+        val units = listOf("g", "kg", "ml", "l", "cup", "tbsp", "tsp", "piece", "pack", "slice")
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, units)
+        unitAutocomplete.setAdapter(adapter)
+        unitAutocomplete.setOnItemClickListener { _, _, position, _ ->
+            viewModel.updateUnit(units[position])
+        }
+    }
 
-        locationSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
-                viewModel.updateLocation(PantryLocation.values()[pos])
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+    private fun setupLocationDropdown() {
+        val locations = PantryLocation.values().map { it.name.replaceFirstChar { char -> char.uppercase() } }
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, locations)
+        locationAutocomplete.setAdapter(adapter)
+        locationAutocomplete.setOnItemClickListener { _, _, position, _ ->
+            viewModel.updateLocation(PantryLocation.values()[position])
         }
     }
 
@@ -159,9 +175,20 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
             if (descEdit.text.toString() != state.description) {
                 descEdit.setText(state.description)
             }
-            if (expiryEdit.text.toString() != state.expiryDate) {
-                expiryEdit.setText(state.expiryDate)
+            state.expiryDate.toLongOrNull()?.let { timestamp ->
+                if (timestamp > 0) {
+                    val currentDisplayedText = expiryText.text.toString()
+                    val newDateText = displayDateFormat.format(Date(timestamp))
+                    if (currentDisplayedText != newDateText) {
+                        expiryText.text = newDateText
+                    }
+                }
+            } ?: run {
+                if (expiryText.text.toString() != "Select Date") {
+                    expiryText.text = "Select Date"
+                }
             }
+
             // For non-string types, a simple check is usually fine.
             if (quantityEdit.text.toString() != state.quantity.toString()) {
                 quantityEdit.setText(state.quantity.toString())
@@ -169,10 +196,12 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
             if (categoryEdit.text.toString() != state.category) {
                 categoryEdit.setText(state.category)
             }
-            val index = PantryLocation.values().indexOf(state.location)
-            if (index >= 0 && index < locationSpinner.count) locationSpinner.setSelection(index)
-
-
+            if (locationAutocomplete.text.toString() != state.location.name.replaceFirstChar { it.uppercase() }) {
+                locationAutocomplete.setText(state.location.name.replaceFirstChar { it.uppercase() }, false)
+            }
+            if (unitAutocomplete.text.toString() != state.unit) {
+                unitAutocomplete.setText(state.unit, false)
+            }
         }
         )
         viewModel.transientBitmap.observe(viewLifecycleOwner) { bmp ->
@@ -183,7 +212,9 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
     private fun setupTextWatchers() {
         titleEdit.doAfterTextChanged { viewModel.updateTitle(it.toString()) }
         descEdit.doAfterTextChanged { viewModel.updateDescription(it.toString()) }
-        expiryEdit.doAfterTextChanged { viewModel.updateExpiryDate(it.toString()) }
+        quantityEdit.doAfterTextChanged {
+            viewModel.updateQuantity(it.toString().toIntOrNull() ?: 0)
+        }
         quantityEdit.doAfterTextChanged {
             viewModel.updateQuantity(
                 it.toString().toIntOrNull() ?: 0
@@ -197,7 +228,7 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
             val title = titleEdit.text.toString().trim()
             val quantity = quantityEdit.text.toString().trim()
             val category = categoryEdit.text.toString().trim()
-            val unit = unitSpinner.selectedItem.toString()
+            val unit = unitAutocomplete.text.toString()
 
             when {
                 title.isEmpty() -> {
