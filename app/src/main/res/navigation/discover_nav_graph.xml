@@ -9,6 +9,19 @@
         android:id="@+id/discoverFragment"
         android:name="com.ssba.pantrychef.discover.DiscoverFragment"
         android:label="fragment_discover"
-        tools:layout="@layout/fragment_discover" />
+        tools:layout="@layout/fragment_discover">
+
+        <action
+            android:id="@+id/action_discoverFragment_to_SavedRecipesFragment"
+            app:destination="@id/SavedRecipesFragment" />
+
+    </fragment>
+
+    <!-- Define all the other screen fragments as destinations -->
+    <fragment
+        android:id="@+id/SavedRecipesFragment"
+        android:name="com.ssba.pantrychef.discover.saved_recipes.SavedRecipesFragment"
+        android:label="Saved Recipes"
+        tools:layout="@layout/fragment_saved_recipes" />
 
 </navigation>
