@@ -108,39 +108,32 @@ class ProfileViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                // Step 1: Upload to Supabase if a new image exists.
-                val newPhotoUrl = if (imageBytes != null) {
-                    Log.d(TAG, "Uploading new profile image to Supabase.")
-                    SupabaseUtils.uploadProfileImageToStorage("${user.uid}/profile.jpg", imageBytes)
-                } else {
-                    _userProfile.value?.photoURL // Keep the existing URL if no new image.
+                var newPhotoUrl = _userProfile.value?.photoURL // Start with the old URL
+
+                // If new image bytes exist, upload them and get the new URL
+                if (imageBytes != null) {
+                    Log.d(TAG, "New image bytes found. Uploading to Supabase...")
+                    newPhotoUrl = SupabaseUtils.uploadProfileImageToStorage("${user.uid}/profile.jpg", imageBytes)
                 }
 
-                // Step 2: Update the profile in Firebase Authentication.
-                Log.d(TAG, "Updating Firebase Auth profile.")
+                // Update Auth
                 val profileUpdates = UserProfileChangeRequest.Builder()
                     .setDisplayName(newDisplayName)
                     .setPhotoUri(newPhotoUrl?.let { Uri.parse(it) })
                     .build()
                 user.updateProfile(profileUpdates).await()
 
-                // Step 3: Update the profile data in Firestore.
-                Log.d(TAG, "Updating Firestore document with new photo URL: $newPhotoUrl")
+                // Update Firestore
                 val firestoreUpdate = mapOf(
                     "profile.displayName" to newDisplayName,
                     "profile.photoURL" to (newPhotoUrl ?: "")
                 )
                 db.collection("users").document(user.uid).update(firestoreUpdate).await()
 
-                // If all steps succeed, post the success result.
                 _operationResult.value = Result.success("Profile updated successfully")
-
             } catch (e: Exception) {
-                // If any of the `await()` calls fail, the catch block will execute.
-                Log.e(TAG, "Failed to update profile", e)
                 _operationResult.value = Result.failure(e)
             } finally {
-                // This ensures the loading indicator is always hidden, even on failure.
                 _isLoading.value = false
             }
         }

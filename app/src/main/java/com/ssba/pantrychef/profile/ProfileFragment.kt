@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.firebase.Firebase
@@ -58,7 +59,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
                 Glide.with(this)
                     .load(it.photoURL)
                     .placeholder(R.drawable.ic_profile_placeholder)
-                    .error(R.drawable.ic_profile_placeholder) // Show placeholder on error
+                    .error(R.drawable.ic_profile_placeholder)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
                     .into(ivProfileImage)
             }
         }
