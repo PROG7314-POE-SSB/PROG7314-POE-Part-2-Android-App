@@ -76,6 +76,13 @@
             android:backgroundTint="@color/yellow"
             android:inputType="number"
             android:layout_marginBottom="8dp" />
+        <Spinner
+            android:id="@+id/unit_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:spinnerMode="dropdown"
+            android:prompt="@string/unit_prompt" />
 
         <!-- Category -->
         <EditText

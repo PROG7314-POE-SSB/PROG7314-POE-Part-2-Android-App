@@ -8,6 +8,7 @@ data class PantryItem(
     val imageUrl: String?,
     val expiryDate: Long,   // timestamp or string
     val quantity: Int,
+    val unit: String,
     val category: String,
     val location: PantryLocation
 )

@@ -1,5 +1,6 @@
 package com.ssba.pantrychef.pantry
 
+import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,8 +16,9 @@ data class PantryItemUiState(
     val expiryDate: String = "",
     val quantity: Int = 0,
     val category: String = "",
+    val unit: String = "",
     val location: PantryLocation = PantryLocation.PANTRY,
-    val imageUri: String? = null
+    val imageUrl: String? = null
 )
 
 sealed class PantryUiEvent {
@@ -29,7 +31,12 @@ sealed class PantryUiEvent {
 class PantryViewModel(
     baseUrl: String = "https://pantry-chef-shravan.loca.lt"
 ) : ViewModel() {
+    private val _transientBitmap = MutableLiveData<Bitmap?>()
+    val transientBitmap: LiveData<Bitmap?> get() = _transientBitmap
 
+    fun setTransientBitmap(bitmap: Bitmap?) {
+        _transientBitmap.value = bitmap
+    }
     private val apiService = PantryApiService(baseUrl)
 
     // Search query
@@ -65,7 +72,8 @@ class PantryViewModel(
                 quantity = item.quantity,
                 category = item.category,
                 location = item.location,
-                imageUri = item.imageUrl
+                imageUrl = item.imageUrl,
+                unit = item.unit
             )
         } else PantryItemUiState()
     }
@@ -76,8 +84,8 @@ class PantryViewModel(
     fun updateQuantity(quantity: Int) = updateCurrent { it.copy(quantity = quantity) }
     fun updateCategory(category: String) = updateCurrent { it.copy(category = category) }
     fun updateLocation(location: PantryLocation) = updateCurrent { it.copy(location = location) }
-    fun updateImage(uri: String?) = updateCurrent { it.copy(imageUri = uri) }
-
+    fun updateImage(url: String?) = updateCurrent { it.copy(imageUrl = url) }
+    fun updateUnit(unit: String) = updateCurrent { it.copy(unit = unit) }
     private fun updateCurrent(transform: (PantryItemUiState) -> PantryItemUiState) {
         _currentItemState.value = transform(_currentItemState.value ?: PantryItemUiState())
     }
@@ -109,7 +117,8 @@ class PantryViewModel(
             quantity = state.quantity,
             category = state.category,
             location = state.location,
-            imageUrl = state.imageUri
+            imageUrl = state.imageUrl,
+            unit = state.unit
         )
 
         if (editingItemId != null) updateItem(item) else addItem(item)
