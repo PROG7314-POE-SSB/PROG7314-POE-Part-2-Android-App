@@ -15,4 +15,6 @@
     <color name="favorites_subtitle_color">#757575</color>
     <color name="favorites_empty_bg">#FFEBEE</color>
     <color name="favorites_icon_bg">#FCE4EC</color>
+    <color name="empty_state_bg">#FFF8E1</color>
+    <color name="empty_state_icon_bg">#FFECB3</color>
 </resources>
