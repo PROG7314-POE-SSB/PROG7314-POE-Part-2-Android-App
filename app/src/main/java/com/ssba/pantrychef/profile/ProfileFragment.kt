@@ -1,5 +1,6 @@
 package com.ssba.pantrychef.profile
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -80,9 +81,23 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         // --- Logout Logic ---
         cardLogout.setOnClickListener {
+            // Get SharedPreferences instance
+            val sharedPreferences = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+
+            // Clear the saved Dark Mode preference
+            with(sharedPreferences.edit()) {
+                remove("DarkMode")
+                apply()
+            }
+
+            // Revert to Light Mode immediately upon logout
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+            // Sign out from Firebase and clear biometric credentials
             Firebase.auth.signOut()
-            // Also clear any saved biometric credentials on logout
             BiometricAuthManager.clearCredentials(requireContext())
+
+            // Navigate to the welcome screen
             val intent = Intent(requireActivity(), WelcomeActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
@@ -95,15 +110,25 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
      * It sets the initial state and listens for user changes to apply the theme.
      */
     private fun setupDarkModeSwitch(switchDarkMode: MaterialSwitch) {
-        // Set the switch to the correct state based on the current app theme
-        switchDarkMode.isChecked = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+        val sharedPreferences = requireActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+
+        // Set the switch's initial state based on the saved preference.
+        switchDarkMode.isChecked = sharedPreferences.getBoolean("DarkMode", false)
+
         switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
+            // Apply the theme change immediately
             val mode = if (isChecked) {
                 AppCompatDelegate.MODE_NIGHT_YES
             } else {
                 AppCompatDelegate.MODE_NIGHT_NO
             }
             AppCompatDelegate.setDefaultNightMode(mode)
+
+            // Save the user's choice to SharedPreferences
+            with(sharedPreferences.edit()) {
+                putBoolean("DarkMode", isChecked)
+                apply()
+            }
         }
     }
 
