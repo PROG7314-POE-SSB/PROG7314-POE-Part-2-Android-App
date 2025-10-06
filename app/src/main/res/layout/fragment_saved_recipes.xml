@@ -280,18 +280,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/categories_section_header" />
 
-    <!-- Enhanced Floating Action Button -->
+    <!-- Floating Action Button to create a new recipe category -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/create_collection_fab"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         android:layout_margin="24dp"
         android:src="@drawable/ic_add"
         android:contentDescription="Create Category"
         app:backgroundTint="@color/yellow"
         app:tint="@color/white"
-        app:fabSize="normal"
-        app:elevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
