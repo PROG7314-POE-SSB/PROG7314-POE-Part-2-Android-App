@@ -47,7 +47,7 @@ class FreezerFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {viewModel.allItems.observe(viewLifecycleOwner) { list ->
-                adapter.submitList(list.filter { it.location == PantryLocation.PANTRY })
+                adapter.submitList(list.filter { it.location == PantryLocation.FREEZER })
             }
             }
         }
