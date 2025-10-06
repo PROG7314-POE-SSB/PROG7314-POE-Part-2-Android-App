@@ -3,6 +3,7 @@ package com.ssba.pantrychef.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
@@ -17,7 +18,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class RecipeAdapter(
-    private val onRecipeClick: (Recipe) -> Unit
+    private val onRecipeClick: (Recipe) -> Unit,
+    private val onDeleteClick: (Recipe) -> Unit
 ) : ListAdapter<Recipe, RecipeAdapter.RecipeViewHolder>(RecipeDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
@@ -37,6 +39,7 @@ class RecipeAdapter(
         private val recipeImage: ImageView = itemView.findViewById(R.id.iv_recipe_image)
         private val recipeDescription: TextView = itemView.findViewById(R.id.tv_recipe_description)
         private val servings: TextView = itemView.findViewById(R.id.tv_servings)
+        private val btnDelete: ImageButton = itemView.findViewById(R.id.btn_delete_recipe)
 
         fun bind(recipe: Recipe) {
             recipeTitle.text = recipe.title
@@ -59,8 +62,13 @@ class RecipeAdapter(
                 .error(R.drawable.ic_default_image)
                 .into(recipeImage)
 
+            // Click listeners
             cardView.setOnClickListener {
                 onRecipeClick(recipe)
+            }
+
+            btnDelete.setOnClickListener {
+                onDeleteClick(recipe)
             }
         }
     }

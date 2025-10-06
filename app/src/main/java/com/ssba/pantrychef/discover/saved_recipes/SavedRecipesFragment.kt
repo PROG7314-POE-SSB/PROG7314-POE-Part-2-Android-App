@@ -70,8 +70,14 @@ class SavedRecipesFragment : Fragment() {
             showCreateCategoryDialog()
         }
 
-        // Load categories
-        loadCategories()
+        // Load categories with updated counts
+        loadCategoriesWithUpdatedCounts()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Refresh counts when returning to this fragment (e.g., after creating/deleting recipes)
+        loadCategoriesWithUpdatedCounts()
     }
 
     private fun setupRecyclerView() {
@@ -83,6 +89,34 @@ class SavedRecipesFragment : Fragment() {
         recyclerView.layoutManager = GridLayoutManager(context, 2)
     }
 
+    /**
+     * Loads categories and updates their recipe counts based on actual recipe subcollections
+     */
+    private fun loadCategoriesWithUpdatedCounts() {
+        lifecycleScope.launch {
+            repository.updateAllRecipeCounts()
+                .onSuccess { categoriesWithUpdatedCounts ->
+                    if (categoriesWithUpdatedCounts.isEmpty()) {
+                        showEmptyState()
+                    } else {
+                        showRecipesList()
+                        adapter.submitList(categoriesWithUpdatedCounts)
+                    }
+                }
+                .onFailure { exception ->
+                    Toast.makeText(
+                        context,
+                        "Failed to load categories: ${exception.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    showEmptyState()
+                }
+        }
+    }
+
+    /**
+     * Fallback method to load categories without updating counts (for error scenarios)
+     */
     private fun loadCategories() {
         lifecycleScope.launch {
             repository.getCategories()
@@ -165,7 +199,7 @@ class SavedRecipesFragment : Fragment() {
             repository.createCategory(category)
                 .onSuccess {
                     Toast.makeText(context, "Category created successfully!", Toast.LENGTH_SHORT).show()
-                    loadCategories() // Refresh the list
+                    loadCategoriesWithUpdatedCounts() // Refresh the list with updated counts
                 }
                 .onFailure { exception ->
                     Toast.makeText(

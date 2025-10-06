@@ -9,6 +9,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +19,7 @@ import com.ssba.pantrychef.R
 import com.ssba.pantrychef.adapters.RecipeAdapter
 import com.ssba.pantrychef.data.recipe_models.Recipe
 import com.ssba.pantrychef.data.repositories.RecipeRepository
+import com.ssba.pantrychef.helpers.SupabaseUtils
 import kotlinx.coroutines.launch
 
 class RecipeListFragment : Fragment() {
@@ -44,8 +46,6 @@ class RecipeListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         repository = RecipeRepository()
-
-        // Get category name from arguments
         categoryName = arguments?.getString(ARG_CATEGORY_NAME) ?: ""
 
         // Bind views
@@ -68,7 +68,7 @@ class RecipeListFragment : Fragment() {
 
         // FAB click listener
         fabCreateRecipe.setOnClickListener {
-            Toast.makeText(context, "Create Recipe - Coming Soon!", Toast.LENGTH_SHORT).show()
+            navigateToCreateRecipe()
         }
 
         // Load recipes
@@ -76,9 +76,14 @@ class RecipeListFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = RecipeAdapter { recipe ->
-            onRecipeClick(recipe)
-        }
+        adapter = RecipeAdapter(
+            onRecipeClick = { recipe ->
+                onRecipeClick(recipe)
+            },
+            onDeleteClick = { recipe ->
+                showDeleteConfirmationDialog(recipe)
+            }
+        )
 
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -122,5 +127,64 @@ class RecipeListFragment : Fragment() {
             "Opening recipe: ${recipe.title}",
             Toast.LENGTH_SHORT
         ).show()
+    }
+
+    private fun showDeleteConfirmationDialog(recipe: Recipe) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Recipe")
+            .setMessage("Are you sure you want to delete recipe - ${recipe.title}?")
+            .setPositiveButton("Delete") { _, _ ->
+                deleteRecipe(recipe)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun deleteRecipe(recipe: Recipe) {
+        lifecycleScope.launch {
+            try {
+                // First delete from Firestore
+                repository.deleteRecipe(categoryName, recipe.recipeId)
+                    .onSuccess {
+                        // If Firestore deletion is successful, delete the image from Supabase
+                        if (recipe.imageURL.isNotEmpty()) {
+                            // Extract filename from recipe ID and delete from Supabase
+                            val filename = "${recipe.recipeId}.jpg"
+
+                            // initialise supabase utils
+                            SupabaseUtils.init(requireContext())
+
+                            SupabaseUtils.deleteRecipeImage(filename)
+                        }
+
+                        Toast.makeText(context, "Recipe deleted successfully", Toast.LENGTH_SHORT).show()
+                        loadRecipes() // Refresh the list
+                    }
+                    .onFailure { exception ->
+                        Toast.makeText(
+                            context,
+                            "Failed to delete recipe: ${exception.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            } catch (e: Exception) {
+                Toast.makeText(
+                    context,
+                    "Error deleting recipe: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun navigateToCreateRecipe() {
+        val bundle = Bundle().apply {
+            putString(CreateRecipeFragment.ARG_CATEGORY_NAME, categoryName)
+        }
+
+        findNavController().navigate(
+            R.id.action_recipeListFragment_to_createRecipeFragment,
+            bundle
+        )
     }
 }

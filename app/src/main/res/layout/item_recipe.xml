@@ -79,12 +79,12 @@
             app:layout_constraintTop_toBottomOf="@+id/iv_recipe_image"
             tools:text="Delicious homemade chocolate chip cookies that are crispy on the outside and chewy on the inside. Perfect for any occasion!" />
 
-        <!-- Servings Info -->
+        <!-- Bottom Row with Servings and Action Buttons -->
         <TextView
             android:id="@+id/tv_servings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:paddingHorizontal="8dp"
             android:paddingVertical="4dp"
             android:text="Serves 4"
@@ -94,6 +94,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_recipe_description"
             tools:text="Serves 6" />
+
+        <!-- Delete Button -->
+        <ImageButton
+            android:id="@+id/btn_delete_recipe"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Delete Recipe"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_servings"
+            app:tint="@android:color/holo_red_dark" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

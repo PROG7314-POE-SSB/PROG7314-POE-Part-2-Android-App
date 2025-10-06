@@ -33,6 +33,17 @@
         android:id="@+id/recipeListFragment"
         android:name="com.ssba.pantrychef.discover.saved_recipes.RecipeListFragment"
         android:label="Recipe List"
-        tools:layout="@layout/fragment_recipe_list" />
+        tools:layout="@layout/fragment_recipe_list">
+
+        <action
+            android:id="@+id/action_recipeListFragment_to_createRecipeFragment"
+            app:destination="@id/createRecipeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createRecipeFragment"
+        android:name="com.ssba.pantrychef.discover.saved_recipes.CreateRecipeFragment"
+        android:label="Create Recipe"
+        tools:layout="@layout/fragment_create_recipe" />
 
 </navigation>
