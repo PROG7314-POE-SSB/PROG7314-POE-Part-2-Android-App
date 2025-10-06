@@ -6,15 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.Spinner
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.core.widget.doAfterTextChanged
@@ -40,8 +32,6 @@ class AddEditPantryItemFragment : Fragment() {
     private lateinit var categoryEdit: EditText
     private lateinit var locationSpinner: Spinner
     private lateinit var saveButton: Button
-    private lateinit var cameraButton: ImageButton
-    private lateinit var galleryButton: ImageButton
 
     private var isAiCameraEnabled = false // AI camera temporarily disabled
 
@@ -68,7 +58,6 @@ class AddEditPantryItemFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val itemId = arguments?.getString(ARG_ITEM_ID)
         viewModel.loadItem(itemId)
     }
@@ -89,11 +78,9 @@ class AddEditPantryItemFragment : Fragment() {
         categoryEdit = view.findViewById(R.id.edit_category)
         locationSpinner = view.findViewById(R.id.location_spinner)
         saveButton = view.findViewById(R.id.btn_save)
-        cameraButton = view.findViewById(R.id.btn_ai_camera)
-        galleryButton = view.findViewById(R.id.btn_pick_gallery)
 
         setupLocationSpinner()
-        setupImagePickers()
+        setupImagePickerDialog() // NEW dialog-based picker
         observeViewModel()
         setupTextWatchers()
         setupSaveButton()
@@ -115,25 +102,33 @@ class AddEditPantryItemFragment : Fragment() {
         }
     }
 
-    private fun setupImagePickers() {
-        galleryButton.setOnClickListener { galleryLauncher.launch("image/*") }
 
-        cameraButton.setOnClickListener {
-            if (isAiCameraEnabled) {
-                cameraLauncher.launch(null)
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Camera feature is currently disabled",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-
+    private fun setupImagePickerDialog() {
         imagePickerContainer.setOnClickListener {
-            // Optional: open a small popup/drawer with gallery & camera options
-            // For simplicity, let's trigger gallery for now
-            galleryLauncher.launch("image/*")
+            val dialogView = layoutInflater.inflate(R.layout.dialog_add_image, null)
+            val dialog = android.app.AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .create()
+
+            val btnGallery = dialogView.findViewById<Button>(R.id.btn_pick_gallery)
+            val btnCamera = dialogView.findViewById<Button>(R.id.btn_take_photo)
+            val btnAiCamera = dialogView.findViewById<Button>(R.id.btn_ai_camera)
+
+            btnGallery.setOnClickListener {
+                galleryLauncher.launch("image/*")
+                dialog.dismiss()
+            }
+
+            btnCamera.setOnClickListener {
+                cameraLauncher.launch(null)
+                dialog.dismiss()
+            }
+
+            btnAiCamera.setOnClickListener {
+                Toast.makeText(requireContext(), "AI Camera coming soon!", Toast.LENGTH_SHORT).show()
+            }
+
+            dialog.show()
         }
     }
 
@@ -155,11 +150,7 @@ class AddEditPantryItemFragment : Fragment() {
         titleEdit.doAfterTextChanged { viewModel.updateTitle(it.toString()) }
         descEdit.doAfterTextChanged { viewModel.updateDescription(it.toString()) }
         expiryEdit.doAfterTextChanged { viewModel.updateExpiryDate(it.toString()) }
-        quantityEdit.doAfterTextChanged {
-            viewModel.updateQuantity(
-                it.toString().toIntOrNull() ?: 0
-            )
-        }
+        quantityEdit.doAfterTextChanged { viewModel.updateQuantity(it.toString().toIntOrNull() ?: 0) }
         categoryEdit.doAfterTextChanged { viewModel.updateCategory(it.toString()) }
     }
 
@@ -173,16 +164,15 @@ class AddEditPantryItemFragment : Fragment() {
                     val bytes = context.contentResolver.openInputStream(Uri.parse(imageUri))
                         ?.use { it.readBytes() }
                     if (bytes != null && bytes.isNotEmpty()) {
-                        // Assuming user is logged in with Firebase
                         val uid = viewModel.generateNewId()
                         val publicUrl = SupabaseUtils.uploadPantryItemToStorage(uid, bytes)
                         viewModel.updateImage(publicUrl)
-
-                    }else {
+                    } else {
                         Toast.makeText(context, "Could not read image", Toast.LENGTH_SHORT).show()
                         return@launch
                     }
                 }
+
                 saveButton.isEnabled = false
                 viewModel.saveCurrentItem()
                 saveButton.isEnabled = true

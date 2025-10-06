@@ -8,6 +8,7 @@ import android.widget.EditText
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -41,8 +42,7 @@ class PantryHostFragment : Fragment() {
         }
         val fab = view.findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.pantry_fab)
         fab.setOnClickListener {
-            // TODO: navigate to add item screen (for now show stub)
-            // Example: findNavController().navigate(R.id.action_to_addItem)
+            findNavController().navigate(R.id.action_pantry_to_addItem)
         }
     }
 }
