@@ -6,9 +6,8 @@ import com.google.firebase.firestore.Query
 import com.ssba.pantrychef.data.recipe_models.Recipe
 import kotlinx.coroutines.tasks.await
 
+class RecipeRepository {
 
-class RecipeRepository
-{
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
@@ -36,6 +35,20 @@ class RecipeRepository
         }
     }
 
+    suspend fun getRecipeById(categoryName: String, recipeId: String): Result<Recipe?> {
+        return try {
+            val snapshot = getCategoryRecipesCollection(categoryName)
+                .document(recipeId)
+                .get()
+                .await()
+
+            val recipe = snapshot.toObject(Recipe::class.java)?.copy(recipeId = snapshot.id)
+            Result.success(recipe)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun createRecipe(categoryName: String, recipe: Recipe): Result<String> {
         return try {
             val recipeWithTimestamp = recipe.copy(
@@ -47,19 +60,6 @@ class RecipeRepository
 
             docRef.set(recipeWithId).await()
             Result.success(docRef.id)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun updateRecipe(categoryName: String, recipe: Recipe): Result<Unit> {
-        return try {
-            getCategoryRecipesCollection(categoryName)
-                .document(recipe.recipeId)
-                .set(recipe)
-                .await()
-
-            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }

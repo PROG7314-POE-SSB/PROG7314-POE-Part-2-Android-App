@@ -17,7 +17,6 @@
 
     </fragment>
 
-    <!-- Define all the other screen fragments as destinations -->
     <fragment
         android:id="@+id/SavedRecipesFragment"
         android:name="com.ssba.pantrychef.discover.saved_recipes.SavedRecipesFragment"
@@ -38,7 +37,18 @@
         <action
             android:id="@+id/action_recipeListFragment_to_createRecipeFragment"
             app:destination="@id/createRecipeFragment" />
+
+        <action
+            android:id="@+id/action_recipeListFragment_to_viewUserRecipeFragment"
+            app:destination="@id/viewUserRecipeFragment" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/viewUserRecipeFragment"
+        android:name="com.ssba.pantrychef.discover.saved_recipes.ViewUserRecipeFragment"
+        android:label="View Recipe"
+        tools:layout="@layout/fragment_view_user_recipe" />
 
     <fragment
         android:id="@+id/createRecipeFragment"

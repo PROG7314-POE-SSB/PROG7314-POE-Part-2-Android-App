@@ -122,11 +122,15 @@ class RecipeListFragment : Fragment() {
     }
 
     private fun onRecipeClick(recipe: Recipe) {
-        Toast.makeText(
-            context,
-            "Opening recipe: ${recipe.title}",
-            Toast.LENGTH_SHORT
-        ).show()
+        val bundle = Bundle().apply {
+            putString(ViewUserRecipeFragment.ARG_CATEGORY_NAME, categoryName)
+            putString(ViewUserRecipeFragment.ARG_RECIPE_ID, recipe.recipeId)
+        }
+
+        findNavController().navigate(
+            R.id.action_recipeListFragment_to_viewUserRecipeFragment,
+            bundle
+        )
     }
 
     private fun showDeleteConfirmationDialog(recipe: Recipe) {
