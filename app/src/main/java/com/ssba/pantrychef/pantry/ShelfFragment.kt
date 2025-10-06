@@ -52,5 +52,8 @@ class ShelfFragment : Fragment() {
                 }
             }
         }
+        viewModel.searchQuery.observe(viewLifecycleOwner) { query ->
+            adapter.filter(query) // implement filter in adapter
+        }
     }
 }

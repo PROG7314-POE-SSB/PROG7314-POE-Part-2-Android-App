@@ -1,5 +1,7 @@
 package com.ssba.pantrychef.pantry
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssba.pantrychef.pantry.data.PantryApiService
@@ -30,7 +32,12 @@ sealed class PantryUiEvent {
 class PantryViewModel(
     baseUrl: String = "https://pantry-chef-shravan.loca.lt"
 ) : ViewModel() {
+    private val _searchQuery = MutableLiveData("")
+    val searchQuery: LiveData<String> get() = _searchQuery
 
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
     private val apiService = PantryApiService(baseUrl)
 
     private val _allItems = MutableStateFlow<List<PantryItem>>(emptyList())

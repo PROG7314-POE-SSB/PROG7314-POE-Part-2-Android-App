@@ -59,12 +59,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+
+            app:tint="@color/orange_main"
+            android:layout_marginEnd="8dp"/>
+
+        <EditText
+            android:id="@+id/search_input"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Search pantry"
+            android:hint="Search pantry..."
+            android:background="@null"
             android:textColor="@color/orange_main"
-            android:textSize="12sp" />
+            android:textColorHint="@color/orange_main"
+            android:textSize="14sp"
+            android:imeOptions="actionDone"/>
     </LinearLayout>
 
     <!-- Tabs -->

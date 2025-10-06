@@ -16,17 +16,14 @@
         <action
             android:id="@+id/action_shoppingFragment_to_shoppingDetailFragment"
             app:destination="@id/shoppingDetailFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
+            />
     </fragment>
 
     <!-- Shopping List Detail Fragment (placeholder) -->
     <fragment
         android:id="@+id/shoppingDetailFragment"
-        android:name="com.ssba.pantrychef.shopping.ShoppingDetailFragment"
+        android:name="com.ssba.pantrychef.shopping.ShoppingListDetailFragment"
         android:label="Shopping List Details"
-        tools:layout="@layout/fragment_shopping_detail" />
+        tools:layout="@layout/fragment_shopping_list_detail" />
 
 </navigation>
