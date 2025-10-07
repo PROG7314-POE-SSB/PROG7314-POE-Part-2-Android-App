@@ -5,10 +5,25 @@
     android:id="@+id/shopping_nav_graph"
     app:startDestination="@id/shoppingFragment">
 
+    <!-- Shopping List Fragment -->
     <fragment
         android:id="@+id/shoppingFragment"
-        android:name="com.ssba.pantrychef.shopping.ShoppingFragment"
-        android:label="fragment_shopping"
-        tools:layout="@layout/fragment_shopping" />
+        android:name="com.ssba.pantrychef.shopping.ShoppingListFragment"
+        android:label="Shopping Lists"
+        tools:layout="@layout/fragment_shopping" >
+
+        <!-- Example action to navigate to Shopping List Details -->
+        <action
+            android:id="@+id/action_shoppingFragment_to_shoppingDetailFragment"
+            app:destination="@id/shoppingDetailFragment"
+            />
+    </fragment>
+
+    <!-- Shopping List Detail Fragment (placeholder) -->
+    <fragment
+        android:id="@+id/shoppingDetailFragment"
+        android:name="com.ssba.pantrychef.shopping.ShoppingListDetailFragment"
+        android:label="Shopping List Details"
+        tools:layout="@layout/fragment_shopping_list_detail" />
 
 </navigation>
