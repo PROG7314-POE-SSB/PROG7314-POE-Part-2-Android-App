@@ -1,8 +1,8 @@
 package com.ssba.pantrychef.pantry
 
 import android.graphics.Bitmap
-import android.icu.util.Calendar
-import android.icu.util.TimeZone
+import java.util.Calendar
+import java.util.TimeZone
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.ssba.pantrychef.R
@@ -33,7 +34,7 @@ import java.util.Locale
 
 class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
 
-    private val viewModel: PantryViewModel by viewModels()
+    private val viewModel: PantryViewModel by viewModels({ requireActivity() })
 
     private lateinit var imagePickerContainer: FrameLayout
     private lateinit var imageView: ImageView
@@ -202,6 +203,12 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
             if (unitAutocomplete.text.toString() != state.unit) {
                 unitAutocomplete.setText(state.unit, false)
             }
+            if (!state.imageUrl.isNullOrEmpty() && imageBitmap == null) {
+                Glide.with(this)
+                    .load(state.imageUrl)
+                    .placeholder(R.drawable.sample_food) // Optional placeholder
+                    .into(imageView)
+            }
         }
         )
         viewModel.transientBitmap.observe(viewLifecycleOwner) { bmp ->
@@ -213,9 +220,6 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
         titleEdit.doAfterTextChanged { viewModel.updateTitle(it.toString()) }
         descEdit.doAfterTextChanged { viewModel.updateDescription(it.toString()) }
         quantityEdit.doAfterTextChanged {
-            viewModel.updateQuantity(it.toString().toIntOrNull() ?: 0)
-        }
-        quantityEdit.doAfterTextChanged {
             viewModel.updateQuantity(
                 it.toString().toIntOrNull() ?: 0
             )
@@ -225,11 +229,13 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
 
     private fun setupSaveButtonWithValidation() {
         saveButton.setOnClickListener {
+
             val title = titleEdit.text.toString().trim()
             val quantity = quantityEdit.text.toString().trim()
             val category = categoryEdit.text.toString().trim()
-            val unit = unitAutocomplete.text.toString()
+            val unit = unitAutocomplete.text.toString().trim()
 
+            SupabaseUtils.init(requireContext())
             when {
                 title.isEmpty() -> {
                     Toast.makeText(requireContext(), "Title cannot be empty", Toast.LENGTH_SHORT)
@@ -246,24 +252,26 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
                         .show(); return@setOnClickListener
                 }
 
-                unit == "Select unit" -> {
+                unit.isBlank() -> {
                     Toast.makeText(requireContext(), "Please select a unit", Toast.LENGTH_SHORT)
-                        .show(); return@setOnClickListener
+                        .show()
+                    return@setOnClickListener // Stop the save process
                 }
             }
 
             lifecycleScope.launch {
+                saveButton.isEnabled = false
                 // Upload only in-memory bitmap
                 imageBitmap?.let { bmp ->
                     val stream = java.io.ByteArrayOutputStream()
                     bmp.compress(Bitmap.CompressFormat.JPEG, 90, stream)
                     val bytes = stream.toByteArray()
-                    val publicUrl =
-                        SupabaseUtils.uploadPantryItemToStorage(viewModel.generateNewId(), bytes)
+                    // This is a suspend function, so it will be awaited here
+                    val publicUrl = SupabaseUtils.uploadPantryItemToStorage(viewModel.generateNewId(), bytes)
                     viewModel.updateImage(publicUrl)
                 }
 
-                saveButton.isEnabled = false
+
                 viewModel.saveCurrentItem()
                 saveButton.isEnabled = true
                 Toast.makeText(requireContext(), "Item saved", Toast.LENGTH_SHORT).show()

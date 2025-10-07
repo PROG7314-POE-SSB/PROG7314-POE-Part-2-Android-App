@@ -17,31 +17,31 @@
         interface PantryApi {
 
             // POST /api/pantry
-            @POST("pantry")
+            @POST("/api/pantry")
             suspend fun addItem(
                 @Body item: PantryItem,
             ): Response<PantryResponse>
 
             // GET /api/pantry
-            @GET("pantry")
+            @GET("/api/pantry")
             suspend fun getAllItems(): Response<Map<String, List<PantryItem>>>
             // Returns a map with keys "pantry", "fridge", "freezer"
 
             // GET /api/pantry/:id
-            @GET("pantry/{id}")
+            @GET("/api/pantry/{id}")
             suspend fun getItemById(
                 @Path("id") id: String,
             ): Response<PantryItem>
 
             // PUT /api/pantry/:id
-            @PUT("pantry/{id}")
+            @PUT("/api/pantry/{id}")
             suspend fun updateItem(
                 @Path("id") id: String,
                 @Body item: PantryItem,
             ): Response<PantryResponse>
 
             // DELETE /api/pantry/:id
-            @DELETE("pantry/{id}")
+            @DELETE("/api/pantry/{id}")
             suspend fun deleteItem(
                 @Path("id") id: String,
             ): Response<PantryResponse>

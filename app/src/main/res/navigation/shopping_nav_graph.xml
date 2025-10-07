@@ -17,6 +17,17 @@
             android:id="@+id/action_shoppingFragment_to_shoppingDetailFragment"
             app:destination="@id/shoppingDetailFragment"
             />
+        <argument
+            android:name="recipeId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+
+        <argument
+            android:name="categoryName"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 
     <!-- Shopping List Detail Fragment (placeholder) -->

@@ -29,6 +29,7 @@ class ShelfFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(PantryViewModel::class.java)
 
         recycler = view.findViewById(R.id.recycler_shelf)
@@ -44,12 +45,9 @@ class ShelfFragment : Fragment() {
 
         recycler.adapter = adapter
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.allItems.observe(viewLifecycleOwner) { list ->
-                    adapter.submitList(list.filter { it.location == PantryLocation.PANTRY })
-                }
-            }
+        viewModel.allItems.observe(viewLifecycleOwner) { allItemsList ->
+            val freezerItems = allItemsList.filter { it.location == PantryLocation.PANTRY }
+            adapter.submitList(freezerItems)
         }
         viewModel.searchQuery.observe(viewLifecycleOwner) { query ->
             adapter.filter(query) // implement filter in adapter

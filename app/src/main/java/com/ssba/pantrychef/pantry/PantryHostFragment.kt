@@ -30,6 +30,8 @@ class PantryHostFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.fetchAllItems()
         viewPager = view.findViewById(R.id.pantry_viewpager)
         tabLayout = view.findViewById(R.id.tab_layout)
 

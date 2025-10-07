@@ -3,18 +3,36 @@ package com.ssba.pantrychef.shopping
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ssba.pantrychef.R
 
-class ShoppingListAdapter(private val onClick: (String) -> Unit) :
-    RecyclerView.Adapter<ShoppingListAdapter.ViewHolder>() {
+// Sealed class to represent the different types of items in our RecyclerView
+sealed class DisplayListItem {
+    data class Header(val list: ShoppingList) : DisplayListItem()
+    data class Item(val item: ShoppingItem, val listId: String) : DisplayListItem()
+}
 
-    private var lists: List<ShoppingList> = emptyList()
+class ShoppingListAdapter(
+    private val onHeaderClick: (listId: String) -> Unit,
+    private val onItemChecked: (listId: String, itemId: String) -> Unit
+) : ListAdapter<DisplayListItem, RecyclerView.ViewHolder>(DisplayListDiffCallback()) {
 
-    fun submitList(newLists: List<ShoppingList>) {
-        lists = newLists
-        notifyDataSetChanged()
+    private  val VIEW_TYPE_HEADER = 0
+    private  val VIEW_TYPE_ITEM = 1
+
+    inner class HeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val headerText: TextView = view.findViewById(R.id.tv_list_header)
+        fun bind(header: DisplayListItem.Header) {
+            headerText.text = header.list.listName
+            // Set the click listener for the entire header view
+            itemView.setOnClickListener {
+                onHeaderClick(header.list.listId)
+            }
+        }
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -32,18 +50,46 @@ class ShoppingListAdapter(private val onClick: (String) -> Unit) :
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_shopping_list, parent, false)
-        return ViewHolder(view)
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is DisplayListItem.Header -> VIEW_TYPE_HEADER
+            is DisplayListItem.Item -> VIEW_TYPE_ITEM
+        }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val list = lists[position]
-        holder.listNameTextView.text = list.listName
-        holder.listDescriptionTextView.text = list.description ?: ""
-        holder.progressTextView.text = "${list.checkedItems}/${list.totalItems} items checked"
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        return when (viewType) {
+            VIEW_TYPE_HEADER -> {
+                val view = inflater.inflate(R.layout.item_shopping_list_header, parent, false)
+                HeaderViewHolder(view)
+            }
+            VIEW_TYPE_ITEM -> {
+                val view = inflater.inflate(R.layout.item_shopping_list_item, parent, false)
+                ItemViewHolder(view)
+            }
+            else -> throw IllegalArgumentException("Invalid view type")
+        }
     }
 
-    override fun getItemCount(): Int = lists.size
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (val currentItem = getItem(position)) {
+            is DisplayListItem.Header -> (holder as HeaderViewHolder).bind(currentItem)
+            is DisplayListItem.Item -> (holder as ItemViewHolder).bind(currentItem)
+        }
+    }
+}
+
+class DisplayListDiffCallback : DiffUtil.ItemCallback<DisplayListItem>() {
+    override fun areItemsTheSame(oldItem: DisplayListItem, newItem: DisplayListItem): Boolean {
+        return when {
+            oldItem is DisplayListItem.Header && newItem is DisplayListItem.Header -> oldItem.list.listId == newItem.list.listId
+            oldItem is DisplayListItem.Item && newItem is DisplayListItem.Item -> oldItem.item.itemId == newItem.item.itemId
+            else -> false
+        }
+    }
+
+    override fun areContentsTheSame(oldItem: DisplayListItem, newItem: DisplayListItem): Boolean {
+        return oldItem == newItem
+    }
 }

@@ -1,130 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- THIS IS THE NEW WRAPPER, required for the floating button -->
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/details_root"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="@color/beige_bg">
+    android:background="@color/beige_bg"
+    tools:context=".pantry.PantryItemDetailsFragment">
 
-    <LinearLayout
+    <!-- YOUR ORIGINAL SCROLLVIEW GOES HERE, UNCHANGED -->
+    <ScrollView
+        android:id="@+id/details_root"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:divider="?android:attr/dividerVertical"
-        android:showDividers="middle"
-        android:dividerPadding="12dp">
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:padding="16dp">
 
-        <!-- Item Image -->
-        <ImageView
-            android:id="@+id/details_image"
-            android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:scaleType="centerCrop"
-            android:background="@drawable/bg_card"
-            android:src="@drawable/sample_food" />
-
-        <!-- Title + Category -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="12dp">
+            android:orientation="vertical"
+            android:divider="?android:attr/dividerVertical"
+            android:showDividers="middle"
+            android:dividerPadding="12dp">
 
-            <TextView
-                android:id="@+id/details_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Apples"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="@color/orange_main" />
-
-            <TextView
-                android:id="@+id/details_category"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="6dp"
-                android:background="@drawable/bg_chip_category"
-                android:text="Fruit"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <!-- Description -->
-        <TextView
-            android:id="@+id/details_desc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Fresh red apples, perfect for snacks or pies."
-            android:textSize="14sp"
-            android:textColor="@color/brown_letters"
-            android:layout_marginTop="8dp"
-            android:lineSpacingExtra="2dp" />
-
-        <!-- Info Row: Expiry + Quantity -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2"
-            android:layout_marginTop="16dp">
-
-            <!-- Expiry -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:padding="8dp"
+            <!-- Item Image -->
+            <ImageView
+                android:id="@+id/details_image"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:scaleType="centerCrop"
                 android:background="@drawable/bg_card"
-                android:orientation="horizontal">
+                tools:src="@drawable/sample_food" />
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_time"
-                    app:tint="@color/orange_main"
-                    android:layout_marginEnd="6dp" />
-
-                <TextView
-                    android:id="@+id/details_expiry"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="05 Oct 2025"
-                    android:textSize="14sp"
-                    android:textColor="@color/brown_letters" />
-            </LinearLayout>
-
-            <!-- Quantity -->
+            <!-- Title + Category -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:padding="8dp"
-                android:background="@drawable/bg_card"
                 android:orientation="horizontal"
-                android:layout_marginStart="8dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_quantity"
-                    app:tint="@color/orange_main"
-                    android:layout_marginEnd="6dp" />
+                android:gravity="center_vertical"
+                android:layout_marginTop="12dp">
 
                 <TextView
-                    android:id="@+id/details_quantity"
+                    android:id="@+id/details_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="Apples"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/orange_main" />
+
+                <TextView
+                    android:id="@+id/details_category"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="6"
-                    android:textSize="14sp"
-                    android:textColor="@color/brown_letters" />
+                    android:padding="6dp"
+                    android:background="@drawable/bg_chip_category"
+                    tools:text="Fruit"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
             </LinearLayout>
+
+            <!-- Description -->
+            <TextView
+                android:id="@+id/details_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Fresh red apples, perfect for snacks or pies."
+                android:textSize="14sp"
+                android:textColor="@color/brown_letters"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="2dp" />
+
+            <!-- Info Row: Expiry + Quantity -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginTop="16dp">
+
+                <!-- Expiry -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:padding="8dp"
+                    android:background="@drawable/bg_card"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_time"
+                        app:tint="@color/orange_main"
+                        android:layout_marginEnd="6dp" />
+
+                    <TextView
+                        android:id="@+id/details_expiry"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="05 Oct 2025"
+                        android:textSize="14sp"
+                        android:textColor="@color/brown_letters" />
+                </LinearLayout>
+
+                <!-- Quantity -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:padding="8dp"
+                    android:background="@drawable/bg_card"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="8dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_quantity"
+                        app:tint="@color/orange_main"
+                        android:layout_marginEnd="6dp" />
+
+                    <TextView
+                        android:id="@+id/details_quantity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="6"
+                        android:textSize="14sp"
+                        android:textColor="@color/brown_letters" />
+                </LinearLayout>
+            </LinearLayout>
+
         </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+
+    <!-- ADD THIS EDIT BUTTON OUTSIDE THE SCROLLVIEW BUT INSIDE THE COORDINATORLAYOUT -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_edit_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="Edit Item"
+        app:srcCompat="@drawable/ic_edit" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
