@@ -10,6 +10,26 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
+/*
+ * Code Attribution
+ *
+ * Purpose:
+ *   - Define the Retrofit service interface for making recipe discovery API calls.
+ *   - Includes methods for fetching random recipes, searching recipes, and retrieving detailed recipe data by ID.
+ *   - Integrates with Firebase-authenticated backend requests through the AuthInterceptor.
+ *   - Ensures proper structuring of API endpoints for the Discover module in the PantryChef app.
+ *
+ * Authors/Technologies Used:
+ *   - Retrofit (HTTP Client for Android and Kotlin): Square, Inc.
+ *   - Kotlin Coroutines (Suspend Functions): JetBrains
+ *   - Firebase Authentication Integration: Firebase Open Source Community
+ *
+ * References:
+ *   - Retrofit Documentation: https://square.github.io/retrofit/
+ *   - Kotlin Coroutines Guide: https://kotlinlang.org/docs/coroutines-overview.html
+ *   - Firebase Authentication for Android: https://firebase.google.com/docs/auth
+ */
+
 /**
  * Retrofit interface for Discover/Recipe related API calls
  */
