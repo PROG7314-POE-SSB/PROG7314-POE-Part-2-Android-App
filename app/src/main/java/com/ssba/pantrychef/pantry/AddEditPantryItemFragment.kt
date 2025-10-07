@@ -1,8 +1,8 @@
 package com.ssba.pantrychef.pantry
 
 import android.graphics.Bitmap
-import android.icu.util.Calendar
-import android.icu.util.TimeZone
+import java.util.Calendar
+import java.util.TimeZone
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -213,9 +213,6 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
         titleEdit.doAfterTextChanged { viewModel.updateTitle(it.toString()) }
         descEdit.doAfterTextChanged { viewModel.updateDescription(it.toString()) }
         quantityEdit.doAfterTextChanged {
-            viewModel.updateQuantity(it.toString().toIntOrNull() ?: 0)
-        }
-        quantityEdit.doAfterTextChanged {
             viewModel.updateQuantity(
                 it.toString().toIntOrNull() ?: 0
             )
@@ -225,11 +222,13 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
 
     private fun setupSaveButtonWithValidation() {
         saveButton.setOnClickListener {
+
             val title = titleEdit.text.toString().trim()
             val quantity = quantityEdit.text.toString().trim()
             val category = categoryEdit.text.toString().trim()
             val unit = unitAutocomplete.text.toString()
 
+            SupabaseUtils.init(requireContext())
             when {
                 title.isEmpty() -> {
                     Toast.makeText(requireContext(), "Title cannot be empty", Toast.LENGTH_SHORT)
@@ -253,17 +252,18 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
             }
 
             lifecycleScope.launch {
+                saveButton.isEnabled = false
                 // Upload only in-memory bitmap
                 imageBitmap?.let { bmp ->
                     val stream = java.io.ByteArrayOutputStream()
                     bmp.compress(Bitmap.CompressFormat.JPEG, 90, stream)
                     val bytes = stream.toByteArray()
-                    val publicUrl =
-                        SupabaseUtils.uploadPantryItemToStorage(viewModel.generateNewId(), bytes)
+                    // This is a suspend function, so it will be awaited here
+                    val publicUrl = SupabaseUtils.uploadPantryItemToStorage(viewModel.generateNewId(), bytes)
                     viewModel.updateImage(publicUrl)
                 }
 
-                saveButton.isEnabled = false
+
                 viewModel.saveCurrentItem()
                 saveButton.isEnabled = true
                 Toast.makeText(requireContext(), "Item saved", Toast.LENGTH_SHORT).show()

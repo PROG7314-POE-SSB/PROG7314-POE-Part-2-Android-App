@@ -17,4 +17,9 @@
     <color name="favorites_icon_bg">#FCE4EC</color>
     <color name="empty_state_bg">#FFF8E1</color>
     <color name="empty_state_icon_bg">#FFECB3</color>
+    <color name="expiry_soon">#FF8F00</color>
+    <color name="expiry_expired">#D32F2F</color>
+
+
+    <color name="category_background">#E0E0E0</color>
 </resources>

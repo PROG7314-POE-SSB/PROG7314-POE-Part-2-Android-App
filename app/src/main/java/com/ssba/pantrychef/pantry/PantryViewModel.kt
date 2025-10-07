@@ -107,7 +107,7 @@ class PantryViewModel(
         }
     }
 
-    fun saveCurrentItem() {
+   suspend fun saveCurrentItem() {
         val state = _currentItemState.value ?: return
         val item = PantryItem(
             id = editingItemId ?: generateNewId(),
@@ -124,8 +124,8 @@ class PantryViewModel(
         if (editingItemId != null) updateItem(item) else addItem(item)
     }
 
-    private fun addItem(item: PantryItem) {
-        viewModelScope.launch {
+    private suspend fun addItem(item: PantryItem) {
+
             _uiEvent.value = PantryUiEvent.Loading
             try {
                 val created = apiService.addItem(item)
@@ -134,11 +134,11 @@ class PantryViewModel(
             } catch (e: IOException) {
                 _uiEvent.value = PantryUiEvent.Error(e.message ?: "Failed to add item")
             }
-        }
+
     }
 
-    private fun updateItem(updated: PantryItem) {
-        viewModelScope.launch {
+    private suspend fun updateItem(updated: PantryItem) {
+
             _uiEvent.value = PantryUiEvent.Loading
             try {
                 val result = apiService.updateItem(updated.id, updated)
@@ -147,11 +147,11 @@ class PantryViewModel(
             } catch (e: IOException) {
                 _uiEvent.value = PantryUiEvent.Error(e.message ?: "Failed to update item")
             }
-        }
+
     }
 
-    fun deleteItem(itemId: String) {
-        viewModelScope.launch {
+    suspend fun deleteItem(itemId: String) {
+
             _uiEvent.value = PantryUiEvent.Loading
             try {
                 apiService.deleteItem(itemId)
@@ -160,7 +160,7 @@ class PantryViewModel(
             } catch (e: IOException) {
                 _uiEvent.value = PantryUiEvent.Error(e.message ?: "Failed to delete item")
             }
-        }
+
     }
 
     // -------------------------------------------------------------------------

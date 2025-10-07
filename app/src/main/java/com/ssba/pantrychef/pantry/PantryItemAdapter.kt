@@ -5,11 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ssba.pantrychef.R
+import com.ssba.pantrychef.helpers.DateUtils
+import java.util.concurrent.TimeUnit
 
 class PantryItemAdapter(
     private val onClick: (PantryItem) -> Unit
@@ -57,7 +60,8 @@ class PantryItemAdapter(
         fun bind(item: PantryItem) {
             title.text = item.title
             desc.text = item.description
-            expiry.text = "Expiry: ${item.expiryDate ?: "N/A"}"
+            expiry.text = "Exp: ${DateUtils.formatTimestamp(item.expiryDate)}"
+            setExpiryColor(item.expiryDate)
             quantity.text = "Qty: ${item.quantity}"
             category.text = "Category: ${item.category}"
 
@@ -72,6 +76,23 @@ class PantryItemAdapter(
 
 
             view.setOnClickListener { onClick(item) }
+        }
+        private fun setExpiryColor(expiryTimestamp: Long) {
+            if (expiryTimestamp == 0L) {
+                expiry.setTextColor(ContextCompat.getColor(view.context, R.color.dark_brown))
+                return
+            }
+
+            val currentTime = System.currentTimeMillis()
+            val differenceInMillis = expiryTimestamp - currentTime
+            val differenceInDays = TimeUnit.MILLISECONDS.toDays(differenceInMillis)
+
+            val color = when {
+                differenceInDays < 0 -> R.color.expiry_expired // Expired (Red)
+                differenceInDays <= 3 -> R.color.expiry_soon   // Expiring soon (Orange)
+                else -> R.color.dark_brown                     // Good (Default color)
+            }
+            expiry.setTextColor(ContextCompat.getColor(view.context, color))
         }
     }
 

@@ -8,5 +8,6 @@
     <string name="supabase_user_profile_images_bucket_name">user-profile-images</string>
     <string name="supabase_recipe_images_bucket_name">recipe-images</string>
     <string name="supabase_pantry_items_images_bucket_name">pantry-items-images</string>
+
     <string name="unit_prompt">Unit of Measurement</string>
 </resources>

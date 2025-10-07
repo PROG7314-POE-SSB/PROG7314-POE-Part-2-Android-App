@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.ssba.pantrychef.R
+import com.ssba.pantrychef.helpers.DateUtils
 
 class PantryItemDetailsFragment : Fragment() {
 
@@ -43,7 +44,9 @@ class PantryItemDetailsFragment : Fragment() {
             item?.let {
                 title.text = it.title
                 desc.text = it.description
-                expiry.text = "Expiry: ${it.expiryDate.takeIf { d -> d != 0L  } ?: "N/A"}"
+                expiry.text = "Expires on: ${DateUtils.formatTimestamp(it.expiryDate)}" // <-- Use the formatter
+
+                quantity.text = "Quantity: ${it.quantity}"
                 quantity.text = "Quantity: ${it.quantity}"
                 category.text = "Category: ${it.category}"
 
