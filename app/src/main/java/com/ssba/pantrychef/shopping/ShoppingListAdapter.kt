@@ -35,17 +35,20 @@ class ShoppingListAdapter(
         }
     }
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val listNameTextView: TextView = view.findViewById(R.id.listNameTextView)
-        val listDescriptionTextView: TextView = view.findViewById(R.id.listDescriptionTextView)
-        val progressTextView: TextView = view.findViewById(R.id.progressTextView)
+    inner class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val checkBox: CheckBox = view.findViewById(R.id.item_checkbox)
+        private val nameText: TextView = view.findViewById(R.id.tv_item_name)
 
-        init {
-            view.setOnClickListener {
-                @Suppress("DEPRECATION") val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    onClick(lists[position].listId)
-                }
+        private val quantityText: TextView = view.findViewById(R.id.tv_item_quantity)
+
+        fun bind(itemWrapper: DisplayListItem.Item) {
+            val item = itemWrapper.item
+            nameText.text = item.name
+            quantityText.text = item.quantity.toInt().toString()
+            checkBox.isChecked = item.checked
+
+            checkBox.setOnClickListener {
+                onItemChecked(itemWrapper.listId, item.itemId)
             }
         }
     }
