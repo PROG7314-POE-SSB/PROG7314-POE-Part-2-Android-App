@@ -9,6 +9,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.firebase.auth.FirebaseAuth
 import com.ssba.pantrychef.MainActivity
 
+// Android Developer. 2025. Splash screens. [online] Android Developers. Available at: <https://developer.android.com/develop/ui/views/launch/splash-screen> [Accessed 7 October 2025].
+
 /**
  * The initial entry point of the application that displays a splash screen.
  *
@@ -31,6 +33,7 @@ class SplashScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: Splash screen starting.")
         // This must be called before super.onCreate() to handle the theme-based splash screen
+        // in, 2024. Stack Overflow. [online] Stack Overflow. Available at: <https://stackoverflow.com/questions/78303299/how-to-keep-splashscreen-showing-until-datastore-is-loaded-in-jetpack-compose> [Accessed 7 October 2025].
         installSplashScreen()
         super.onCreate(savedInstanceState)
 

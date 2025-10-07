@@ -34,6 +34,8 @@ import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 import java.io.File
 
+// Firebase. 2025. Firebase Authentication. [online] Firebase. Available at: <https://firebase.google.com/docs/auth?authuser=2> [Accessed 7 October 2025].
+
 /**
  * An activity for handling new user registration.
  *
@@ -241,6 +243,7 @@ class RegisterActivity : AppCompatActivity() {
         )
     }
 
+    // Firebase. 2025. Authenticate with Firebase using Password-Based Accounts on Android. [online] Firebase. Available at: <https://firebase.google.com/docs/auth/android/password-auth?authuser=2> [Accessed 7 October 2025].
     /**
      * Validates input fields and orchestrates the user registration process.
      */
