@@ -5,6 +5,8 @@
     android:id="@+id/discover_nav_graph"
     app:startDestination="@id/discoverFragment">
 
+    <!-- Android Developer. 2025. Principles of navigation. [online] Android Developers. Available at: <https://developer.android.com/guide/navigation/principles> [Accessed 7 October 2025]. -->
+
     <fragment
         android:id="@+id/discoverFragment"
         android:name="com.ssba.pantrychef.discover.DiscoverFragment"
@@ -15,7 +17,16 @@
             android:id="@+id/action_discoverFragment_to_SavedRecipesFragment"
             app:destination="@id/SavedRecipesFragment" />
 
+        <action
+            android:id="@+id/action_discoverFragment_to_viewSpoonacularRecipeFragment"
+            app:destination="@id/viewSpoonacularRecipeFragment" />
     </fragment>
+
+    <fragment
+    android:id="@+id/viewSpoonacularRecipeFragment"
+    android:name="com.ssba.pantrychef.discover.ViewSpoonacularRecipeFragment"
+    android:label="Recipe Details"
+    tools:layout="@layout/fragment_view_spoonacular_recipe" />
 
     <fragment
         android:id="@+id/SavedRecipesFragment"

@@ -41,6 +41,34 @@ android {
     }
 }
 
+/*
+ * Code Attribution
+ *
+ * Purpose:
+ *   - This Gradle build configuration defines the Android application setup for the PantryChef app.
+ *   - It configures SDK versions, dependencies, and Kotlin/Java compilation targets.
+ *   - The dependencies include key Android Jetpack libraries, Firebase (Auth & Firestore), Retrofit for API calls,
+ *     Glide for image loading, and Kotlin Coroutines for asynchronous programming.
+ *   - Also integrates Google Sign-In, biometrics, and secure credential storage for user authentication.
+ *
+ * Authors/Technologies Used:
+ *   - Android Jetpack Libraries: Android Open Source Project
+ *   - Kotlin DSL & Coroutines: JetBrains
+ *   - Firebase SDKs: Google Firebase
+ *   - Retrofit & OkHttp Logging Interceptor: Square, Inc.
+ *   - Glide Image Library: Bumptech
+ *   - CircleImageView: Henning Dodenhof
+ *
+ * References:
+ *   - Android Gradle Plugin Documentation: https://developer.android.com/studio/build
+ *   - Firebase for Android Setup Guide: https://firebase.google.com/docs/android/setup
+ *   - Retrofit Official Docs: https://square.github.io/retrofit/
+ *   - Kotlin Coroutines Guide: https://kotlinlang.org/docs/coroutines-overview.html
+ *   - Glide GitHub Repository: https://github.com/bumptech/glide
+ *   - CircleImageView Repository: https://github.com/hdodenhof/CircleImageView
+ */
+
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)

@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
+    <!-- Android Developer. 2025. Navigation. [online] Android Developers. Available at: <https://developer.android.com/guide/navigation> [Accessed 7 October 2025]. -->
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"

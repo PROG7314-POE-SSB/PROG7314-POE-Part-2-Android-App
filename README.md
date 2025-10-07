@@ -1,73 +1,82 @@
-PantryChef 🍳
-=============
+# PantryChef 🍳
 
-PantryChef is a zero-waste cooking companion designed to simplify meal preparation, optimise shopping, and inspire creativity in the kitchen. Our vision is to make cooking accessible and enjoyable while helping users save money and reduce food waste. By blending intelligent recommendations with a user-first design, PantryChef transforms everyday ingredients into exciting meals.
+PantryChef is a zero-waste cooking companion designed to simplify meal preparation, reduce food waste, and inspire creativity in the kitchen. By blending intelligent recommendations with a user-first design, PantryChef transforms everyday ingredients into exciting meals, empowering users to rediscover the joy of cooking.
 
-* * * * *
-
-Table of Contents
------------------
-
-- [About The Project](#about-the-project)
-- [Key Features](#key-features)
-- [Technology Stack & Architecture](#technology-stack--architecture)
-- [Getting Started (For Developers)](#getting-started-for-developers)
-  - [Prerequisites](#prerequisites)
-  - [Setup Instructions](#setup-instructions)
-- [Installation (For Users)](#installation-for-users)
-- [Project Team](#project-team)
-- [Acknowledgments](#acknowledgments)
+![App Icon](./images/Icon.png "App Icon")
 
 * * * * *
 
-About The Project
------------------
+### Table of Contents
 
-PantryChef is a complete kitchen partner designed to simplify meal preparation, reduce food waste, and inspire confidence in the kitchen. By combining AI-driven intelligence with a user-friendly design, the app transforms pantry management into a proactive and enjoyable experience. ^5^Our design strategy is firmly grounded in research, analyzing competing apps to address real user needs while introducing new, innovative features to stand apart from existing solutions.
+-   [About The Project](#about-the-project)
+
+-   [Design Considerations](#design-considerations)
+
+-   [Key Features](#key-features)
+
+-   [Technology Stack & Architecture](#technology-stack--architecture)
+
+-   [Navigation Flow](#navigation-flow)
+
+-   [Development Workflow](#development-workflow)
+
+-   [Getting Started (For Developers)](#getting-started-for-developers)
+
+-   [Installation (For Users)](#installation-for-users)
+
+-   [Project Team](#project-team)
 
 * * * * *
 
-Key Features
-------------
+## About The Project
+
+PantryChef is a complete kitchen partner designed to simplify meal preparation and inspire confidence in the kitchen. By combining AI-driven intelligence with a user-friendly design, the app transforms pantry management into a proactive and enjoyable experience. The goal is to provide a complete kitchen partner that not only helps users discover creative recipes but also automates planning, shopping, and organisation.
+
+* * * * *
+
+## Design Considerations
+
+The design of PantryChef is firmly grounded in research and a commitment to a scalable, user-centric architecture.
+
+-   **Research-Driven Approach:** The project began by analysing competing apps like AnyList, Paprika, and SuperCook to identify well-received features and areas for improvement. Insights from this research directly informed PantryChef's design; for example, SuperCook validated our ingredient-first recipe concept, while Paprika highlighted the need for robust offline capabilities.
+
+-   **User-Centric UI/UX:** The user experience is designed to be seamless, from a multi-step onboarding process that personalises the app from the start, to an integrated profile and settings hub for easy management. The navigation is handled by a single `Activity` managing multiple `Fragment`'s, ensuring a fast and fluid interface without the jarring transitions of traditional multi-activity apps.
+
+-   **Scalable Architecture:** The system employs a modern three-tier architecture to separate concerns between the frontend, backend, and data storage layers. The Node.js middleware serves as a central orchestrator, allowing the Android client to remain lightweight while enabling complex business logic and integration with multiple external APIs.
+
+* * * * *
+
+## Key Features
 
 PantryChef is packed with features designed to create a seamless cooking journey, from pantry to plate.
 
-### Core Features
+#### Core Features
 
--   **Single Sign-On (SSO) & Biometric Authentication:** Securely log in via Google Sign-In, email/password, or biometrics (fingerprint/face ID) for quick and frictionless access.
+-   **Single Sign-On (SSO) & Biometric Authentication:** Securely log in via Google Sign-In, email/password, or biometrics for quick access.
 
--   **User Settings Management:** A dedicated profile section to manage account details, update dietary preferences, customize notifications, and switch between light/dark themes.
+-   **User Settings Management:** A dedicated profile section to manage account details, update dietary preferences, customise notifications, and switch themes.
 
--   **REST API Integration:** A robust Node.js backend handles all data operations, ensuring a scalable and secure connection between the app and the database.
+-   **Offline Mode:** View and edit your pantry, recipes, and shopping lists without an internet connection. Changes are cached locally and synced automatically when connectivity is restored.
 
--   **Offline Mode with Synchronization:** View and edit your pantry, recipes, and shopping lists even without an internet connection. Changes are automatically synced when you're back online.
+-   **Real-Time Push Notifications:** Receive timely expiry alerts and personalised recipe suggestions via Firebase Cloud Messaging.
 
--   **Real-Time Push Notifications:** Receive timely expiry alerts for pantry items and personalized recipe suggestions via Firebase Cloud Messaging.
+-   **Multi-Language Support:** Full support for English, Afrikaans, and isiZulu.
 
--   **Multi-Language Support:** Full support for English, Afrikaans, and isiZulu to ensure an inclusive experience for a diverse audience.
+#### Innovative Features
 
-### Innovative Features
+-   🧠 **AI-Powered Recipe Discovery:** Generate personalised recipes by analysing your pantry's contents using the [Spoonacular API](https://spoonacular.com/food-api).
 
--   🧠 **AI-Powered Recipe Discovery:** Generate personalized recipes by analyzing your pantry's contents using the SuperCook and Edamam APIs.
+-   🥫 **Intelligent Pantry Management:** Add items by scanning with your camera (Vision AI), using voice input, or manual entry.
 
--   🥫 **Intelligent Pantry Management:** Add items by scanning with your camera (Vision AI), using voice input, or manual entry. The app tracks quantities and expiration dates to help prevent waste.
+-   🛒 **Smart Shopping List Generator:** Automatically create shopping lists from recipes, intelligently subtracting items you already own.
 
--   🛒 **Smart Shopping List Generator:** Automatically create shopping lists from recipes. The app intelligently subtracts items you already have and organizes the list by store layout.
-
--   🧑‍🍳 **Interactive Recipe Assistant:** An integrated Cohere-powered chatbot provides real-time cooking help, offering ingredient substitutions, technique explanations, and troubleshooting advice.
-
--   📅 **Advanced Meal Planning:** Plan your meals for the week or month using a calendar interface and generate a consolidated shopping list for the entire period.
-
--   📉 **Food Waste Prevention Dashboard:** Get "Priority Recipes" that use soon-to-expire ingredients and view reports on your food usage habits.
-
--   📲 **Recipe Sharing:** Easily export and share your favorite recipes with friends and family via WhatsApp, email, or other platforms.
+-   🧑‍🍳 **Interactive Recipe Assistant:** An integrated Cohere-powered chatbot provides real-time cooking help, offering ingredient substitutions and technique explanations.
 
 * * * * *
 
-Technology Stack & Architecture
--------------------------------
+## Technology Stack & Architecture
 
-PantryChef is built on a modern, three-tier architecture for scalability and maintainability.
+PantryChef is built on a modern, three-tier architecture designed for scalability and maintainability.
 
 -   **Frontend:**
 
@@ -89,71 +98,93 @@ PantryChef is built on a modern, three-tier architecture for scalability and mai
 
 -   **Storage:**
 
-    -   **Database:** Firebase Realtime Database
+    -   **Database:**  **Cloud Firestore** (Note: Real-time sync features are planned for Part 3)
 
     -   **Image Storage:** Supabase Storage
 
 -   **External APIs:**
 
-    -   **Recipe Search:** SuperCook API, Edamam API
+    -   **Recipe Search:** [Spoonacular API](https://spoonacular.com/food-api)
 
     -   **AI Chatbot:** Cohere API
 
     -   **Image Recognition:** Vision AI (.NET Service)
 
+![System Architecture Overview](./images/Architecture.png "System Architecture Overview")
+
+> **Note:** The architecture diagram shown above is from our initial planning and implementation phase. While the overall system architecture remains the same, the API used for recipe search has been updated to use the Spoonacular API instead of the previously planned Edamame and SuperCook APIs.
+
 * * * * *
 
-Getting Started (For Developers)
---------------------------------
+## Navigation Flow
+
+The app's navigation is structured around a central `BottomNavigationView` with five main destinations. The entire profile section is managed within its own nested navigation graph to keep the architecture modular and easy to manage.
+
+![Use Case Diagram](./images/Navigation.png "Use Case Diagram")
+
+* * * * *
+
+## Development Workflow
+
+This project utilises Git for version control and is hosted on GitHub to facilitate collaboration.
+
+-   **Branching Strategy:** We follow the popular GitFlow model:
+
+    -   `main`: Contains production-ready, stable code.
+
+    -   `develop`: The primary branch for ongoing development. All feature branches are merged into `develop`.
+
+    -   `feature/<feature-name>`: Individual branches for new features or bug fixes (e.g., `feature/profile-settings`).
+
+-   **GitHub Actions for CI/CD:** Continuous Integration is set up using GitHub Actions. A workflow is configured to automatically trigger on every push to a branch other than the `main` branch. This workflow:
+
+    1.  Sets up a Java and Android environment.
+
+    2.  Builds the debug version of the application (`./gradlew assembleDebug`).
+
+    3.  Runs any available unit tests (`./gradlew test`).
+
+    This ensures that code merged into the `develop` branch is always in a buildable and tested state, improving code quality and stability.
+
+* * * * *
+
+## Getting Started (For Developers)
 
 To get a local copy up and running, follow these simple steps.
 
-### Prerequisites
+#### Prerequisites
 
 -   Android Studio (latest stable version recommended)
 
 -   Git
 
-### Setup Instructions
+#### Setup Instructions
 
 1.  **Clone the repository:**
 
-    Bash
-
-    ```
+    ```bash
     git clone https://github.com/PROG7314-POE-SSB/PROG7314-POE-Part-2-Android-App.git
-
     ```
 
-2.  Open in Android Studio:
+2.  **Open in Android Studio:** Open the cloned folder as a new project.
 
-    Open the cloned folder as a new project in Android Studio.
-
-3.  Firebase Configuration (CRITICAL):
-
-    This app requires a Firebase project to function.
+3.  **Firebase Configuration (CRITICAL):**
 
     -   Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project.
 
     -   Add an Android app to your project with the package name `com.ssba.pantrychef`.
 
-    -   In your Firebase project, go to **Authentication > Sign-in method** and enable **Email/Password** and **Google**.
+    -   In your project, enable **Authentication** (Email/Password, Google) and **Cloud Firestore**.
 
-    -   Go to **Realtime Database** and create a database.
+    -   Download the `google-services.json` file from your Firebase project settings and place it in the `app/` directory.
 
-    -   Download the `google-services.json` file from your Firebase project settings and place it in the `app/` directory of your Android Studio project.
-
-4.  Supabase & Google SSO Configuration:
-
-    The app needs API keys to connect to Supabase and to enable Google SSO.
+4.  **Supabase & Google SSO Configuration:**
 
     -   In `app/src/main/res/values/`, create a new file named `secrets.xml`.
 
-    -   Add your keys to this file. **Note:** This file is listed in `.gitignore` and should not be committed to version control.
+    -   Add your keys to this file (this file is in `.gitignore` and will not be committed).
 
-        XML
-
-        ```
+        ```xml
         <?xml version="1.0" encoding="utf-8"?>
         <resources>
             <string name="supabase_url">YOUR_SUPABASE_URL</string>
@@ -161,19 +192,15 @@ To get a local copy up and running, follow these simple steps.
 
             <string name="default_web_client_id">YOUR_GOOGLE_WEB_CLIENT_ID</string>
         </resources>
-
         ```
 
-    -   To enable Google Sign-In, you must add your computer's **SHA-1 fingerprint** to your Firebase project settings. Follow the instructions from the Firebase documentation to generate it.
+    -   To enable Google Sign-In, add your computer's **SHA-1 fingerprint** to your Firebase project settings.
 
-5.  Build and Run:
-
-    Sync the project with Gradle files and run the application on an emulator or a physical device.
+5.  **Build and Run:** Sync the project with Gradle files and run the application.
 
 * * * * *
 
-Installation (For Users)
-------------------------
+## Installation (For Users)
 
 If you just want to try the app, you can download the latest pre-built APK file.
 
@@ -181,12 +208,11 @@ If you just want to try the app, you can download the latest pre-built APK file.
 
 2.  Under the latest release, find the `app-debug.apk` file in the "Assets" section.
 
-3.  Download the file and install it on your Android device.
+3.  Download and install the file on your Android device.
 
 * * * * *
 
-Project Team
-------------
+## Project Team
 
 This application was designed and developed by **SSB Digital (Group 2)**:
 
@@ -195,26 +221,3 @@ This application was designed and developed by **SSB Digital (Group 2)**:
 -   Shravan Ramjathan (ST10247982)
 
 -   Blaise Mikka de Gier (ST10249838)
-
-* * * * *
-
-Acknowledgments
----------------
-
--   UI/UX design created with
-
-    [Figma](https://www.figma.com/).
-
--   System diagrams created with
-
-    [Excalidraw](https://excalidraw.com/).
-
--   Project planning managed with
-
-    [TeamGantt](https://www.teamgantt.com/).
-
--   External APIs:
-
-    [SuperCook](https://www.supercook.com/), [Edamam](https://www.edamam.com/), [Cohere](https://cohere.com/).
-
-* * * * *

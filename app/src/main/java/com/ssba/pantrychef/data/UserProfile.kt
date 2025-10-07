@@ -3,6 +3,8 @@ package com.ssba.pantrychef.data
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ServerTimestamp
 
+// Firebase. 2025. Manage Users in Firebase. [online] Firebase. Available at: <https://firebase.google.com/docs/auth/android/manage-users?authuser=2> [Accessed 7 October 2025].
+
 /**
  * Represents the data structure for a user's profile, as stored in the
  * 'profile' map within a user's document in Firestore.
