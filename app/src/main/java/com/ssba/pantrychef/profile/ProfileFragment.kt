@@ -93,6 +93,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
      */
     private fun setupObservers(ivProfileImage: ImageView, tvProfileName: TextView) {
         Log.d(TAG, "setupObservers: Setting up LiveData observers.")
+        // Androidx, in, 2019. Stack Overflow. [online] Stack Overflow. Available at: <https://stackoverflow.com/questions/58909819/getviewlifecycleowner-vs-this-vs-this-getactivity-in-androidx-fragments> [Accessed 7 October 2025].
         viewModel.userProfile.observe(viewLifecycleOwner) { userProfile ->
             userProfile?.let {
                 Log.i(TAG, "userProfile observer triggered. Updating name and profile image.")
