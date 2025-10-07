@@ -9,6 +9,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
+// Android Developer. 2025. Guide to app architecture. [online] Android Developers. Available at: <https://developer.android.com/topic/architecture> [Accessed 7 October 2025].
+
 /**
  * The main activity of the application, displayed after the user has successfully authenticated.
  *
@@ -23,6 +25,7 @@ class MainActivity : AppCompatActivity() {
         private const val TAG = "MainActivity"
     }
 
+    // Android Developer. 2025. Pass data between destinations. [online] Android Developers. Available at: <https://developer.android.com/guide/navigation/use-graph/pass-data> [Accessed 7 October 2025].
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

@@ -168,6 +168,7 @@ class LoginActivity : AppCompatActivity() {
      */
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
+        // Android Developer. 2024. Kotlin coroutines on Android. [online] Android Developers. Available at: <https://developer.android.com/kotlin/coroutines> [Accessed 7 October 2025].
         lifecycleScope.launch {
             try {
                 Log.d(TAG, "firebaseAuthWithGoogle: Attempting to sign in with Google credential.")
