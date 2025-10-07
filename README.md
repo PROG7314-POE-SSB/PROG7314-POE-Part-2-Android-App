@@ -1,9 +1,8 @@
-![App Icon](./images/Icon.png "App Icon")
-
-PantryChef 🍳
-=============
+# PantryChef 🍳
 
 PantryChef is a zero-waste cooking companion designed to simplify meal preparation, reduce food waste, and inspire creativity in the kitchen. By blending intelligent recommendations with a user-first design, PantryChef transforms everyday ingredients into exciting meals, empowering users to rediscover the joy of cooking.
+
+![App Icon](./images/Icon.png "App Icon")
 
 * * * * *
 
@@ -29,15 +28,13 @@ PantryChef is a zero-waste cooking companion designed to simplify meal preparati
 
 * * * * *
 
-About The Project
------------------
+## About The Project
 
 PantryChef is a complete kitchen partner designed to simplify meal preparation and inspire confidence in the kitchen. By combining AI-driven intelligence with a user-friendly design, the app transforms pantry management into a proactive and enjoyable experience. The goal is to provide a complete kitchen partner that not only helps users discover creative recipes but also automates planning, shopping, and organisation.
 
 * * * * *
 
-Design Considerations
----------------------
+## Design Considerations
 
 The design of PantryChef is firmly grounded in research and a commitment to a scalable, user-centric architecture.
 
@@ -49,8 +46,7 @@ The design of PantryChef is firmly grounded in research and a commitment to a sc
 
 * * * * *
 
-Key Features
-------------
+## Key Features
 
 PantryChef is packed with features designed to create a seamless cooking journey, from pantry to plate.
 
@@ -68,7 +64,7 @@ PantryChef is packed with features designed to create a seamless cooking journey
 
 #### Innovative Features
 
--   🧠 **AI-Powered Recipe Discovery:** Generate personalised recipes by analysing your pantry's contents using the SuperCook and Edamam APIs.
+-   🧠 **AI-Powered Recipe Discovery:** Generate personalised recipes by analysing your pantry's contents using the [Spoonacular API](https://spoonacular.com/food-api).
 
 -   🥫 **Intelligent Pantry Management:** Add items by scanning with your camera (Vision AI), using voice input, or manual entry.
 
@@ -78,8 +74,7 @@ PantryChef is packed with features designed to create a seamless cooking journey
 
 * * * * *
 
-Technology Stack & Architecture
--------------------------------
+## Technology Stack & Architecture
 
 PantryChef is built on a modern, three-tier architecture designed for scalability and maintainability.
 
@@ -109,7 +104,7 @@ PantryChef is built on a modern, three-tier architecture designed for scalabilit
 
 -   **External APIs:**
 
-    -   **Recipe Search:** SuperCook API, Edamam API
+    -   **Recipe Search:** [Spoonacular API](https://spoonacular.com/food-api)
 
     -   **AI Chatbot:** Cohere API
 
@@ -117,10 +112,11 @@ PantryChef is built on a modern, three-tier architecture designed for scalabilit
 
 ![System Architecture Overview](./images/Architecture.png "System Architecture Overview")
 
+> **Note:** The architecture diagram shown above is from our initial planning and implementation phase. While the overall system architecture remains the same, the API used for recipe search has been updated to use the Spoonacular API instead of the previously planned Edamame and SuperCook APIs.
+
 * * * * *
 
-Navigation Flow
----------------
+## Navigation Flow
 
 The app's navigation is structured around a central `BottomNavigationView` with five main destinations. The entire profile section is managed within its own nested navigation graph to keep the architecture modular and easy to manage.
 
@@ -128,8 +124,7 @@ The app's navigation is structured around a central `BottomNavigationView` with 
 
 * * * * *
 
-Development Workflow
---------------------
+## Development Workflow
 
 This project utilises Git for version control and is hosted on GitHub to facilitate collaboration.
 
@@ -153,8 +148,7 @@ This project utilises Git for version control and is hosted on GitHub to facilit
 
 * * * * *
 
-Getting Started (For Developers)
---------------------------------
+## Getting Started (For Developers)
 
 To get a local copy up and running, follow these simple steps.
 
@@ -168,11 +162,8 @@ To get a local copy up and running, follow these simple steps.
 
 1.  **Clone the repository:**
 
-    Bash
-
-    ```
+    ```bash
     git clone https://github.com/PROG7314-POE-SSB/PROG7314-POE-Part-2-Android-App.git
-
     ```
 
 2.  **Open in Android Studio:** Open the cloned folder as a new project.
@@ -193,7 +184,7 @@ To get a local copy up and running, follow these simple steps.
 
     -   Add your keys to this file (this file is in `.gitignore` and will not be committed).
 
-        ``` XML
+        ```xml
         <?xml version="1.0" encoding="utf-8"?>
         <resources>
             <string name="supabase_url">YOUR_SUPABASE_URL</string>
@@ -201,7 +192,6 @@ To get a local copy up and running, follow these simple steps.
 
             <string name="default_web_client_id">YOUR_GOOGLE_WEB_CLIENT_ID</string>
         </resources>
-
         ```
 
     -   To enable Google Sign-In, add your computer's **SHA-1 fingerprint** to your Firebase project settings.
@@ -210,8 +200,7 @@ To get a local copy up and running, follow these simple steps.
 
 * * * * *
 
-Installation (For Users)
-------------------------
+## Installation (For Users)
 
 If you just want to try the app, you can download the latest pre-built APK file.
 
@@ -223,8 +212,7 @@ If you just want to try the app, you can download the latest pre-built APK file.
 
 * * * * *
 
-Project Team
-------------
+## Project Team
 
 This application was designed and developed by **SSB Digital (Group 2)**:
 
@@ -233,5 +221,3 @@ This application was designed and developed by **SSB Digital (Group 2)**:
 -   Shravan Ramjathan (ST10247982)
 
 -   Blaise Mikka de Gier (ST10249838)
-
-------------
