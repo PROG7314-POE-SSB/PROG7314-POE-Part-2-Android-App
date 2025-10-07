@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object ApiClient {
 
     // Default base URL (fallback)
-    private const val DEFAULT_BASE_URL = "https://your-api-goes-here.com/api/v1/"
+    private const val DEFAULT_BASE_URL = "https://pantry-chef-sashveer.loca.lt"//"https://your-api-goes-here.com/api/v1/"
 
     /**
      * Builds a Retrofit instance with the specified base URL.
