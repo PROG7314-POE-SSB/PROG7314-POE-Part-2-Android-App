@@ -53,7 +53,7 @@ data class ShoppingList(
 
 class ShoppingListViewModel : ViewModel() {
     private val recipeRepository = RecipeRepository()
-    private val apiService = ShoppingListApiService("https://your-backend-url.com/api/")
+    private val apiService = ShoppingListApiService("https://pantry-chef-shravan.loca.lt")
 
     // Holds all the shopping lists for the main screen
     private val _shoppingLists = MutableLiveData<List<ShoppingList>>(emptyList())
@@ -138,11 +138,41 @@ class ShoppingListViewModel : ViewModel() {
             }
         }
     }
+    fun processShoppingListRequest(categoryName: String, recipeId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                // Step A: Fetch the most recent lists from the server first.
+                val currentLists = apiService.getAllLists()
+                _shoppingLists.value = currentLists // Update the UI immediately with fetched lists
+
+                // Step B: NOW, check for an existing list using the fresh data.
+                val existingList = currentLists.find { it.recipeId == recipeId }
+                if (existingList != null) {
+                    _listGenerationStatus.postValue(Event("Shopping list for this recipe already exists."))
+                } else {
+                    // Step C: Only if no list exists, proceed to generate a new one.
+                    generateListFromRecipeIds(categoryName, recipeId)
+                }
+            } catch (e: Exception) {
+                _listGenerationStatus.postValue(Event("Error: ${e.message ?: "Failed to process request"}"))
+            } finally {
+                // Loading is set to false in the generate function or here if it already existed.
+                if (_isLoading.value == true) _isLoading.value = false
+            }
+        }
+    }
 
     /**
      * Generates a new shopping list from a recipe by calling the backend.
      */
     fun generateListFromRecipeIds(categoryName: String, recipeId: String) {
+        val existingList = _shoppingLists.value?.find { it.recipeId == recipeId }
+        if (existingList != null) {
+            // If it exists, post a message and do nothing else.
+            _listGenerationStatus.postValue(Event("Shopping list for this recipe already exists."))
+            return
+        }
         viewModelScope.launch {
             _isLoading.value = true
             try {

@@ -35,7 +35,7 @@ import java.util.Locale
 class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
 
     private val viewModel: PantryViewModel by viewModels({ requireActivity() })
-
+    private lateinit var addImagePromptText: TextView
     private lateinit var imagePickerContainer: FrameLayout
     private lateinit var imageView: ImageView
     private lateinit var titleEdit: EditText
@@ -60,7 +60,7 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
                 bitmap?.let {
                     imageBitmap = it
                     imageView.setImageBitmap(it)
-
+                    addImagePromptText.visibility = View.GONE
                 }
             }
         }
@@ -73,7 +73,7 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
         bitmap?.let {
             imageBitmap = it
             imageView.setImageBitmap(it)
-
+            addImagePromptText.visibility = View.GONE
         }
     }
 
@@ -85,7 +85,7 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Toast.makeText(requireContext(), "Fragment loaded!", Toast.LENGTH_SHORT).show()
-
+        addImagePromptText = view.findViewById(R.id.text_add_image_prompt)
         imagePickerContainer = view.findViewById(R.id.image_picker_container)
         imageView = view.findViewById(R.id.item_image)
         titleEdit = view.findViewById(R.id.edit_title)
@@ -208,6 +208,9 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
                     .load(state.imageUrl)
                     .placeholder(R.drawable.sample_food) // Optional placeholder
                     .into(imageView)
+                addImagePromptText.visibility = View.GONE
+            }else if(imageBitmap==null){
+                addImagePromptText.visibility = View.VISIBLE
             }
         }
         )

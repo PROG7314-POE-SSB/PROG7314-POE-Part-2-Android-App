@@ -21,35 +21,35 @@ interface ShoppingListApi {
 
     // GET /api/shopping-list -> Fetches all ShoppingList objects
 
-    @GET("shopping-list")
+    @GET("api/shopping-list")
     suspend fun getAllLists(): Response<List<ShoppingList>>
 
     // POST /api/shopping-list/generate -> Generates a list from a recipe
-    @POST("shopping-list/generate")
+    @POST("api/shopping-list/generate")
     suspend fun generateListFromRecipe(
         @Body request: GenerateListRequest
     ): Response<ShoppingListGenerateResponse>
 
     // POST /api/shopping-lists -> Creates a new, empty list
 
-    @POST("shopping-lists")
+    @POST("api/shopping-list")
     suspend fun createShoppingList(@Body list: ShoppingList): Response<ShoppingList>
 
     // PUT /api/shopping-lists/:id -> Updates an entire list (e.g., after checking an item)
 
-    @PUT("shopping-lists/{id}")
+    @PUT("api/shopping-lists/{id}")
     suspend fun updateShoppingList(@Path("id") id: String, @Body list: ShoppingList): Response<ShoppingList>
 
-    @POST("shopping-list")
+    @POST("api/shopping-list")
     suspend fun addItem(@Body item: ShoppingItem): Response<ShoppingListResponse>
 
-    @GET("shopping-list/{id}")
+    @GET("api/shopping-list/{id}")
     suspend fun getItemById(@Path("id") id: String): Response<ShoppingItem>
 
-    @PUT("shopping-list/{id}")
+    @PUT("api/shopping-list/{id}")
     suspend fun updateItem(@Path("id") id: String, @Body item: ShoppingItem): Response<ShoppingListResponse>
 
-    @DELETE("shopping-list/{id}")
+    @DELETE("api/shopping-list/{id}")
     suspend fun deleteItem(@Path("id") id: String): Response<ShoppingListResponse>
 }
 
