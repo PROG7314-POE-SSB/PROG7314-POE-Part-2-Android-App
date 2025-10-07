@@ -32,6 +32,14 @@ class DiscoverViewModel : ViewModel() {
     private val _isEmpty = MutableStateFlow(false)
     val isEmpty: StateFlow<Boolean> = _isEmpty.asStateFlow()
 
+    // State for current search query
+    private val _currentSearchQuery = MutableStateFlow<String?>(null)
+    val currentSearchQuery: StateFlow<String?> = _currentSearchQuery.asStateFlow()
+
+    // State to track if we're in search mode
+    private val _isSearchMode = MutableStateFlow(false)
+    val isSearchMode: StateFlow<Boolean> = _isSearchMode.asStateFlow()
+
     /**
      * Load random recipes based on user preferences
      */
@@ -39,6 +47,8 @@ class DiscoverViewModel : ViewModel() {
         _isLoading.value = true
         _errorMessage.value = null
         _isEmpty.value = false
+        _isSearchMode.value = false
+        _currentSearchQuery.value = null
 
         viewModelScope.launch {
             repository.getRandomRecipes()
@@ -56,6 +66,40 @@ class DiscoverViewModel : ViewModel() {
     }
 
     /**
+     * Search recipes based on query
+     */
+    fun searchRecipes(query: String) {
+        _isLoading.value = true
+        _errorMessage.value = null
+        _isEmpty.value = false
+        _isSearchMode.value = true
+
+        viewModelScope.launch {
+            repository.searchRecipes(query)
+                .onSuccess { (searchQuery, recipesList) ->
+                    _currentSearchQuery.value = searchQuery
+                    _recipes.value = recipesList
+                    _isEmpty.value = recipesList.isEmpty()
+                    _isLoading.value = false
+                }
+                .onFailure { exception ->
+                    _errorMessage.value = "Failed to search recipes: ${exception.message}"
+                    _isEmpty.value = false
+                    _isLoading.value = false
+                }
+        }
+    }
+
+    /**
+     * Clear search and return to random recipes
+     */
+    fun clearSearch() {
+        viewModelScope.launch {
+            loadRandomRecipes()
+        }
+    }
+
+    /**
      * Clear error message
      */
     fun clearError() {
@@ -63,11 +107,15 @@ class DiscoverViewModel : ViewModel() {
     }
 
     /**
-     * Refresh recipes
+     * Refresh current view (search or random)
      */
-    fun refreshRecipes() {
+    fun refresh() {
         viewModelScope.launch {
-            loadRandomRecipes()
+            if (_isSearchMode.value && _currentSearchQuery.value != null) {
+                searchRecipes(_currentSearchQuery.value!!)
+            } else {
+                loadRandomRecipes()
+            }
         }
     }
 

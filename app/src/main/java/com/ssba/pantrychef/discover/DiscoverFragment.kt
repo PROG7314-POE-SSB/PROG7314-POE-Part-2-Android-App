@@ -5,8 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -33,6 +35,9 @@ class DiscoverFragment : Fragment() {
     private lateinit var emptyStateLayout: LinearLayout
     private lateinit var recyclerViewRecipes: RecyclerView
     private lateinit var retryButton: MaterialButton
+    private lateinit var discoverSectionText: TextView
+    private lateinit var discoverIcon: ImageView
+    private lateinit var clearSearchButton: MaterialButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,6 +57,9 @@ class DiscoverFragment : Fragment() {
         progressBar = view.findViewById(R.id.progress_bar)
         emptyStateLayout = view.findViewById(R.id.empty_state_layout)
         retryButton = view.findViewById(R.id.retry_button)
+        discoverSectionText = view.findViewById(R.id.tv_discover_section)
+        discoverIcon = view.findViewById(R.id.discover_icon)
+        clearSearchButton = view.findViewById(R.id.clear_search_button)
 
         // Navigation to saved recipes
         savedRecipesCard.setOnClickListener {
@@ -77,9 +85,14 @@ class DiscoverFragment : Fragment() {
             }
         }
 
+        // Clear search button functionality
+        clearSearchButton.setOnClickListener {
+            clearSearch(etSearch)
+        }
+
         // Retry button functionality
         retryButton.setOnClickListener {
-            loadRandomRecipes()
+            viewModel.refresh()
         }
 
         // Setup RecyclerView for recipe discovery
@@ -122,6 +135,19 @@ class DiscoverFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isEmpty.collect { isEmpty ->
                 updateEmptyState(isEmpty)
+            }
+        }
+
+        // Observe search mode and query
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isSearchMode.collect { isSearchMode ->
+                updateHeaderForSearchMode(isSearchMode)
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.currentSearchQuery.collect { query ->
+                updateHeaderWithQuery(query)
             }
         }
 
@@ -169,17 +195,29 @@ class DiscoverFragment : Fragment() {
         }
     }
 
+    private fun updateHeaderForSearchMode(isSearchMode: Boolean) {
+        if (isSearchMode) {
+            // Change icon to search icon
+            discoverIcon.setImageResource(R.drawable.ic_search)
+            clearSearchButton.visibility = View.VISIBLE
+        } else {
+            // Change back to explore icon
+            discoverIcon.setImageResource(R.drawable.ic_explore)
+            clearSearchButton.visibility = View.GONE
+            discoverSectionText.text = "Explore New Recipes"
+        }
+    }
+
+    private fun updateHeaderWithQuery(query: String?) {
+        if (query != null) {
+            discoverSectionText.text = "Search: \"$query\""
+        }
+    }
+
     private fun loadRandomRecipes() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadRandomRecipes()
         }
-    }
-
-    private fun onRecipeClick(recipe: Recipe) {
-        Toast.makeText(requireContext(), "Clicked: ${recipe.title}", Toast.LENGTH_SHORT).show()
-        // TODO: Navigate to recipe detail screen
-        // val action = DiscoverFragmentDirections.actionDiscoverFragmentToRecipeDetailFragment(recipe.recipeId)
-        // findNavController().navigate(action)
     }
 
     private fun performSearch(etSearch: EditText) {
@@ -189,11 +227,31 @@ class DiscoverFragment : Fragment() {
             val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
             imm.hideSoftInputFromWindow(etSearch.windowToken, 0)
 
-            Toast.makeText(requireContext(), "Searching for: $query", Toast.LENGTH_SHORT).show()
-            // TODO: Implement actual search functionality
-            // viewModel.searchRecipes(query)
+            // Perform search using ViewModel
+            viewModel.searchRecipes(query)
         } else {
             etSearch.error = "Please enter a search term"
         }
+    }
+
+    private fun clearSearch(etSearch: EditText) {
+        // Clear the search input
+        etSearch.text.clear()
+
+        // Hide keyboard
+        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        imm.hideSoftInputFromWindow(etSearch.windowToken, 0)
+
+        // Clear search and load random recipes
+        viewModel.clearSearch()
+
+        Toast.makeText(requireContext(), "Search cleared", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun onRecipeClick(recipe: Recipe) {
+        Toast.makeText(requireContext(), "Clicked: ${recipe.title}", Toast.LENGTH_SHORT).show()
+        // TODO: Navigate to recipe detail screen
+        // val action = DiscoverFragmentDirections.actionDiscoverFragmentToRecipeDetailFragment(recipe.recipeId)
+        // findNavController().navigate(action)
     }
 }

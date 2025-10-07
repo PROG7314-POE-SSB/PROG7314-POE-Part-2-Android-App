@@ -215,6 +215,7 @@
         app:layout_constraintTop_toBottomOf="@id/saved_recipes_card">
 
         <ImageView
+            android:id="@+id/discover_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="8dp"
@@ -231,6 +232,20 @@
             android:textColor="@color/orange_main"
             android:textSize="22sp"
             android:textStyle="bold" />
+
+        <!-- Clear Search Button (hidden by default) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/clear_search_button"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:contentDescription="Clear Search"
+            app:icon="@drawable/ic_clear"
+            app:iconTint="@color/orange_main"
+            app:cornerRadius="20dp"
+            android:visibility="gone"
+            android:insetTop="0dp"
+            android:insetBottom="0dp" />
 
     </LinearLayout>
 
