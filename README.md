@@ -141,7 +141,7 @@ This project utilises Git for version control and is hosted on GitHub to facilit
 
     -   `feature/<feature-name>`: Individual branches for new features or bug fixes (e.g., `feature/profile-settings`).
 
--   **GitHub Actions for CI/CD:** Continuous Integration is set up using GitHub Actions. A workflow is configured to automatically trigger on every push to the `develop` branch. This workflow:
+-   **GitHub Actions for CI/CD:** Continuous Integration is set up using GitHub Actions. A workflow is configured to automatically trigger on every push to a branch other than the `main` branch. This workflow:
 
     1.  Sets up a Java and Android environment.
 
