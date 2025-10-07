@@ -11,14 +11,28 @@ import io.github.jan.supabase.storage.storage
 import io.ktor.http.ContentType
 
 /*
- 	* Code Attribution
- 	* Purpose:
- 	*   - Setting up Supabase client in an Android app
- 	*   - Uploading an image to a Supabase bucket
- 	* Author: Supabase Community
- 	* Sources:
- 	*   - Supabase Android Client: https://supabase.com/docs/guides/with-react-native/android
-*/
+ * Code Attribution
+ *
+ * Purpose:
+ *   - This Kotlin object, `SupabaseUtils`, centralizes all Supabase backend operations
+ *     for the PantryChef Android app.
+ *      Key responsibilities include:
+ *       1. Initializing the Supabase client for PostgREST and Storage.
+ *       2. Uploading and deleting images for profiles, recipes, and pantry items.
+ *       3. Abstracting repetitive Supabase logic for consistent usage across the app.
+ *
+ * Authors/Technologies Used:
+ *   - Supabase Android SDK: Supabase Open Source Community
+ *   - Ktor HTTP client: JetBrains
+ *   - Kotlin Coroutines for asynchronous operations
+ *   - Android Logging APIs for runtime debugging
+ *
+ * References:
+ *   - Supabase Android Documentation: https://supabase.com/docs/guides/client-libraries/android
+ *   - Supabase Storage API: https://supabase.com/docs/guides/storage
+ *   - Kotlin Coroutines: https://kotlinlang.org/docs/coroutines-overview.html
+ */
+
 
 /**
  * `SupabaseUtils` is a singleton helper object responsible for managing interactions

@@ -6,6 +6,28 @@ import androidx.biometric.BiometricManager
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 
+/*
+ * Code Attribution
+ *
+ * Purpose:
+ *   - This Kotlin object securely manages user credentials for biometric authentication
+ *     using Android's EncryptedSharedPreferences.
+ *   - It provides functionality to store, retrieve, and clear encrypted login credentials,
+ *     as well as check biometric authentication availability on the device.
+ *   - The class ensures strong encryption using AndroidX Security Crypto and AES-256 encryption standards.
+ *
+ * Authors/Technologies Used:
+ *   - AndroidX Security Crypto (EncryptedSharedPreferences, MasterKeys): Google
+ *   - AndroidX Biometric API: Google
+ *   - Kotlin Language and Android Framework APIs: JetBrains & Google
+ *
+ * References:
+ *   - AndroidX Security Crypto Documentation: https://developer.android.com/topic/security/data
+ *   - EncryptedSharedPreferences Guide: https://developer.android.com/reference/androidx/security/crypto/EncryptedSharedPreferences
+ *   - Android Biometric Authentication Guide: https://developer.android.com/training/sign-in/biometric-auth
+ *   - Android Developers — Secure User Data: https://developer.android.com/topic/security/best-practices
+ */
+
 /**
  * A utility class to securely manage user credentials for biometric login
  * using Android's EncryptedSharedPreferences.

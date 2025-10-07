@@ -5,6 +5,28 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import com.ssba.pantrychef.helpers.SupabaseUtils
 
+/*
+ * Code Attribution
+ *
+ * Purpose:
+ *   - This Kotlin class defines the custom Application class for the PantryChef Android app.
+ *   - It performs global one-time initializations on app startup, including:
+ *       1. Initializing the Supabase client for backend integration.
+ *       2. Applying the user's preferred theme (Dark/Light mode) across the app.
+ *   - Ensures that the app is configured before any Activity or Service is created.
+ *
+ * Authors/Technologies Used:
+ *   - Supabase SDK for Android: Supabase Open Source Community
+ *   - Android Application & AppCompatDelegate APIs: Google
+ *   - Kotlin Language and Android Framework: JetBrains & Google
+ *
+ * References:
+ *   - Supabase Android Documentation: https://supabase.com/docs/guides/client-libraries/android
+ *   - Android Application Class: https://developer.android.com/reference/android/app/Application
+ *   - AppCompatDelegate for Dark/Light Mode: https://developer.android.com/reference/androidx/appcompat/app/AppCompatDelegate
+ */
+
+
 /**
  * The custom Application class for PantryChef.
  *

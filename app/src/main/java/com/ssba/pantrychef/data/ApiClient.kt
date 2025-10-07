@@ -5,6 +5,28 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+/*
+ * Code Attribution
+ *
+ * Purpose:
+ *   - This Kotlin object, `ApiClient`, provides a centralized way to create
+ *     Retrofit service instances for the PantryChef Android app.
+ *   - It sets up an OkHttp client with logging and Firebase authentication
+ *     token injection via `AuthInterceptor`.
+ *   - Supports creating multiple API service interfaces with optional custom base URLs.
+ *
+ * Authors/Technologies Used:
+ *   - Retrofit: Square, Inc. (https://square.github.io/retrofit/)
+ *   - OkHttp: Square, Inc. (https://square.github.io/okhttp/)
+ *   - Gson Converter: Google (https://github.com/google/gson)
+ *   - Kotlin Coroutines + Android logging for async network calls
+ *
+ * References:
+ *   - Retrofit Documentation: https://square.github.io/retrofit/
+ *   - OkHttp Interceptors: https://square.github.io/okhttp/interceptors/
+ *   - Firebase Auth with Retrofit: https://firebase.google.com/docs/auth/android/manage-users
+ */
+
 /**
  * A singleton object that provides a pre-configured Retrofit builder.
  * Each feature module can create its own API service interface and pass it to this client.
@@ -12,6 +34,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 object ApiClient {
 
     // Default base URL (fallback)
+    // TODO: Replace with your actual API base URL
+    // You get this when you run the Node.js backend locally (In the terminal)
     private const val DEFAULT_BASE_URL = "https://your-api-goes-here.com/api/v1/"
 
     /**

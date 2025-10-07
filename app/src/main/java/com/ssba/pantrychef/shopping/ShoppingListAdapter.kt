@@ -24,7 +24,7 @@ class ShoppingListAdapter(private val onClick: (String) -> Unit) :
 
         init {
             view.setOnClickListener {
-                val position = adapterPosition
+                @Suppress("DEPRECATION") val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     onClick(lists[position].listId)
                 }

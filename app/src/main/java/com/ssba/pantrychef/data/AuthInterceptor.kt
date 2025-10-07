@@ -6,6 +6,29 @@ import kotlinx.coroutines.tasks.await
 import okhttp3.Interceptor
 import okhttp3.Response
 
+/*
+ * Code Attribution
+ *
+ * Purpose:
+ *   - This Kotlin class defines an OkHttp `Interceptor` that automatically attaches a
+ *     Firebase Authentication ID token to all outgoing API requests.
+ *   - It ensures that authenticated requests include a valid `Authorization: Bearer <token>` header,
+ *     allowing secure access to backend routes protected by Firebase Authentication.
+ *   - If no user is logged in or if the token cannot be fetched, the request proceeds without authentication.
+ *
+ * Authors/Technologies Used:
+ *   - Firebase Authentication SDK: Google Firebase
+ *   - OkHttp Interceptor: Square, Inc.
+ *   - Kotlin Coroutines and `runBlocking`: JetBrains
+ *
+ * References:
+ *   - Firebase Authentication for Android: https://firebase.google.com/docs/auth/android/start
+ *   - OkHttp Interceptors Documentation: https://square.github.io/okhttp/interceptors/
+ *   - Kotlin Coroutines Official Docs: https://kotlinlang.org/docs/coroutines-overview.html
+ *   - Firebase ID Tokens Overview: https://firebase.google.com/docs/auth/admin/verify-id-tokens
+ */
+
+
 /**
  * This OkHttp Interceptor intercepts every outgoing API request to add the
  * Firebase Authentication ID token to the 'Authorization' header.
