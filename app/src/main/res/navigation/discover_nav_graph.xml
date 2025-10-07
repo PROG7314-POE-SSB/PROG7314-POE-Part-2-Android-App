@@ -15,7 +15,16 @@
             android:id="@+id/action_discoverFragment_to_SavedRecipesFragment"
             app:destination="@id/SavedRecipesFragment" />
 
+        <action
+            android:id="@+id/action_discoverFragment_to_viewSpoonacularRecipeFragment"
+            app:destination="@id/viewSpoonacularRecipeFragment" />
     </fragment>
+
+    <fragment
+    android:id="@+id/viewSpoonacularRecipeFragment"
+    android:name="com.ssba.pantrychef.discover.ViewSpoonacularRecipeFragment"
+    android:label="Recipe Details"
+    tools:layout="@layout/fragment_view_spoonacular_recipe" />
 
     <fragment
         android:id="@+id/SavedRecipesFragment"

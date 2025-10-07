@@ -76,4 +76,34 @@ class DiscoverRepository {
             Result.failure(e)
         }
     }
+
+    /**
+     * Get recipe details by ID
+     */
+    suspend fun getRecipeById(recipeId: Int): Result<Recipe> = withContext(Dispatchers.IO) {
+        try {
+            Log.d("DiscoverRepository", "Making API call to get recipe details for ID: $recipeId")
+            val response = apiService.getRecipeById(recipeId)
+
+            Log.d("DiscoverRepository", "Recipe detail response received - Success: ${response.isSuccessful}")
+            Log.d("DiscoverRepository", "Response code: ${response.code()}")
+
+            if (response.isSuccessful) {
+                val recipeResponse = response.body()
+                if (recipeResponse != null) {
+                    Log.d("DiscoverRepository", "Recipe detail received: ${recipeResponse.recipe.title}")
+                    Result.success(recipeResponse.recipe)
+                } else {
+                    Log.e("DiscoverRepository", "Recipe detail response body is null")
+                    Result.failure(Exception("Empty response body"))
+                }
+            } else {
+                Log.e("DiscoverRepository", "Recipe detail API Error: ${response.code()} - ${response.message()}")
+                Result.failure(Exception("Recipe not found or API Error: ${response.code()} - ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Log.e("DiscoverRepository", "Recipe detail exception occurred", e)
+            Result.failure(e)
+        }
+    }
 }

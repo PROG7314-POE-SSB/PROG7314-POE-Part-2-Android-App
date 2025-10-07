@@ -249,9 +249,14 @@ class DiscoverFragment : Fragment() {
     }
 
     private fun onRecipeClick(recipe: Recipe) {
-        Toast.makeText(requireContext(), "Clicked: ${recipe.title}", Toast.LENGTH_SHORT).show()
-        // TODO: Navigate to recipe detail screen
-        // val action = DiscoverFragmentDirections.actionDiscoverFragmentToRecipeDetailFragment(recipe.recipeId)
-        // findNavController().navigate(action)
+        // Navigate to recipe detail screen using Bundle arguments
+        val bundle = Bundle().apply {
+            putInt(ViewSpoonacularRecipeFragment.ARG_RECIPE_ID, recipe.recipeId)
+        }
+
+        findNavController().navigate(
+            R.id.action_discoverFragment_to_viewSpoonacularRecipeFragment,
+            bundle
+        )
     }
 }
