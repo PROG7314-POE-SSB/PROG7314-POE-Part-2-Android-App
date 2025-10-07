@@ -26,6 +26,8 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.core.os.bundleOf
+import androidx.navigation.NavOptions
+
 class ViewUserRecipeFragment : Fragment() {
 
     private lateinit var repository: RecipeRepository
@@ -122,6 +124,9 @@ class ViewUserRecipeFragment : Fragment() {
                     "recipeId" to recipeId,
                     "categoryName" to categoryName
                 )
+                val navOptions = NavOptions.Builder()
+                    .setPopUpTo(R.id.viewUserRecipeFragment, true) // Pop this fragment off the stack
+                    .build()
                 findNavController().navigate(R.id.action_global_to_shopping_nav_graph, bundle)
             }
         }

@@ -37,7 +37,7 @@ object ApiClient {
     // Default base URL (fallback)
     // TODO: Replace with your actual API base URL
     // You get this when you run the Node.js backend locally (In the terminal)
-    private const val DEFAULT_BASE_URL = "https://your-api-goes-here.com/api/v1/"
+    private const val DEFAULT_BASE_URL = "https://pantry-chef-shravan.loca.lt"
 
     /**
      * Builds a Retrofit instance with the specified base URL.

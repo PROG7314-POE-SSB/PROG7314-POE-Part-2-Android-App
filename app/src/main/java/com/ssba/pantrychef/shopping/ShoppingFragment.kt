@@ -42,11 +42,13 @@ class ShoppingListFragment : Fragment() {
 
         // 2. If both IDs were passed, tell the ViewModel to start the generation process
         if (!recipeId.isNullOrBlank() && !categoryName.isNullOrBlank()) {
-            viewModel.generateListFromRecipeIds(categoryName, recipeId)
+            viewModel.processShoppingListRequest(categoryName, recipeId)
             // Clear the arguments so this doesn't run again if the screen rotates
             arguments?.clear()
+        }else{
+            viewModel.fetchShoppingLists()
         }
-        viewModel.fetchShoppingLists()
+
 
         viewModel.shoppingLists.observe(viewLifecycleOwner) { lists ->
             if (lists.isNullOrEmpty()) {
