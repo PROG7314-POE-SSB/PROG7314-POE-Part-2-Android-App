@@ -7,13 +7,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import com.ssba.pantrychef.data.recipe_models.Recipe
+import com.ssba.pantrychef.data.repositories.RecipeRepository
 import com.ssba.pantrychef.helpers.Event
 import com.ssba.pantrychef.shopping.data.GenerateListRequest
 import com.ssba.pantrychef.shopping.data.ShoppingListApiService
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
-// --------------------------- DATA MODELS ---------------------------
+
 
 @Parcelize
 data class ShoppingItem(
@@ -51,7 +52,7 @@ data class ShoppingList(
 // --------------------------- VIEWMODEL CLASS ---------------------------
 
 class ShoppingListViewModel : ViewModel() {
-    // IMPORTANT: Replace this with your actual backend URL
+    private val recipeRepository = RecipeRepository()
     private val apiService = ShoppingListApiService("https://your-backend-url.com/api/")
 
     // Holds all the shopping lists for the main screen
@@ -141,26 +142,34 @@ class ShoppingListViewModel : ViewModel() {
     /**
      * Generates a new shopping list from a recipe by calling the backend.
      */
-    fun generateShoppingListFromRecipe(recipe: Recipe) {
+    fun generateListFromRecipeIds(categoryName: String, recipeId: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val request = GenerateListRequest(
-                    recipeId = recipe.recipeId,
-                    recipeName = recipe.title,
-                    ingredients = recipe.ingredients
-                )
+                // 1. Fetch the full recipe object using the repository
+                val result = recipeRepository.getRecipeById(categoryName, recipeId)
 
-                val response = apiService.generateListFromRecipe(request)
+               result.onSuccess{recipe->
+                    // 2. If recipe is found, create the request and call the API
+                    val request = GenerateListRequest(
+                        recipeId = recipe!!.recipeId,
+                        recipeName = recipe.title,
+                        ingredients = recipe.ingredients
+                    )
+                    val response = apiService.generateListFromRecipe(request)
 
-                // If a new list was successfully created, add it to the top of our local data
-                response.list?.let { newList ->
-                    val currentLists = _shoppingLists.value?.toMutableList() ?: mutableListOf()
-                    currentLists.add(0, newList)
-                    _shoppingLists.value = currentLists
+                    response.list?.let { newList ->
+                        val currentLists = _shoppingLists.value?.toMutableList() ?: mutableListOf()
+                        currentLists.add(0, newList)
+                        _shoppingLists.value = currentLists
+                    }
+                    _listGenerationStatus.postValue(Event(response.message))
                 }
 
-                _listGenerationStatus.postValue(Event(response.message))
+               result.onFailure{
+                    // 3. Handle case where recipe couldn't be found
+                    _listGenerationStatus.postValue(Event("Error: Could not find recipe to generate list."))
+                }
 
             } catch (e: Exception) {
                 _listGenerationStatus.postValue(Event("Error: ${e.message ?: "Unknown error"}"))

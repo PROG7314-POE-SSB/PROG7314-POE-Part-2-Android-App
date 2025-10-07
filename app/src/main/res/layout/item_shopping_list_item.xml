@@ -26,22 +26,12 @@
         android:textColor="@android:color/black"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/tv_item_price"
+
         app:layout_constraintStart_toEndOf="@id/item_checkbox"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Arborio rice" />
 
-    <TextView
-        android:id="@+id/tv_item_price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:textColor="@android:color/darker_gray"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/tv_item_quantity"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="R50" />
+
 
     <TextView
         android:id="@+id/tv_item_quantity"

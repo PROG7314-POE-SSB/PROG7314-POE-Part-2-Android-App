@@ -25,7 +25,7 @@ import com.ssba.pantrychef.data.repositories.RecipeRepository
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
-
+import androidx.core.os.bundleOf
 class ViewUserRecipeFragment : Fragment() {
 
     private lateinit var repository: RecipeRepository
@@ -115,12 +115,14 @@ class ViewUserRecipeFragment : Fragment() {
 
     private fun setupClickListeners() {
         btnGenerateShoppingList.setOnClickListener {
-            currentRecipe?.let { recipe ->
-                Toast.makeText(
-                    context,
-                    "Generating shopping list for ${recipe.title}",
-                    Toast.LENGTH_SHORT
-                ).show()
+            if (recipeId.isNotBlank() && categoryName.isNotBlank()) {
+
+                // Create a bundle with our simple string IDs
+                val bundle = bundleOf(
+                    "recipeId" to recipeId,
+                    "categoryName" to categoryName
+                )
+                findNavController().navigate(R.id.action_global_to_shopping_nav_graph, bundle)
             }
         }
 

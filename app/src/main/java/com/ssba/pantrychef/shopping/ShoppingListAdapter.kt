@@ -38,14 +38,13 @@ class ShoppingListAdapter(
     inner class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val checkBox: CheckBox = view.findViewById(R.id.item_checkbox)
         private val nameText: TextView = view.findViewById(R.id.tv_item_name)
-        private val priceText: TextView = view.findViewById(R.id.tv_item_price)
+
         private val quantityText: TextView = view.findViewById(R.id.tv_item_quantity)
 
         fun bind(itemWrapper: DisplayListItem.Item) {
             val item = itemWrapper.item
             nameText.text = item.name
             quantityText.text = item.quantity.toInt().toString()
-            priceText.text = "" // Placeholder for price
             checkBox.isChecked = item.checked
 
             checkBox.setOnClickListener {

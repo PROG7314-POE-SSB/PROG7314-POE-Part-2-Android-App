@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ssba.pantrychef.R
+import com.ssba.pantrychef.data.recipe_models.Recipe
 
 class ShoppingListFragment : Fragment() {
 
@@ -36,7 +37,15 @@ class ShoppingListFragment : Fragment() {
             // Navigate to your Create List Fragment
             // findNavController().navigate(R.id.action_shoppingListFragment_to_createShoppingListFragment)
         }
+        val recipeId = arguments?.getString("recipeId")
+        val categoryName = arguments?.getString("categoryName")
 
+        // 2. If both IDs were passed, tell the ViewModel to start the generation process
+        if (!recipeId.isNullOrBlank() && !categoryName.isNullOrBlank()) {
+            viewModel.generateListFromRecipeIds(categoryName, recipeId)
+            // Clear the arguments so this doesn't run again if the screen rotates
+            arguments?.clear()
+        }
         viewModel.fetchShoppingLists()
 
         viewModel.shoppingLists.observe(viewLifecycleOwner) { lists ->
