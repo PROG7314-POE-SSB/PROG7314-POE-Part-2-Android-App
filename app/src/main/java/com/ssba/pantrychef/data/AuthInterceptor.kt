@@ -26,6 +26,7 @@ import okhttp3.Response
  *   - OkHttp Interceptors Documentation: https://square.github.io/okhttp/interceptors/
  *   - Kotlin Coroutines Official Docs: https://kotlinlang.org/docs/coroutines-overview.html
  *   - Firebase ID Tokens Overview: https://firebase.google.com/docs/auth/admin/verify-id-tokens
+ *   - ChatGPT (OpenAI): https://chatgpt.com/share/68e535d0-d3c0-800f-9a24-a4cb8d298a6e
  */
 
 

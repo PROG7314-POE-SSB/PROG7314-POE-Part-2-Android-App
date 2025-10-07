@@ -25,6 +25,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  *   - Retrofit Documentation: https://square.github.io/retrofit/
  *   - OkHttp Interceptors: https://square.github.io/okhttp/interceptors/
  *   - Firebase Auth with Retrofit: https://firebase.google.com/docs/auth/android/manage-users
+ *   - ChatGPT (OpenAI): https://chatgpt.com/share/68e535d0-d3c0-800f-9a24-a4cb8d298a6e
  */
 
 /**
