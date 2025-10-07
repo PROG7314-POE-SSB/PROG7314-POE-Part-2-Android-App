@@ -80,6 +80,17 @@
             app:layout_constraintStart_toStartOf="@id/item_title"
             app:layout_constraintTop_toBottomOf="@id/item_desc"
             tools:text="Fruit" />
+        <TextView
+            android:id="@+id/item_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:textColor="@color/dark_brown"
+            android:textSize="12sp"
+            app:layout_constraintBaseline_toBaselineOf="@id/item_category"
+            app:layout_constraintStart_toEndOf="@id/item_category"
+            app:layout_constraintEnd_toEndOf="@id/item_title"
+            tools:text="Qty: 5" />
 
         <TextView
             android:id="@+id/item_expiry"
@@ -93,16 +104,6 @@
             app:layout_constraintStart_toStartOf="@id/item_title"
             tools:text="Exp: 15 Oct 2025" />
 
-        <TextView
-            android:id="@+id/item_quantity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/dark_brown"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@id/item_expiry"
-            app:layout_constraintEnd_toEndOf="@id/item_title"
-            app:layout_constraintTop_toTopOf="@id/item_expiry"
-            tools:text="Qty: 5" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

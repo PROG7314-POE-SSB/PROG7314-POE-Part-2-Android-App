@@ -62,7 +62,9 @@ class PantryItemAdapter(
             desc.text = item.description
             expiry.text = "Exp: ${DateUtils.formatTimestamp(item.expiryDate)}"
             setExpiryColor(item.expiryDate)
-            quantity.text = "Qty: ${item.quantity}"
+
+            val quantityText = "Q: ${item.quantity} ${item.unit}".trim()
+            quantity.text = quantityText
             category.text = "Category: ${item.category}"
 
 

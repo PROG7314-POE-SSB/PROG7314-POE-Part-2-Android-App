@@ -8,7 +8,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ssba.pantrychef.R
 import com.ssba.pantrychef.helpers.DateUtils
 
@@ -37,7 +39,7 @@ class PantryItemDetailsFragment : Fragment() {
         val quantity = view.findViewById<TextView>(R.id.details_quantity)
         val category = view.findViewById<TextView>(R.id.details_category)
         val image = view.findViewById<ImageView>(R.id.details_image)
-
+        val editFab = view.findViewById<FloatingActionButton>(R.id.fab_edit_item)
         // Observe all items via LiveData
         viewModel.allItems.observe(viewLifecycleOwner) { list ->
             val item = list.find { it.id == itemId }
@@ -45,10 +47,9 @@ class PantryItemDetailsFragment : Fragment() {
                 title.text = it.title
                 desc.text = it.description
                 expiry.text = "Expires on: ${DateUtils.formatTimestamp(it.expiryDate)}" // <-- Use the formatter
-
-                quantity.text = "Quantity: ${it.quantity}"
-                quantity.text = "Quantity: ${it.quantity}"
-                category.text = "Category: ${it.category}"
+                val quantityText = "Quantity: ${it.quantity} ${it.unit}".trim()
+                quantity.text = quantityText
+                category.text = it.category
 
                 if (!it.imageUrl.isNullOrEmpty()) {
                     Glide.with(requireContext())
@@ -58,6 +59,16 @@ class PantryItemDetailsFragment : Fragment() {
                 } else {
                     image.setImageResource(R.drawable.sample_food)
                 }
+            }
+        }
+        editFab.setOnClickListener {
+            // Use the itemId that was passed to this fragment
+            itemId?.let { id ->
+                val bundle = Bundle().apply {
+                    putString("itemId", id)
+                }
+                // Navigate using the action ID from the nav graph
+                findNavController().navigate(R.id.action_details_to_edit, bundle)
             }
         }
     }

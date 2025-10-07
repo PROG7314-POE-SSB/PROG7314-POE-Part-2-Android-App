@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.ssba.pantrychef.R
@@ -33,7 +34,7 @@ import java.util.Locale
 
 class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
 
-    private val viewModel: PantryViewModel by viewModels()
+    private val viewModel: PantryViewModel by viewModels({ requireActivity() })
 
     private lateinit var imagePickerContainer: FrameLayout
     private lateinit var imageView: ImageView
@@ -202,6 +203,12 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
             if (unitAutocomplete.text.toString() != state.unit) {
                 unitAutocomplete.setText(state.unit, false)
             }
+            if (!state.imageUrl.isNullOrEmpty() && imageBitmap == null) {
+                Glide.with(this)
+                    .load(state.imageUrl)
+                    .placeholder(R.drawable.sample_food) // Optional placeholder
+                    .into(imageView)
+            }
         }
         )
         viewModel.transientBitmap.observe(viewLifecycleOwner) { bmp ->
@@ -226,7 +233,7 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
             val title = titleEdit.text.toString().trim()
             val quantity = quantityEdit.text.toString().trim()
             val category = categoryEdit.text.toString().trim()
-            val unit = unitAutocomplete.text.toString()
+            val unit = unitAutocomplete.text.toString().trim()
 
             SupabaseUtils.init(requireContext())
             when {
@@ -245,9 +252,10 @@ class AddEditPantryItemFragment : Fragment(R.layout.fragment_add_edit_item) {
                         .show(); return@setOnClickListener
                 }
 
-                unit == "Select unit" -> {
+                unit.isBlank() -> {
                     Toast.makeText(requireContext(), "Please select a unit", Toast.LENGTH_SHORT)
-                        .show(); return@setOnClickListener
+                        .show()
+                    return@setOnClickListener // Stop the save process
                 }
             }
 

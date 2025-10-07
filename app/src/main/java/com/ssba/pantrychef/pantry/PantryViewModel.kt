@@ -73,7 +73,7 @@ class PantryViewModel(
                 category = item.category,
                 location = item.location,
                 imageUrl = item.imageUrl,
-                unit = item.unit
+                unit =  item.unit?:""
             )
         } else PantryItemUiState()
     }

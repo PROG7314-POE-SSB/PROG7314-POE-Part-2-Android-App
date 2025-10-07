@@ -33,6 +33,9 @@
         <argument
             android:name="itemId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_details_to_edit"
+            app:destination="@id/nav_add_item" />
     </fragment>
     <!-- Optional: Add/Edit Pantry Item -->
     <fragment
